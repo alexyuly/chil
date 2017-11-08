@@ -36,30 +36,35 @@ Primitive types:
 - `delay`: asynchronously sink an event for each `feed` source event: `(feed:number) -> ...feed ms later`
 
 #### Generic operations
-- `map<Feed, Sink>`: synchronously sink 1 or more events for each `feed` source event: `(feed:Feed) -> feed:Sink`
-- `reduce<Feed, Sink>`: once the first `seed` and `feed` source events have both arrived, and for each `feed` source event thereafter, sink the last `seed` event: `(seed:Sink) -> (feed:Feed) -> seed`
-- `equal<Type>` implements `reduce<Type, Type>`: `seed -> feed -> if feed == seed then feed`
-- `unequal<Type>` implements `reduce<Type, Type>`: `seed -> feed -> if feed != seed then feed`
+- `map<Feed, Sink>`: synchronously sink each `feed` source event (or 1 or more other events, depending on implementation): `(feed:Feed) -> feed:Sink`
+- `reduce<Seed, Feed>`: once the first `seed` and `feed` source events have both arrived, and for each `feed` source event thereafter, sink the last `seed` event (or a function of `seed` and `feed`, depending on implementation): `(seed:Seed, feed:Feed) -> seed`
+- `equal<Type>` implements `reduce<Type, Type>`: `(seed, feed) -> if feed == seed then feed`
+- `unequal<Type>` implements `reduce<Type, Type>`: `(seed, feed) -> if feed != seed then feed`
+
+#### Skip and take
+- `skip<Type>` implements `reduce<number, Type>`: for each `seed` source event, skip the next so many `feed` events
+- `take<Type>` implements `reduce<number, Type>`: for each `seed` source event, take only the next so many `feed` events
+
 #### Operations on numbers
 
 - `negate` implements `map<number, number>`: `feed -> -feed`
 - `invert` implements `map<number, number>`: `feed -> 1 / feed`
-- `add` implements `reduce<number, number>`: `seed -> feed -> feed + seed`
-- `multiply` implements `reduce<number, number>`: `seed -> feed -> feed * seed`
-- `modulus` implements `reduce<number, number>`: `seed -> feed -> feed % seed`
-- `less` implements `reduce<number, number>`: `seed -> feed -> feed < seed`
-- `least` implements `reduce<number, number>`: `seed -> feed -> feed <= seed`
-- `greater` implements `reduce<number, number>`: `seed -> feed -> feed > seed`
-- `greatest` implements `reduce<number, number>`: `seed -> feed -> feed >= seed`
+- `add` implements `reduce<number, number>`: `(seed, feed) -> feed + seed`
+- `multiply` implements `reduce<number, number>`: `(seed, feed) -> feed * seed`
+- `modulus` implements `reduce<number, number>`: `(seed, feed) -> feed % seed`
+- `less` implements `reduce<number, number>`: `(seed, feed) -> feed < seed`
+- `least` implements `reduce<number, number>`: `(seed, feed) -> feed <= seed`
+- `greater` implements `reduce<number, number>`: `(seed, feed) -> feed > seed`
+- `greatest` implements `reduce<number, number>`: `(seed, feed) -> feed >= seed`
 
 #### Operations on vectors
 
-- `append<Type>` implements `reduce<vector<Type>, Type or vector<Type>>`: `seed -> feed -> feed.concat(seed)`
+- `append<Type>` implements `reduce<Type or vector<Type>, vector<Type>>`: `(seed, feed) -> feed.concat(seed)`
 - `chain<Type>` implements `map<vector<Type>, Type>`: `feed -> for each in feed`
 - `count<Type>` implements `map<vector<Type>, number>`: `feed -> feed.length`
 - `reverse<Type>` implements `map<vector<Type>, vector<Type>>`: `feed -> [...feed.reverse()]`
-- `slice<Type>` implements `reduce<number, vector<Type>>`: `seed -> feed -> feed.slice(seed)`
+- `slice<Type>` implements `reduce<number, vector<Type>>`: `(seed, feed) -> feed.slice(seed)`
 
 #### Operations on structs
 
-- `combine<Sources>`: synchronously sink an event that maps the last event from each of *n* sources to a new `struct`: `a -> b -> c -> ... -> { a, b, c, ... }`
+- `combine<A, B, C, ...>`: once all *n* source events have arrived, and for each of any event thereafter, synchronously sink an event that maps the last event from each source to a new `struct`: `a -> b -> c -> ... -> { a, b, c, ... }`

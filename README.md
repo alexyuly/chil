@@ -11,7 +11,7 @@ Many software applications are primarily concerned with delivering *information*
 
 ## Types, Operations, Components: The Building Blocks of `vinescape`
 
-`vinescape` defines applications in terms of *operations*. An operation is a unit of processing that has *n* named inputs called *sources* and one output called the *sink*. Components define relationships between instances of operations.
+`vinescape` defines applications in terms of *operations*. An operation is a unit of processing that has *n* named inputs called *sources* and one output called the *sink*. A component likewise has sources and a sink, and additionally it defines a set of relationships between instances of operations and components and their sources and sinks. A component with 1 or more *start operations* may be executed as an application.
 
 ### Types
 
@@ -29,11 +29,11 @@ Primitive types:
 
 ### Operations
 
-#### Application start operations
+#### Start operations
 - `event<Value>`: synchronously sink `Value` on application start: `() -> Value`
 
 #### Asynchronous operations
-- `delay`: asynchronously sink an event for each `feed` source event: `(feed:number) -> ...feed ms later`
+- `delay`: asynchronously sink a `null` event for each `feed` source event: `(feed:number) -> feed milliseconds later, sink null`
 
 #### Generic operations
 - `map<Feed, Sink>`: synchronously sink each `feed` source event (or 1 or more other events, depending on implementation): `(feed:Feed) -> feed:Sink`
@@ -67,4 +67,8 @@ Primitive types:
 
 #### Operations on structs
 
-- `combine<A, B, C, ...>`: once all *n* source events have arrived, and for each of any event thereafter, synchronously sink an event that maps the last event from each source to a new `struct`: `a -> b -> c -> ... -> { a, b, c, ... }`
+- `combine<...Sources>`: once all *n* source events have arrived, and for each of any event thereafter, synchronously sink an event that maps the last event from each source to a new `struct`: `(...sources) -> { ...sources }`
+
+#### Higher-order operations
+
+- `variable<Operation:operation, ...sources>`: for each `operation` source event, adopt the behavior of that operation for all sources and sink

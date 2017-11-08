@@ -54,11 +54,11 @@ Primitive types:
 
 #### Operations on vectors
 
-- `append<vector<Type>, Type or vector<Type>>`: `seed -> feed -> feed.concat(seed)`
+- `append<Type>` implements `reduce<vector<Type>, Type or vector<Type>>`: `seed -> feed -> feed.concat(seed)`
 - `chain<Type>` implements `map<vector<Type>, Type>`: `feed -> for each in feed`
-- `count` implements `map<vector<any>, number>`: `feed -> feed.length`
-- `reverse` implements `map<vector<any>, vector<any>>`: `feed -> [...feed.reverse()]`
-- `slice` implements `reduce<number, vector<any>>`: `seed -> feed -> feed.slice(seed)`
+- `count<Type>` implements `map<vector<Type>, number>`: `feed -> feed.length`
+- `reverse<Type>` implements `map<vector<Type>, vector<Type>>`: `feed -> [...feed.reverse()]`
+- `slice<Type>` implements `reduce<number, vector<Type>>`: `seed -> feed -> feed.slice(seed)`
 
 #### Operations on structs
 

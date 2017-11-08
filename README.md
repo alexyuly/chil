@@ -38,8 +38,8 @@ Primitive types:
 #### Generic operations
 - `map<Feed, Sink>`: synchronously sink each `feed` source event (or 1 or more other events, depending on implementation): `(feed:Feed) -> feed:Sink`
 - `reduce<Seed, Feed>`: once the first `seed` and `feed` source events have both arrived, and for each `feed` source event thereafter, sink the last `seed` event (or a function of `seed` and `feed`, depending on implementation): `(seed:Seed, feed:Feed) -> seed`
-- `equal<Type>` implements `reduce<Type, Type>`: `(seed, feed) -> if feed == seed then feed`
-- `unequal<Type>` implements `reduce<Type, Type>`: `(seed, feed) -> if feed != seed then feed`
+- `equal<Type>` implements `reduce<Type, Type>`: `(seed, feed) -> if feed == seed then feed` *(uses deep value equality)*
+- `unequal<Type>` implements `reduce<Type, Type>`: `(seed, feed) -> if feed != seed then feed` *(uses deep value inequality)*
 
 #### Skip and take
 - `skip<Type>` implements `reduce<number, Type>`: for each `seed` source event, skip the next so many `feed` events
@@ -52,10 +52,10 @@ Primitive types:
 - `add` implements `reduce<number, number>`: `(seed, feed) -> feed + seed`
 - `multiply` implements `reduce<number, number>`: `(seed, feed) -> feed * seed`
 - `modulus` implements `reduce<number, number>`: `(seed, feed) -> feed % seed`
-- `less` implements `reduce<number, number>`: `(seed, feed) -> feed < seed`
-- `least` implements `reduce<number, number>`: `(seed, feed) -> feed <= seed`
-- `greater` implements `reduce<number, number>`: `(seed, feed) -> feed > seed`
-- `greatest` implements `reduce<number, number>`: `(seed, feed) -> feed >= seed`
+- `less` implements `reduce<number, number>`: `(seed, feed) -> if feed < seed then feed`
+- `least` implements `reduce<number, number>`: `(seed, feed) -> if feed <= seed then feed`
+- `greater` implements `reduce<number, number>`: `(seed, feed) -> if feed > seed then feed`
+- `greatest` implements `reduce<number, number>`: `(seed, feed) -> if feed >= seed then feed`
 
 #### Operations on vectors
 

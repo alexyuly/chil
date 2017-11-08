@@ -71,4 +71,4 @@ Primitive types:
 
 #### Higher-order operations
 
-- `variable<Operation:operation, ...sources>`: for each `operation` source event, adopt the behavior of that operation for all sources and sink
+- `variable<Operation>`: for each `operation` source event, adopt the behavior of that operation for all sources and sink: `(operation:Operation) -> (...operation.sources) -> operation.sink`

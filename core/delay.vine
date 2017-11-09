@@ -1,5 +1,5 @@
 {
-    "type": "delay",
+    "class": "delay",
     "primitive": true,
     "sources": {
         "feed": {

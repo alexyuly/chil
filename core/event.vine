@@ -1,7 +1,7 @@
 {
-    "type": "event",
+    "class": "event",
     "primitive": true,
-    "run": true,
+    "runnable": true,
     "parameters": {
         "Value": null
     },

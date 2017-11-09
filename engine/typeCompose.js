@@ -1,7 +1,7 @@
 module.exports =
     function typeCompose(type, parameters) {
         if (typeof type === 'string') {
-            return typeCompose(parameters[type], parameters) || type
+            return parameters[type] || type
         }
         if (typeof type === 'object') {
             if (type !== null) {
@@ -13,5 +13,5 @@ module.exports =
             }
             return type
         }
-        throw new Error('Type must be string or object')
+        throw new Error('type must be a string or an object')
     }

@@ -1,14 +1,11 @@
 {
-    "type": "store",
+    "class": "store",
     "primitive": true,
-    "dependencies": {
-        "reduce": "core/reduce"
-    },
     "parameters": {
         "Type": null
     },
-    "super": "reduce",
-    "supertype": {
+    "superclass": "reduce",
+    "super": {
         "Seed": "Type",
         "Feed": null
     }

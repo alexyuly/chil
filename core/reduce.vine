@@ -1,17 +1,20 @@
 {
-    "type": "map",
+    "class": "reduce",
     "primitive": true,
     "abstract": true,
     "parameters": {
-        "Feed": null,
-        "Sink": null
+        "Seed": null,
+        "Feed": null
     },
     "sources": {
+        "seed": {
+            "of": "Seed"
+        },
         "feed": {
             "of": "Feed"
         }
     },
     "sink": {
-        "of": "Sink"
+        "of": "Seed"
     }
 }

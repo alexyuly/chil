@@ -1,12 +1,13 @@
+const instanceOf = require('./instanceOf')
+const typeClass = require('./typeClass')
 const typeCompose = require('./typeCompose')
 const typeOf = require('./typeOf')
-const typeEqual = require('./typeEqual')
 
 module.exports =
     class operation {
         constructor(type, parameters) {
-            if (new.target === operation) {
-                throw new Error('Operation is an abstract class')
+            if (new.target === operation || (type.abstract && new.target === typeClass(type.class))) {
+                throw new Error('cannot construct instance of abstract type')
             }
             this.sinks = []
             this.sources = {}
@@ -24,19 +25,16 @@ module.exports =
             }
         }
         broadcast(event) {
-            if (event === undefined) {
-                return
-            }
-            if (!typeEqual(this.type.sink.of, typeOf(event))) {
-                throw new Error('Operation sink type does not match event type')
+            if (!instanceOf(typeOf(event), this.type.sink.of)) {
+                throw new Error('operation sink type does not match event type')
             }
             for (const sink of this.sinks) {
                 sink.push(event)
             }
         }
         sink(source) {
-            if (!typeEqual(this.type.sink.of, source.type)) {
-                throw new Error('Operation sink type does not match source type')
+            if (!instanceOf(this.type.sink.of, source.type)) {
+                throw new Error('operation sink type does not match source type')
             }
             this.sinks.push(source)
         }
@@ -48,7 +46,7 @@ module.exports =
                     this[key]()
                 },
                 pop: () => events.pop(),
-                shift: () => events.shift(),
+                dump: () => events.splice(0),
                 type: () => this.type.sources[key].of
             }
         }

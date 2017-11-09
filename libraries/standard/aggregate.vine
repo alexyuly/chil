@@ -1,8 +1,5 @@
 {
-    "type": "aggregate",
-    "dependencies": {
-        "store": "core/store"
-    },
+    "class": "aggregate",
     "parameters": {
         "Feed": null,
         "Operation": {

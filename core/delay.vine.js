@@ -1,5 +1,5 @@
-const operation = require('../../engine/operation')
-const typeDefine = require('../../engine/typeDefine')
+const operation = require('../engine/operation')
+const typeDefine = require('../engine/typeDefine')
 
 const type = typeDefine('delay')
 

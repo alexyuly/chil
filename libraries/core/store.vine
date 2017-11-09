@@ -1,0 +1,15 @@
+{
+    "type": "store",
+    "primitive": true,
+    "dependencies": {
+        "reduce": "core/reduce"
+    },
+    "parameters": {
+        "Type": null
+    },
+    "super": "reduce",
+    "supertype": {
+        "Seed": "Type",
+        "Feed": null
+    }
+}

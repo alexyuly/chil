@@ -1,0 +1,15 @@
+{
+    "type": "merge",
+    "primitive": true,
+    "dependencies": {
+        "map": "core/map"
+    },
+    "parameters": {
+        "Type": null
+    },
+    "super": "map",
+    "supertype": {
+        "Feed": "Type",
+        "Sink": "Type"
+    }
+}

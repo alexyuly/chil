@@ -1,0 +1,11 @@
+{
+    "type": "event",
+    "primitive": true,
+    "run": true,
+    "parameters": {
+        "Value": null
+    },
+    "sink": {
+        "of": null
+    }
+}

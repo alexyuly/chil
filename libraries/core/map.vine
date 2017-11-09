@@ -1,0 +1,17 @@
+{
+    "type": "map",
+    "primitive": true,
+    "abstract": true,
+    "parameters": {
+        "Feed": null,
+        "Sink": null
+    },
+    "sources": {
+        "feed": {
+            "of": "Feed"
+        }
+    },
+    "sink": {
+        "of": "Sink"
+    }
+}

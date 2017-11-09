@@ -1,0 +1,12 @@
+{
+    "type": "delay",
+    "primitive": true,
+    "sources": {
+        "feed": {
+            "of": "number"
+        }
+    },
+    "sink": {
+        "of": null
+    }
+}

@@ -1,3 +1,5 @@
+# *Please note that this project and readme are currently an active work in progress.*
+
 # `vinescape`
 a specification for informative applications, for Node.js and Chrome
 

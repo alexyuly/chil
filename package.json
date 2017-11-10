@@ -1,6 +1,9 @@
 {
-    "name": "vinescape",
+    "name": "vocalize",
     "version": "0.0.1",
+    "main": "engine/run.js",
+    "author": "Alex Yuly",
+    "license": "MIT",
     "dependencies": {
 
     }

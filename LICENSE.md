@@ -1,4 +1,4 @@
-vinescape
+vocalize
 
 Copyright 2017 Alex Yuly
 

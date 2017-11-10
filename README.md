@@ -31,13 +31,13 @@ One way to think of *VOCAL* is components talking to other components to which t
 
 ### Usage of JSON
 
-JSON (JavaScript Object Notation) is the defacto data markup language of the Web. `vinescape` components are notated purely with JSON, so `vinescape` uses a type system based on JSON and JavaScript. `vinescape` has a strong static type system based on JSON's native types, and this type system itself is notated with JSON. 
+JSON (JavaScript Object Notation) is the defacto data markup language of the Web. `vinescape` adopts it out of convenience and utility. JSON offers an excellent balance between simplicity and expressive power, and it interfaces seamlessly with JavaScript. The `vinescape` runtime engine is built on Node.js, and each `vinescape` type definition, including applications, components, and operations, is notated as a `.vine` file in JSON format.
 
-### Type System
+### Static Type System
 
-All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added for names with multiple words. A type in `vinescape` is like a common noun in English. 
+All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added for names with multiple words. A type in `vinescape` is like a common noun in English.
 
-#### Value Types
+### Value Types
 
 A value type is notated with the name of the type and nothing more.
 
@@ -45,30 +45,67 @@ A value type is notated with the name of the type and nothing more.
 - string type: notated as `"string"`
 - boolean type: notated as `"boolean"`
 
-#### Generic Types
+### Generic Types
 
-A generic type is notated as a JSON object with a single key which is the name of the type, and whose value is 1 or more type arguments which are in a form specified by the type.
+A generic type is a type which is a function of one or more other types. It is notated as an object with a single key which is the name of the type, and whose value is 1 or more type arguments. There are two basic generic types, vectors and structs.
 
-##### vector
+#### vector
 
-##### struct
+A vector is a type of data backed by a JSON array. Unlike an array, its values are all of a single type `Type`, notated like this:
+```
+{
+  "vector": Type
+}
+```
 
-##### Type Templates and Application
+#### struct
 
-#### `null` Type
+A struct is a type of data backed by a JSON object. Unlike an object, a single combination of keys and types forms a single type of struct, notated like this:
+```
+{
+  "struct": {
+    "Key A": A,
+    "Key B": B,
+    "Key C": C,
+    ...
+  }
+}
+```
+
+#### Type Aliases
+
+An instance of a generic type may be aliased by defining a `.vine` file notated like this:
+```
+{
+  "alias": "my struct",
+  "of": {
+    "struct": {
+      "Name": "string",
+      "Phone": "number",
+      "Emails": {
+        "vector": "string"
+      }
+    }
+  }
+}
+```
+
+### `null` Type
 
 A type which is the union of all other types is expressed as `null`. The `null` type is useful for generic type templates and when working with external JSON data containing mixed arrays. Within the context of data flow it is not common, because application to a more specific type is strictly prohibited, and `null` is the "most generic" type possible, so a `null` typed value may never be cast. 
 
-#### Operation Types
+### Operation Types
 
-An operation is a generic type which is backed by a *fundamental unit of execution*. A FUE (pronounced "fuey") is a JavaScript module which implements a normalized unit of behavior that is beyond the scope of `vinescape` itself, such as core arithmetic like addition and multiplication, a native feature of Node.js or Chrome, or some external library.
+An operation is a flavor of generic type which is backed by a *fundamental unit of execution*. A FUE (pronounced "fuey") is a JavaScript module which implements a normalized unit of behavior that is beyond the scope of `vinescape` itself, such as core arithmetic like addition and multiplication, a native feature of Node.js or Chrome, or some external library.
 
-##### Sources
+#### Type Templates and Application
 
-##### The Sink
+#### Sources
 
-##### Abstract Operations
+#### The Sink
 
-#### Component Types
+#### Abstract Operations
 
-#### Application Types
+### Component Types
+
+### Application Types

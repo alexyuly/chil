@@ -1,15 +1,15 @@
 ## *Please note that this project and readme are currently an active work in progress.*
 
 # `vinescape`
-a framework for informative applications, for Node.js and Chrome
+a framework for pure-data applications, for Node.js and Chrome
 
 Copyright &copy; 2017 Alex Yuly
 
 ## Motivation
 
-Many software applications deal with processing and delivering *information* to users, but most of these applications model information indirectly in terms of *instructions* delivered to computer processors. This makes application development needlessly inefficient, because these models must be reduced to information at runtime, which obscures it during development. Many possible sets of instructions exist to model any set of information, so application developers tend to repeatedly solve the same problems for users in various suboptimal ways.
+Many software applications deal with processing and delivering *information* to human or machine users, but most of these applications model data indirectly in terms of *instructions* delivered to computer processors. This makes application development needlessly inefficient, because these coded models must execute to be reduced to useful information at runtime, which obfuscates the information during development. Many possible algorithms exist to model any set of data over time, so application developers tend to repeatedly solve the same problems for users in various suboptimal ways.
 
-If modeling user experience is more important than modeling CPU execution and memory allocation, then a primary design goal should be to entirely encapsulate all imperative processing within a higher level of abstraction. In this user-oriented model, a finite set of strongly typed operations would be combined into reusable components, instantiated as nodes on a directed graph through which data "flows". Each node would be solely responsible for *what* data it delivers, and *when*, to a constant set of other nodes: This stands in stark contrast to many so-called "object-oriented" systems (which are really *controller-oriented*), in which any node may be responsible for managing the behavior of any other nodes. In such a system, data and control are tightly coupled, but in an *informative* system, every expression is data including the relationships amongst data, and control is an abstract convention built into the framework.
+If modeling data flow and user experience is more important than modeling CPU execution and memory allocation, then a primary design goal should be to entirely encapsulate all imperative processing within a higher level of abstraction. In this data-driven model, a finite set of strongly typed operations would be combined into reusable components, instantiated as nodes on a directed graph through which data flows. Each node would be solely responsible for what data it delivers and when, to a constant set of other nodes: This stands unfortunately in stark contrast to many so-called "object-oriented" systems (which are really nothing more than collections of subroutines loosely grouped by topic), in which any node may be responsible for managing the behavior of any other nodes. In such a system, data and control are tightly coupled, but in an *pure-data* system, every expression is data including the relationships amongst data, and control is an abstract convention built into the framework.
 
 ## Specification
 

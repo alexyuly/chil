@@ -1,6 +1,6 @@
-const typeClass = require('../engine/typeClass')
-const typeDefine = require('../engine/typeDefine')
-const typeInstance = require('../engine/typeInstance')
+const typeClass = require('../runtime/typeClass')
+const typeDefine = require('../runtime/typeDefine')
+const typeInstance = require('../runtime/typeInstance')
 
 const type = typeDefine('merge')
 const superclass = typeClass(type.superclass)

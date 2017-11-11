@@ -33,19 +33,21 @@ The `vocalize` runtime engine is built on Node.js, so it adopts JSON as its type
 
 ### Static Type System
 
-`vocalize` uses a strong static type system to enforce the types of connections allowed within its component graph. All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added between words.
+`vocalize` uses a strong static type system to enforce the types of connections allowed within its graph of data. All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added between words.
 
-### Specific Value Types
+### 
 
-A *specific value type* is a given set of specific values.
+### Value Types
+
+A *value type* is a given set of specific values.
 
 - JavaScript Numbers: `"number"`
 - JavaScript Strings: `"string"`
 - JavaScript Booleans: `"boolean"`
 
-### Generic Value Types
+### Value Type Generics
 
-A generic type is a function of other types called *type arguments*. There are two *generic value types*: vectors and structs.
+A generic is a function of other types called *type arguments*. There are two *value type generics*: vectors and structs.
 
 #### vector
 
@@ -72,9 +74,9 @@ A struct type is the set of JavaScript Objects defined by a specific combination
 
 ### Union Types
 
-A *union type* is a union of other types, which may be notated as an array of specific types, for example `["number", "string"]` represents the type of all numbers and strings. The union of all types, sometimes called "any type", is notated as `null`.
+A *union type* is a union of other types, which may be notated as an array of specific types, for example `["number", "string"]` which represents the type of all numbers and strings. The union of all types, also called "any type", is notated as `null`.
 
-Some types are implicit unions of other types. If type A is a *subset* of type B, then type A can be *applied* to type B, because type B is a union of type A and some other set. For example, `{ "vector": "string" }` is a subset of, and therefore can be applied to `{ "vector": null }`.
+Some types are implicit unions of other types. If type A is a *subset* of type B, then type A can be *applied* to type B, because type B is a union of type A and some other set. For example, `{ "vector": "string" }` is a subset of, and therefore can be applied to `{ "vector": null }`, because `"string"` is a subset of `null`.
 
 ### Generic Type Templates
 

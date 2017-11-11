@@ -1,6 +1,6 @@
-const operation = require('../engine/operation')
-const typeCompose = require('../engine/typeCompose')
-const typeDefine = require('../engine/typeDefine')
+const operation = require('../runtime/behaviors/Operation')
+const typeCompose = require('../runtime/typeCompose')
+const typeDefine = require('../runtime/typeDefine')
 
 const type = typeDefine('map')
 

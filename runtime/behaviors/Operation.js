@@ -1,7 +1,7 @@
-const instanceOf = require('./instanceOf')
-const typeClass = require('./typeClass')
-const typeCompose = require('./typeCompose')
-const typeOf = require('./typeOf')
+const instanceOf = require('../instanceOf')
+const typeClass = require('../typeClass')
+const typeCompose = require('../typeCompose')
+const typeOf = require('../typeOf')
 
 module.exports =
     class operation {

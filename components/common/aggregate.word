@@ -1,6 +1,6 @@
 {
-    "class": "aggregate",
-    "parameters": {
+    "component": "aggregate",
+    "template": {
         "Feed": null,
         "Operation": {
             "store": "Feed"

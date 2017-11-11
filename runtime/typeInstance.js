@@ -1,4 +1,4 @@
-const instanceOf = require('../engine/instanceOf')
+const instanceOf = require('./instanceOf')
 
 module.exports =
     function typeInstance(type, args) {

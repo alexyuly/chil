@@ -1,6 +1,5 @@
 {
-    "class": "reduce",
-    "primitive": true,
+    "operation": "reduce",
     "abstract": true,
     "parameters": {
         "Seed": null,

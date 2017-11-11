@@ -1,6 +1,5 @@
 {
-    "class": "equal",
-    "primitive": true,
+    "operation": "equal",
     "parameters": {
         "Type": null
     },

@@ -35,15 +35,13 @@ The `vocalize` runtime engine is built on Node.js, so it adopts JSON as its type
 
 ### Static Type System
 
-All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added between words.
+`vocalize` uses a strong static type system to enforce the types of connections allowed within its component graph. All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added between words.
 
 ### Specific Value Types
 
-There are three *specific value types*:
-
-- `"number"`: A valid JSON number
-- `"string"`: A valid JSON string
-- `"boolean"`: A valid JSON boolean
+- JSON numbers: `"number"`
+- JSON strings: `"string"`
+- JSON `true` or `false`: `"boolean"`
 
 ### Generic Value Types
 
@@ -76,7 +74,7 @@ A struct is a JSON object defined by a distinct combination of distinct keys eac
 
 ### Operation Types
 
-An operation type is a kind of generic type with an encapsulated behavior which is implemented by a *normalized unit of execution*. This is a Node.js module that runs a block of code beyond the scope of the `vocalize` runtime engine, such as a native feature from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, this block of code must be *normalized*, meaning that it should be impossible to reduce to a composition of any other `vocalize` operations. 
+An *operation type* is a specialized value type which is composed of other value types, with an encapsulated behavior which is implemented by a *normalized unit of execution*. This is a Node.js module that runs a block of code beyond the scope of the `vocalize` runtime engine, such as a native feature from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, this block of code must be *normalized*, meaning that it should be impossible to reduce to a composition of any other `vocalize` operations. 
 
 #### Sources
 
@@ -100,7 +98,9 @@ An operation must have at least *1* source OR *1* sink. Otherwise, it would be u
 
 #### Type Definitions
 
-An operation type has an associated *type definition* which is a JSON-formatted `.word` file. For example, `delay.word`, which is part of the `vocalize` "core" set of operation types, reads like so:
+An operation type has an associated *type definition* which is a JSON-formatted `.word` file. A basic operation type definition contains three key-value pairs: `"operation"` which is the name of the operation type, `"sources"` which is an object that maps source names to source definitions, and `"sink"` which is a sink definition. An operation source or sink definition is an object with a key named `"of"` whose value is the source or sink type.
+
+For example, `delay.word`, which is part of the `vocalize` "core" set of operation types, reads like so:
 ```
 {
     "operation": "delay",
@@ -116,15 +116,15 @@ An operation type has an associated *type definition* which is a JSON-formatted 
 ```
 Note that the type *definition* does not contain the *type implementation*. The Node.js implementation is a separate file with a `.word.js` extension and an otherwise matching name, located in the same directory as the `.word` file.
 
-#### Abstract Operations
+*TODO - explain type parameters and provide examples*
 
-#### Type Templates, Type Matching, and `null` Type
+#### Abstract Operation Types
 
-
+An abstract operation type has no associated Node.js implementation. It is simply an operation type definition with sources and sinks, which must be implemented by a "subtype" in order to be used in components.
 
 #### Type Aliases
 
-An instance of a generic type may be aliased by defining a `.word` file notated like this:
+An instance of any generic type may be aliased by defining a `.word` file notated like this:
 ```
 {
     "alias": "my struct",
@@ -140,8 +140,18 @@ An instance of a generic type may be aliased by defining a `.word` file notated 
 }
 ```
 
+*TODO - provide a more generalized description of type aliases, and provide an example of an aliased operation*
+
 ### Component Types
 
+A component type is a specialized operation type which is composed of other operation types. There is no associated JavaScript implementation. The vast majority of a `vocalize` developer's time will be spent writing components, and not operations.
+
+*TODO*
+
 ### Application Types
+
+An application type is a specialized component type which has a *runnable source*.
+
+*TODO*
 
 #### Runnable Sources

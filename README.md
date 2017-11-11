@@ -186,7 +186,9 @@ For example, a simple application which prints its command line arguments, one b
    },
    "operations": {
        "Chain": {
-           "of": "string",
+           "of": {
+               "chain": "string"
+           },
            "to": {
                "Print": "feed"
            }

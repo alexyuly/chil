@@ -37,17 +37,19 @@ The `vocalize` runtime engine is built on Node.js, so it adopts JSON as its type
 
 ### Specific Value Types
 
-- JSON numbers: `"number"`
-- JSON strings: `"string"`
-- JSON `true` or `false`: `"boolean"`
+A *specific value type* is a given set of specific values.
+
+- JavaScript Numbers: `"number"`
+- JavaScript Strings: `"string"`
+- JavaScript Booleans: `"boolean"`
 
 ### Generic Value Types
 
-There are two *generic value types*: vectors and structs.
+A generic type is a function of other types called *type arguments*. There are two *generic value types*: vectors and structs.
 
 #### vector
 
-A vector type is the set of JSON arrays with values all of a single type argument `Type`:
+A vector type is the set of JavaScript Arrays with values of a single type argument `Type`, of the following form:
 ```
 {
     "vector": Type
@@ -56,7 +58,7 @@ A vector type is the set of JSON arrays with values all of a single type argumen
 
 #### struct
 
-A struct type is the set of JSON objects defined by a distinct combination of distinct keys each associated with a type argument:
+A struct type is the set of JavaScript Objects defined by a specific combination of distinct keys each associated with a type argument, of the following form:
 ```
 {
     "struct": {
@@ -68,16 +70,25 @@ A struct type is the set of JSON objects defined by a distinct combination of di
 }
 ```
 
+### Union Types
+
+A *union type* is a union of other types, which may be notated as an array of types. The union of all types, sometimes called "any type", is notated as `null`.
+
+Some types are implicit unions of other types. If type A is a *subset* of type B, then type A can be *applied* to type B, because type B is a union of type A and some other set.
+
+### Type Templates
+
+A *type template* defines the domain for each argument of a generic type. A template is notated as an object with a set of distinct keys which are names of type arguments, each of which is associated with a type which is the union of all types that may be applied to the argument.
+
 ### Operation Types
 
-An *operation type* is a value type which is composed of other value types in the form of parameters, sources, and a sink:
-
+An *operation type* is a value type which is composed of other value types in the form of an optional type template, 0 or more sources, and an optional sink. Each operation type has a *type definition* of the following form:
 ```
 {
-    "operation": TypeName,
-    "parameters": {
-        "Parameter1": Domain1,
-        "Parameter2": Domain2,
+    "operation": OperationTypeName,
+    "template": {
+        "Argument1": Argument1UnionType,
+        "Argument2": Argument2UnionType,
         ...
     },
     "sources": {
@@ -95,35 +106,42 @@ An *operation type* is a value type which is composed of other value types in th
 }
 ```
 
-*TODO*
-
-#### Native Implementation
-
-An operation type's specific behavior is implemented by a Node.js module which controls its sources and sinks and runs methods which are beyond the scope of the `vocalize` runtime engine, such as native features from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, the behavior of each implementation must be *normalized*, meaning that it cannot be reduced to a composition of any other `vocalize` operations. 
+An operation type with no template is notated with just the name of the type. A specific instance of a generic operation type (one with a template) is notated as an object with one key that is the type name, whose value implements the type template.
+```
+{
+    OperationTypeName: {
+        "Argument1": Argument1Type,
+        "Argument2": Argument2Type,
+        ...
+    }
+}
+```
 
 #### Sources
 
-Each operation type has between *0* and *n* sources inclusive, each associated with a name and a type. A source acts as an incoming event queue for an operation, to which *n* other operation sinks which match the source's type may broadcast events asynchronously, as defined by a component type. Immediately upon receipt of an event, the operation calls a native method that is associated with the event's source, in order to accomplish two important tasks:
+Each operation type has 0 or more sources, each associated with a name and a type. A source acts as an incoming event queue for an operation, to which 0 or more other operation sinks which match the source's type may broadcast events asynchronously, as defined by a component type. Immediately upon receipt of an event, the operation calls a native method that is associated with the event's source, in order to accomplish two important tasks:
 1. reduce the operation's next state, if any, as a function of its current state and its event queues
 2. push events out from its sink, if any, synchronously or asynchronously
 
 #### Sinks
 
-Each operation has either *0* or *1* sink, associated with a type. A sink broadcasts data to *n* other operation sources which match its type.
+Each operation has either 0 or 1 sink, associated with a type. A sink broadcasts data to 0 or more other operation sources which match its type.
+
+#### Native Implementation
+
+An operation type's specific behavior is implemented by a Node.js module which controls its sources and sinks and runs methods which are beyond the scope of the `vocalize` runtime engine, such as native features from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, the behavior of each implementation must be *normalized*, meaning that it cannot be reduced to a composition of any other `vocalize` operations. 
 
 #### Headless Operations
 
-An operation with *0* sources is called a *headless operation*. Such an operation is associated with a "purely input" task like mouse and keyboard events, and incoming network responses.
+An operation with 0 sources is called a *headless operation*. Such an operation is associated with a "purely input" task like mouse and keyboard events, and incoming network responses.
 
 #### Tailless Operations
 
 An operation with no sink is called a *tailless operation*. Such an operation is associated with a "purely output" task like printing, rendering, and outgoing network requests.
 
-An operation must have at least *1* source OR *1* sink. Otherwise, it would be unusable within a component and therefore worthless.
+An operation must have at least 1 source OR 1 sink. Otherwise, it would be unusable within a component and therefore worthless.
 
-*TODO - explain type definition and implementation file formats
-
-*TODO - explain type parameters and provide examples*
+*TODO - explain type definition and implementation file formats*
 
 #### Abstract Operation Types
 
@@ -131,23 +149,15 @@ An abstract operation type has no associated Node.js implementation. It is simpl
 
 #### Type Aliases
 
-An instance of any generic type may be aliased by defining a `.word` file notated like this:
+Any type may be associated with a new name called a *type alias*.
 ```
 {
-    "alias": "my struct",
-    "of": {
-        "struct": {
-            "Name": "string",
-            "Phone": "number",
-            "Emails": {
-                "vector": "string"
-            }
-        }
-    }
+    "alias": AliasTypeName
+    "of": Type
 }
 ```
 
-*TODO - provide a more generalized description of type aliases, and provide an example of an aliased operation*
+*TODO - describe generic type aliases
 
 ### Component Types
 

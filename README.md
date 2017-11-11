@@ -15,17 +15,15 @@ If modeling data flow and user experience is more important than modeling CPU ex
 
 ### The *VOCAL* Design Principle
 
-`Values |> Operations |> Components |> AppLication`
+*VOCAL* is an acronym for a software design principle that enforces the use of compositional design, through an inheritance hierarchy of four classes of responsibility:
 
-...or in JavaScript: `Application(Components(Operations(Values)))`
-
-*VOCAL* is an acronym for a design principle that enforces a hierarchy of responsibility within an application, expressed through forward function application:
-
-- Values: sources and sinks of strongly typed data
-- Operations: normalized units of execution that map *n* sources to a sink
-- Components: directed graphs of connected operations that map *n* sources to a sink
+- Value: a source or sink of strongly typed data
+- Operation: a value which is composed of source and sink values, connected by a native implementation
+- Component: an operation which is composed of other operations with connected sources and sinks
 - Application: a component with a "runnable source" of command line arguments
 - L... live long and prosper 🖖
+
+Value is an ancestral class from which Operation inherits, from which Component inherits, from which Application inherits.
 
 *VOCAL* models the interactions of components which speak amongst themselves but never control each other directly. It is the fusion of functional reactive [streams](https://cycle.js.org/streams.html) with the pure object-orientation of [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk#Object-oriented_programming), with absolutely zero imperative syntax.
 
@@ -45,13 +43,11 @@ The `vocalize` runtime engine is built on Node.js, so it adopts JSON as its type
 
 ### Generic Value Types
 
-A *generic type* (of which there are "values" and "operations") is a function of one or more other types called *type arguments*.
-
 There are two *generic value types*: vectors and structs.
 
 #### vector
 
-A vector is a JSON array with values all of a single type argument `Type`:
+A vector type is the set of JSON arrays with values all of a single type argument `Type`:
 ```
 {
     "vector": Type
@@ -60,7 +56,7 @@ A vector is a JSON array with values all of a single type argument `Type`:
 
 #### struct
 
-A struct is a JSON object defined by a distinct combination of distinct keys each associated with a type argument:
+A struct type is the set of JSON objects defined by a distinct combination of distinct keys each associated with a type argument:
 ```
 {
     "struct": {
@@ -74,13 +70,42 @@ A struct is a JSON object defined by a distinct combination of distinct keys eac
 
 ### Operation Types
 
-An *operation type* is a specialized value type which is composed of other value types, with an encapsulated behavior which is implemented by a *normalized unit of execution*. This is a Node.js module that runs a block of code beyond the scope of the `vocalize` runtime engine, such as a native feature from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, this block of code must be *normalized*, meaning that it should be impossible to reduce to a composition of any other `vocalize` operations. 
+An *operation type* is a value type which is composed of other value types in the form of parameters, sources, and a sink:
+
+```
+{
+    "operation": TypeName,
+    "parameters": {
+        "Parameter1": Domain1,
+        "Parameter2": Domain2,
+        ...
+    },
+    "sources": {
+        "a": {
+            "of": AType
+        },
+        "b": {
+            "of": BType
+        },
+        ...
+    },
+    "sink": {
+        "of": SinkType
+    }
+}
+```
+
+*TODO*
+
+#### Native Implementation
+
+An operation type's specific behavior is implemented by a Node.js module which controls its sources and sinks and runs methods which are beyond the scope of the `vocalize` runtime engine, such as native features from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, the behavior of each implementation must be *normalized*, meaning that it cannot be reduced to a composition of any other `vocalize` operations. 
 
 #### Sources
 
-Each operation type has between *0* and *n* sources inclusive, each associated with a name and a type. A source acts as an incoming event queue for an operation, to which *n* other operation sinks which match the source's type may broadcast events asynchronously, as defined by a component type. Immediately upon receipt of an event, the operation calls a private method associated with the event's source, in order to accomplish two important tasks:
+Each operation type has between *0* and *n* sources inclusive, each associated with a name and a type. A source acts as an incoming event queue for an operation, to which *n* other operation sinks which match the source's type may broadcast events asynchronously, as defined by a component type. Immediately upon receipt of an event, the operation calls a native method that is associated with the event's source, in order to accomplish two important tasks:
 1. reduce the operation's next state, if any, as a function of its current state and its event queues
-2. push events out of its sink, if any, synchronously or asynchronously
+2. push events out from its sink, if any, synchronously or asynchronously
 
 #### Sinks
 
@@ -88,33 +113,15 @@ Each operation has either *0* or *1* sink, associated with a type. A sink broadc
 
 #### Headless Operations
 
-An operation with *0* sources is called a *headless operation*. Such an operation is associated with "purely input" tasks like mouse and keyboard events, 
+An operation with *0* sources is called a *headless operation*. Such an operation is associated with a "purely input" task like mouse and keyboard events, and incoming network responses.
 
 #### Tailless Operations
 
-An operation with no sink is called a *tailless operation*. Such an operation is associated with "purely output" tasks like printing, rendering, and outgoing network requests.
+An operation with no sink is called a *tailless operation*. Such an operation is associated with a "purely output" task like printing, rendering, and outgoing network requests.
 
 An operation must have at least *1* source OR *1* sink. Otherwise, it would be unusable within a component and therefore worthless.
 
-#### Type Definitions
-
-An operation type has an associated *type definition* which is a JSON-formatted `.word` file. A basic operation type definition contains three key-value pairs: `"operation"` which is the name of the operation type, `"sources"` which is an object that maps source names to source definitions, and `"sink"` which is a sink definition. An operation source or sink definition is an object with a key named `"of"` whose value is the source or sink type.
-
-For example, `delay.word`, which is part of the `vocalize` "core" set of operation types, reads like so:
-```
-{
-    "operation": "delay",
-    "sources": {
-        "feed": {
-            "of": "number"
-        }
-    },
-    "sink": {
-        "of": null
-    }
-}
-```
-Note that the type *definition* does not contain the *type implementation*. The Node.js implementation is a separate file with a `.word.js` extension and an otherwise matching name, located in the same directory as the `.word` file.
+*TODO - explain type definition and implementation file formats
 
 *TODO - explain type parameters and provide examples*
 
@@ -144,13 +151,13 @@ An instance of any generic type may be aliased by defining a `.word` file notate
 
 ### Component Types
 
-A component type is a specialized operation type which is composed of other operation types. There is no associated JavaScript implementation. The vast majority of a `vocalize` developer's time will be spent writing components, and not operations.
+A component type is an operation type which is composed of other operation types with connected sources and sinks. There is no associated JavaScript implementation. The vast majority of a `vocalize` developer's time will be spent writing components, and not operations.
 
 *TODO*
 
 ### Application Types
 
-An application type is a specialized component type which has a *runnable source*.
+An application type is a component type which has a *runnable source*.
 
 *TODO*
 

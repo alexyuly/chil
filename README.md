@@ -15,7 +15,7 @@ If modeling data flow and user experience is more important than modeling CPU ex
 
 ### The *VOCAL* Design Principle
 
-*VOCAL* is an acronym for a software design principle that enforces the use of compositional design, through an inheritance hierarchy of four classes of responsibility:
+*VOCAL* is an acronym for a software design principle that enforces the use of compositional design, through an inheritance chain of four classes of responsibility:
 
 - Value: a source or sink of strongly typed data
 - Operation: a value which is composed of source and sink values, connected by a native implementation
@@ -72,11 +72,11 @@ A struct type is the set of JavaScript Objects defined by a specific combination
 
 ### Union Types
 
-A *union type* is a union of other types, which may be notated as an array of types. The union of all types, sometimes called "any type", is notated as `null`.
+A *union type* is a union of other types, which may be notated as an array of specific types, for example `["number", "string"]` represents the type of all numbers and strings. The union of all types, sometimes called "any type", is notated as `null`.
 
-Some types are implicit unions of other types. If type A is a *subset* of type B, then type A can be *applied* to type B, because type B is a union of type A and some other set.
+Some types are implicit unions of other types. If type A is a *subset* of type B, then type A can be *applied* to type B, because type B is a union of type A and some other set. For example, `{ "vector": "string" }` is a subset of, and therefore can be applied to `{ "vector": null }`.
 
-### Type Templates
+### Generic Type Templates
 
 A *type template* defines the domain for each argument of a generic type. A template is notated as an object with a set of distinct keys which are names of type arguments, each of which is associated with a type which is the union of all types that may be applied to the argument.
 
@@ -106,7 +106,7 @@ An *operation type* is a value type which is composed of other value types in th
 }
 ```
 
-An operation type with no template is notated with just the name of the type. A specific instance of a generic operation type (one with a template) is notated as an object with one key that is the type name, whose value implements the type template.
+An operation type with no template is notated with just the name of the type, for example, `"delay"`. A specific operation type instantiated from a generic operation type is notated as an object with one key that is the type name, whose value implements the type template:
 ```
 {
     OperationTypeName: {
@@ -145,19 +145,18 @@ An operation must have at least 1 source OR 1 sink. Otherwise, it would be unusa
 
 #### Abstract Operation Types
 
-An abstract operation type has no associated Node.js implementation. It is simply an operation type definition with sources and sinks, which must be implemented by a "subtype" in order to be used in components.
+An abstract operation type has no associated Node.js implementation. It is a standalone operation type definition which must be implemented by a "subtype" in order to be instantiated in components. An abstract operation type is the union of all its subtypes.
 
 #### Type Aliases
 
-Any type may be associated with a new name called a *type alias*.
+Any type may be associated with a kind of type definition called a *type alias*, which may be generic.
 ```
 {
-    "alias": AliasTypeName
+    "alias": AliasTypeName,
+    "template": AliasTypeTemplate,
     "of": Type
 }
 ```
-
-*TODO - describe generic type aliases
 
 ### Component Types
 
@@ -167,8 +166,34 @@ A component type is an operation type which is composed of other operation types
 
 ### Application Types
 
-An application type is a component type which has a *runnable source*.
+An application type is a specific component type which has a source named `"runnable"` of type `{ "vector": "string" }`, which broadcasts one event with command line arguments on application start-up. An application may not be generic because a generic component must be instantiated by another component, and an application is instantiated directly by the `vocalize` runtime engine, from the command line.
 
-*TODO*
+An application type may have a sink, which is routed to a debug logger.
 
-#### Runnable Sources
+For example, a simple application which prints its command line arguments, one by one:
+```
+{
+   "component": "print arguments",
+   "sources": {
+       "runnable": {
+           "of": {
+               "vector": "string"
+           },
+           "to": {
+               "Chain": "feed"
+           }
+       }
+   },
+   "operations": {
+       "Chain": {
+           "of": "string",
+           "to": {
+               "Print": "feed"
+           }
+       },
+       "Print": {
+           "of": "print"
+       }
+   }
+}
+```

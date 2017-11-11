@@ -1,6 +1,5 @@
 {
-    "class": "delay",
-    "primitive": true,
+    "operation": "delay",
     "sources": {
         "feed": {
             "of": "number"

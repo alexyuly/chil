@@ -19,8 +19,6 @@ If an application's model of data flow and user experience is more significant t
 
 ### 1 Behaviors
 
-#### 1.1 The *VOCAL* Design Principle
-
 `vocalize` is based on *VOCAL*, a proposed design principle for software applications, which enforces a vertical hierarchy of four "type classes" called *behaviors*:
 
 - Value: a source or sink of strongly typed data
@@ -34,16 +32,28 @@ Each behavior contains *IS* and *HAS* relationships with the other behaviors:
 
 *VOCAL* models the interactions of types of behaviors which communicate, but never query or control each other directly. It is a fusion of functional reactive [streams programming](https://cycle.js.org/streams.html) with the pure object-orientation of [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk#Object-oriented_programming), with no imperative syntax.
 
-### 1.2 Names, Types, and Generics
+### 2 Names
 
-A *name* is a JSON string which identifies a type or generic. A *type* is a set of specific values. A *generic* is a function of one more types called *arguments*, which returns a type. A *derived type* has an associated generic, and it is expressed as a JSON object with a key of generic name, paired with a value of type arguments in a form required by the generic. A *non-derived type* has no generic and is expressed simply as the type name.
+A *name* is a JSON string which identifies a type or generic.
 
-###### (Figure 1.2) A non-derived type with name `TypeName`
+### 3 Types
+
+A *type* is a set over a domain of values.
+
+#### 3.1 Non-Derived Types
+
+A *non-derived type* has no generic and is expressed simply as the type name.
+
+###### (Figure 3.1) A non-derived type with name `TypeName`
 ```
 TypeName
 ```
 
-###### (Figure 1.3) A derived type with generic name `GenericName` and many arguments
+#### 3.2 Generics and Derived Types
+
+A *generic* is a function of one more types called *arguments*, which returns a type. A *derived type* is the result of applying arguments to a generic, and it is expressed as a JSON object with one key which is the generic name, whose value is type arguments in a form required by the generic.
+
+###### (Figure 3.2) A derived type with generic name `GenericName` and many arguments
 ```
 {
     GenericName: {
@@ -56,13 +66,13 @@ TypeName
 
 **Please note:** Each Pascal-case identifier in Figures 1.2 and 1.3 which is invalid JSON, such as `GenericName`, is a placeholder which must be replaced by a valid name, type, or type argument, in order to produce a valid `vocalize` expression from a figure. Each ellipsis (`...`) indicates "many" elements which follow a given pattern.
 
-### 1.3 Type Unions
+### 3.3 Type Unions
 
-#### 1.3.1 Explicit unions
+#### 3.3.1 Explicit type unions
 
 A *type union* is a union of other types, which may be expressed as a JSON array of other types.
 
-###### (Figure 1.3.1) An explicit type union
+###### (Figure 3.3.1) An explicit type union
 ```
 [
     Type1,
@@ -71,62 +81,70 @@ A *type union* is a union of other types, which may be expressed as a JSON array
 ]
 ```
 
-#### 1.3.2 Any Type
+#### 3.3.2 Any Type
 
 The union of all types globally is called *Any Type* and is expressed as `null`.
 
-#### 1.3.3 Implicit unions
+#### 3.3.3 Implicit type unions
 
-*TODO*
+A type is an implicit type union of any combination of types for which the explicit type union has set equivalency with the original type.
 
-### 1.4 Values
+### 4 Values
 
-#### 1.4.1 Non-Derived Value Types
+#### 4.1 Non-Derived Value Types
 
 - Type `"number"` is the set of all JavaScript numbers.
 - Type `"string"` is the set of all JavaScript strings.
-- Type `"boolean"` is the set of all JavaScript booleans.
+- Type `"boolean"` is the set of JavaScript booleans, `true` and `false`.
 
-#### 1.4.2 Value Generics
+#### 4.2 Vector Value Generic
 
-- Generic `"vector"` returns a type which is the set of JavaScript Arrays each with elements all of a single type argument.
+Generic `"vector"` returns a type which is the set of JavaScript Arrays each with elements all of a single type argument.
 
+###### (Figure 4.2) A vector type
 ```
 {
     "vector": Type
 }
 ```
 
-- Generic `"struct"` returns a type which is the set of JavaScript Objects each defined by one combination of pairs of distinct keys and type arguments.
+#### 4.3 Struct Value Generic
+
+Generic `"struct"` returns a type which is the set of JavaScript Objects each defined by one combination of pairs of distinct keys and type arguments.
+
+###### (Figure 4.3) A struct type
 ```
 {
     "struct": {
-        "Key A": TypeA,
-        "Key B": TypeB,
+        TypeArgumentKey1: TypeArgument1,
+        TypeArgumentKey2: TypeArgument2,
         ...
     }
 }
 ```
 
-*TODO...*
+### 5 Operations
 
-### Operations
+#### 5.1 Operation Type Defintions
 
-An *operation type* is a value type which is composed of other value types in the form of an optional type template, 0 or more sources, and an optional sink. Each operation type has a *type definition* of the following form:
+An *operation type defintion* declares the traits of a new operation type which is composed of a name, an optional generic template, 0 or more sources, and an optional sink.
+
+###### (Figure 5.1) An operation type defintion
 ```
 {
-    "operation": OperationTypeName,
-    "template": {
-        "Argument1": Argument1UnionType,
-        "Argument2": Argument2UnionType,
+    "name": OperationTypeName,
+    "behavior": "operation",
+    "generic": {
+        TypeArgumentKey1: TypeArgument1,
+        TypeArgumentKey2: TypeArgument2,
         ...
     },
     "sources": {
-        "a": {
-            "of": AType
+        Source1Name: {
+            "of": Source1Type
         },
-        "b": {
-            "of": BType
+        Source2Name: {
+            "of": Source2Type
         },
         ...
     },
@@ -136,20 +154,14 @@ An *operation type* is a value type which is composed of other value types in th
 }
 ```
 
-An operation type with no template is notated with just the name of the type, for example, `"delay"`. A specific operation type instantiated from a generic operation type is notated as an object with one key that is the type name, whose value implements the type template:
-```
-{
-    OperationTypeName: {
-        "Argument1": Argument1Type,
-        "Argument2": Argument2Type,
-        ...
-    }
-}
-```
+##### 5.1.1 Operation Generic Templates
 
-### Operation Generic Templates
+*TODO*
 
-A *type template* defines the domain for each argument of a generic type. A template is notated as an object with a set of distinct keys which are names of type arguments, each of which is associated with a type which is the union of all types that may be applied to the argument.
+#### Abstract Operation Types
+
+An abstract operation type has no associated Node.js implementation. It is a standalone operation type definition which must be implemented by a "subtype" in order to be instantiated in components. An abstract operation type is the union of all its subtypes.
+
 
 #### Sources
 
@@ -177,10 +189,6 @@ An operation must have at least 1 source OR 1 sink. Otherwise, it would be unusa
 
 *TODO - explain type definition and implementation file formats*
 
-#### Abstract Operation Types
-
-An abstract operation type has no associated Node.js implementation. It is a standalone operation type definition which must be implemented by a "subtype" in order to be instantiated in components. An abstract operation type is the union of all its subtypes.
-
 #### Type Aliases
 
 Any type may be associated with a kind of type definition called a *type alias*, which may be generic.
@@ -200,9 +208,9 @@ A component type is an operation type which is composed of other operation types
 
 ### Application Types
 
-An application type is a specific component type which has a source named `"runnable"` of type `{ "vector": "string" }`, which broadcasts one event with command line arguments on application start-up. An application may not be generic because a generic component must be instantiated by another component, and an application is instantiated directly by the `vocalize` runtime engine, from the command line.
+An application type is a specific component type which has a single source named `"runnable"` of type `{ "vector": "string" }`, which broadcasts one event with command line arguments on application start-up. An application may not be generic because a generic component must be instantiated by another component, and an application is instantiated directly by the `vocalize` runtime engine, from the command line.
 
-An application type may have a sink, which is routed to a debug logger.
+An application type may have a sink, which is routed to a debug logger unless the application is composed within another application's operations.
 
 For example, a simple application which prints its command line arguments, one by one:
 ```

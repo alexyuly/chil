@@ -5,84 +5,112 @@ a framework for pure-data web applications, for Node.js and Chrome
 
 Copyright &copy; 2017 Alex Yuly
 
-## Motivation
+## Abstract
 
-Many software applications deal with manipulating and delivering information to human or machine users, but most of these applications model data indirectly, in terms of instructions interpreted by computer processors. This makes application development needlessly inefficient, because these coded models can only produce useful information at runtime, which obfuscates it during development. Many different algorithms can be used to model a given set of data over time, so application developers tend to repeatedly solve the same problems in various suboptimal ways.
+`vocalize` is a specification and runtime engine for applications expressed purely with JSON data, built on Node.js.
 
-If modeling data flow and user experience is more important than modeling CPU execution and memory allocation, then an application should entirely encapsulate all imperative processing within a higher level of abstraction. In such a data-driven model, fundamental units of execution would be encapsulated within strongly typed operations and combined into reusable components. Each component would be solely responsible for how it processes incoming data, and for what and when it delivers data to a constant set of other components. This stands in stark contrast to many so-called "object-oriented" systems (which are nothing more than collections of subroutines loosely grouped by topic), in which any object may be responsible for managing the behavior of any other objects. In such a system, data and control are tightly coupled, but in a *pure-data* system like `vocalize`, every expression is data including the relationships amongst data, while control is an abstract convention built into the framework.
+## Design Motivation
+
+Many software applications deal with manipulating and delivering information to human or machine users, but most of these applications model data indirectly, in terms of instructions sequentially interpreted by computer processors. This makes application development needlessly inefficient, because only at runtime do these coded models provide useful information, which is obfuscated during development. Various algorithms can be used to model a given set of data over time, so application developers tend to repeatedly solve the same problems in various suboptimal ways.
+
+If an application's model of data flow and user experience is more significant than CPU execution and memory allocation, then we should encapsulate all its imperative processing within a higher level of abstraction. In such a data-driven model, units of native execution would be subsumed within strongly typed operations and combined into reusable components. Each component would be solely responsible for how it reacts to incoming data, how it pipes data through its operations, and when and what it broadcasts to listeners. This stands in stark contrast to many so-called "object-oriented" systems (which are nothing more than collections of subroutines loosely grouped by topic), in which any objects may be responsible for managing the behavior of any other objects. In such a system, data and control are tightly coupled, but in a *pure-data* system like `vocalize`, every expression is data including the relationships amongst data, while control is an abstract convention built into the framework.
 
 ## Specification
 
-### The *VOCAL* Design Principle
+### 1 Behaviors
 
-*VOCAL* is an acronym for a software design principle that enforces the use of compositional design, through an inheritance chain of four classes of responsibility:
+#### 1.1 The *VOCAL* Design Principle
+
+`vocalize` is based on *VOCAL*, a proposed design principle for software applications, which enforces a vertical hierarchy of four "type classes" called *behaviors*:
 
 - Value: a source or sink of strongly typed data
-- Operation: a value which is composed of source and sink values, connected by a native implementation
+- Operation: a value which is composed of source and sink values, with a well-defined execution plan
 - Component: an operation which is composed of other operations with connected sources and sinks
-- Application: a component with a "runnable source" of command line arguments
-- L... live long and prosper 🖖
+- AppLication: a component with a "runnable source" of command line arguments
 
-Value is an ancestral class from which Operation inherits, from which Component inherits, from which Application inherits.
+Each behavior contains *IS* and *HAS* relationships with the other behaviors:
+1. An application *IS A* component, which *IS AN* operation, which *IS A* value.
+2. Values *MUST NOT HAVE* operations, which *MUST NOT HAVE* components, which *MUST NOT HAVE* applications.
 
-*VOCAL* models the interactions of components which speak amongst themselves but never control each other directly. It is the fusion of functional reactive [streams](https://cycle.js.org/streams.html) with the pure object-orientation of [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk#Object-oriented_programming), with absolutely zero imperative syntax.
+*VOCAL* models the interactions of types of behaviors which communicate, but never query or control each other directly. It is a fusion of functional reactive [streams programming](https://cycle.js.org/streams.html) with the pure object-orientation of [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk#Object-oriented_programming), with no imperative syntax.
 
-### Usage of JSON
+### 1.2 Names, Types, and Generics
 
-The `vocalize` runtime engine is built on Node.js, so it adopts JSON as its type notation format out of convenience and utility. Each operation, component, and application in `vocalize` is a type definition in `.word` format, a subset of JSON specific to `vocalize`. Each type definition defines relationships to other type definitions, which define a directed graph that models the behavior of the type.
+A *name* is a JSON string which identifies a type or generic. A *type* is a set of specific values. A *generic* is a function of one more types called *arguments*, which returns a type. A *derived type* has an associated generic, and it is expressed as a JSON object with a key of generic name, paired with a value of type arguments in a form required by the generic. A *non-derived type* has no generic and is expressed simply as the type name.
 
-### Static Type System
+###### (Figure 1.2) A non-derived type with name `TypeName`
+```
+TypeName
+```
 
-`vocalize` uses a strong static type system to enforce the types of connections allowed within its graph of data. All type names are notated as strings, which may contain spaces or any other valid JSON characters. Conventionally, all type names should be notated in lower case with spaces added between words.
+###### (Figure 1.3) A derived type with generic name `GenericName` and many arguments
+```
+{
+    GenericName: {
+        TypeArgumentKey1: TypeArgument1,
+        TypeArgumentKey2: TypeArgument2,
+        ...
+    }
+}
+```
 
-### 
+**Please note:** Each Pascal-case identifier in Figures 1.2 and 1.3 which is invalid JSON, such as `GenericName`, is a placeholder which must be replaced by a valid name, type, or type argument, in order to produce a valid `vocalize` expression from a figure. Each ellipsis (`...`) indicates "many" elements which follow a given pattern.
 
-### Value Types
+### 1.3 Type Unions
 
-A *value type* is a given set of specific values.
+#### 1.3.1 Explicit unions
 
-- JavaScript Numbers: `"number"`
-- JavaScript Strings: `"string"`
-- JavaScript Booleans: `"boolean"`
+A *type union* is a union of other types, which may be expressed as a JSON array of other types.
 
-### Value Type Generics
+###### (Figure 1.3.1) An explicit type union
+```
+[
+    Type1,
+    Type2,
+    ...
+]
+```
 
-A generic is a function of other types called *type arguments*. There are two *value type generics*: vectors and structs.
+#### 1.3.2 Any Type
 
-#### vector
+The union of all types globally is called *Any Type* and is expressed as `null`.
 
-A vector type is the set of JavaScript Arrays with values of a single type argument `Type`, of the following form:
+#### 1.3.3 Implicit unions
+
+*TODO*
+
+### 1.4 Values
+
+#### 1.4.1 Non-Derived Value Types
+
+- Type `"number"` is the set of all JavaScript numbers.
+- Type `"string"` is the set of all JavaScript strings.
+- Type `"boolean"` is the set of all JavaScript booleans.
+
+#### 1.4.2 Value Generics
+
+- Generic `"vector"` returns a type which is the set of JavaScript Arrays each with elements all of a single type argument.
+
 ```
 {
     "vector": Type
 }
 ```
 
-#### struct
-
-A struct type is the set of JavaScript Objects defined by a specific combination of distinct keys each associated with a type argument, of the following form:
+- Generic `"struct"` returns a type which is the set of JavaScript Objects each defined by one combination of pairs of distinct keys and type arguments.
 ```
 {
     "struct": {
-        "Key A": A,
-        "Key B": B,
-        "Key C": C,
+        "Key A": TypeA,
+        "Key B": TypeB,
         ...
     }
 }
 ```
 
-### Union Types
+*TODO...*
 
-A *union type* is a union of other types, which may be notated as an array of specific types, for example `["number", "string"]` which represents the type of all numbers and strings. The union of all types, also called "any type", is notated as `null`.
-
-Some types are implicit unions of other types. If type A is a *subset* of type B, then type A can be *applied* to type B, because type B is a union of type A and some other set. For example, `{ "vector": "string" }` is a subset of, and therefore can be applied to `{ "vector": null }`, because `"string"` is a subset of `null`.
-
-### Generic Type Templates
-
-A *type template* defines the domain for each argument of a generic type. A template is notated as an object with a set of distinct keys which are names of type arguments, each of which is associated with a type which is the union of all types that may be applied to the argument.
-
-### Operation Types
+### Operations
 
 An *operation type* is a value type which is composed of other value types in the form of an optional type template, 0 or more sources, and an optional sink. Each operation type has a *type definition* of the following form:
 ```
@@ -118,6 +146,10 @@ An operation type with no template is notated with just the name of the type, fo
     }
 }
 ```
+
+### Operation Generic Templates
+
+A *type template* defines the domain for each argument of a generic type. A template is notated as an object with a set of distinct keys which are names of type arguments, each of which is associated with a type which is the union of all types that may be applied to the argument.
 
 #### Sources
 

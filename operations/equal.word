@@ -1,11 +1,13 @@
 {
-    "operation": "equal",
-    "parameters": {
+    "name": "equal",
+    "behavior": "operation",
+    "generic": {
         "Type": null
     },
-    "superclass": "reduce",
-    "super": {
-        "Seed": "Type",
-        "Feed": "Type"
+    "of": {
+        "reduce": {
+            "Seed": "Type",
+            "Feed": "Type"
+        }
     }
 }

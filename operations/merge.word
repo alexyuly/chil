@@ -1,12 +1,13 @@
 {
-    "class": "merge",
-    "primitive": true,
-    "parameters": {
+    "name": "merge",
+    "behavior": "operation",
+    "generic": {
         "Type": null
     },
-    "superclass": "map",
-    "super": {
-        "Feed": "Type",
-        "Sink": "Type"
+    "of": {
+        "map": {
+            "Feed": "Type",
+            "Sink": "Type"
+        }
     }
 }

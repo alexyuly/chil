@@ -1,7 +1,8 @@
 {
-    "operation": "reduce",
+    "name": "reduce",
+    "behavior": "operation",
     "abstract": true,
-    "parameters": {
+    "generic": {
         "Seed": null,
         "Feed": null
     },

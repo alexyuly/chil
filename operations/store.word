@@ -1,12 +1,13 @@
 {
-    "class": "store",
-    "primitive": true,
-    "parameters": {
+    "name": "store",
+    "behavior": "operation",
+    "generic": {
         "Type": null
     },
-    "superclass": "reduce",
-    "super": {
-        "Seed": "Type",
-        "Feed": null
+    "of": {
+        "reduce": {
+            "Seed": "Type",
+            "Feed": null
+        }
     }
 }

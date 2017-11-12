@@ -1,5 +1,6 @@
 {
-    "operation": "delay",
+    "name": "delay",
+    "behavior": "operation",
     "sources": {
         "feed": {
             "of": "number"

@@ -1,8 +1,8 @@
 {
-    "class": "map",
-    "primitive": true,
+    "name": "map",
+    "behavior": "operation",
     "abstract": true,
-    "parameters": {
+    "generic": {
         "Feed": null,
         "Sink": null
     },

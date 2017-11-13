@@ -1,7 +1,7 @@
 const exceptions = require('./exceptions');
 
 function inferType(value) {
-    const nativeType = typeof value;
+    const nativeType = typeof value
     switch (nativeType) {
         case 'number':
         case 'string':
@@ -31,24 +31,26 @@ function inferStructType(object) {
 function inferVectorType(array) {
     const set = {}
     for (const element of array) {
-        set[packType(inferType(element))] = null
+        set[pack(inferType(element))] = null
     }
     const union = []
     for (const type in set) {
-        union.push(unpackType(type))
+        union.push(unpack(type))
     }
-    return union.length === 0
-        ? null
-        : union.length === 1
-            ? union[0]
-            : union
+    return {
+        vector: union.length === 0
+            ? null
+            : union.length === 1
+                ? union[0]
+                : union
+    }
 }
 
-function packType(type) {
+function pack(type) {
     return JSON.stringify(type)
 }
 
-function unpackType(type) {
+function unpack(type) {
     return JSON.parse(type)
 }
 

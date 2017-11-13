@@ -1,17 +1,15 @@
-const operation = require('../runtime/behaviors/Operation')
-const typeDefine = require('../runtime/typeDefine')
+const Operation = require('../runtime/behaviors/Operation')
 
-const type = typeDefine('delay')
-
-module.exports =
-    class delay extends operation {
-        constructor() {
-            super(type)
-        }
-        feed() {
-            setTimeout(
-                () => this.broadcast(null),
-                this.sources.feed.pop(),
-            )
-        }
+class Delay extends Operation {
+    constructor() {
+        super('delay')
     }
+    feed() {
+        setTimeout(
+            () => this.broadcast(null),
+            this.sources.feed.pop(),
+        )
+    }
+}
+
+module.exports = Delay

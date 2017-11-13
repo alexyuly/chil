@@ -13,9 +13,11 @@ Copyright &copy; 2017 Alex Yuly
 
 Many software applications deal with manipulating and delivering information to human or machine users, but most of these applications model data indirectly, in terms of instructions sequentially interpreted by computer processors. This makes application development needlessly inefficient, because only at runtime do these coded models provide useful information, which is obfuscated during development. Various algorithms can be used to model a given set of data over time, so application developers tend to repeatedly solve the same problems in various suboptimal ways.
 
-If an application's model of data flow and user experience is more significant than CPU execution and memory allocation, then we should encapsulate all its imperative processing within a higher level of abstraction. In such a data-driven model, units of native execution would be subsumed within strongly typed operations and combined into reusable components. Each component would be solely responsible for how it reacts to incoming data, how it pipes data through its operations, and when and what it broadcasts to listeners. This stands in stark contrast to many so-called "object-oriented" systems (which are nothing more than collections of subroutines loosely grouped by topic), in which any objects may be responsible for managing the behavior of any other objects. In such a system, data and control are tightly coupled, but in a *pure-data* system like `vocalize`, every expression is data including the relationships amongst data, while control is an abstract convention built into the framework.
+If an application's model of data flow and user experience is more significant than CPU execution and memory allocation, then we should encapsulate all its imperative processing within a higher level of abstraction. In such a data-driven model, units of native execution would be subsumed within strongly typed operations and combined into reusable components. Each component would be solely responsible for how it reacts to incoming data, how it pipes data through its operations, and when and what it broadcasts to listeners. This stands in stark contrast to many so-called "object-oriented" systems which are no more than collections of subroutines loosely grouped by topic, in which any objects may be responsible for managing the behavior of any other objects. In such a system, data and control are tightly coupled, but in a *pure-data* system like `vocalize`, every block of code is an expression of data which includes the relationships amongst data, and control is an abstract convention built into the framework.
 
 ## Specification
+
+This specification contains figures which describe various `vocalize` JSON expressions, with Pascal-case "identifiers" in place of keys or values which must be replaced in order to produce valid expressions. An ellipsis (`...`) indicates a repeating pattern based on the preceding two elements.
 
 ### 1 Behaviors
 
@@ -64,11 +66,9 @@ A *generic* is a function of one more types called *arguments*, which returns a 
 }
 ```
 
-**Please note:** Each Pascal-case identifier in Figures 1.2 and 1.3 which is invalid JSON, such as `GenericName`, is a placeholder which must be replaced by a valid name, type, or type argument, in order to produce a valid `vocalize` expression from a figure. Each ellipsis (`...`) indicates "many" elements which follow a given pattern.
+#### 3.3 Type Unions
 
-### 3.3 Type Unions
-
-#### 3.3.1 Explicit type unions
+##### 3.3.1 Explicit type unions
 
 A *type union* is a union of other types, which may be expressed as a JSON array of other types.
 
@@ -81,13 +81,9 @@ A *type union* is a union of other types, which may be expressed as a JSON array
 ]
 ```
 
-#### 3.3.2 Any Type
+##### 3.3.2 Any Type
 
 The union of all types globally is called *Any Type* and is expressed as `null`.
-
-#### 3.3.3 Implicit type unions
-
-A type is an implicit type union of any combination of types for which the explicit type union has set equivalency with the original type.
 
 ### 4 Values
 
@@ -125,14 +121,14 @@ Generic `"struct"` returns a type which is the set of JavaScript Objects each de
 
 ### 5 Operations
 
-#### 5.1 Operation Type Defintions
+#### 5.1 Operation Defintions
 
-An *operation type defintion* declares the traits of a new operation type which is composed of a name, an optional generic template, 0 or more sources, and an optional sink.
+An *operation defintion* is a file with an extension of `.word`, in JSON format, which declares the traits of a new operation type or generic which is composed of a name, an optional generic template, 1 or more sources, and an optional sink. The name of the file, excluding the `.word` extension, should be equivalent to the name of the operation type or generic.
 
 ###### (Figure 5.1) An operation type defintion
 ```
 {
-    "name": OperationTypeName,
+    "name": OperationName,
     "behavior": "operation",
     "generic": {
         TypeArgumentKey1: TypeArgument1,
@@ -156,88 +152,68 @@ An *operation type defintion* declares the traits of a new operation type which 
 
 ##### 5.1.1 Operation Generic Templates
 
-*TODO*
+Each operation type definition may have a optional key called `"generic"`, whose value is a *generic template*. A generic template is a JSON object which defines the type arguments for an operation generic in terms of a set of keys, for which each value is a type. The type arguments applied to the generic must "match" the template, which means that the arguments are also a JSON object with the same keys, for which each value is a type which is a subset of the corresponding type defined by the template. A type argument key may be referenced in any place within the type definition for which a type must be specified, including other type arguments so long as no cycles exist between arguments.
 
-#### Abstract Operation Types
+##### 5.1.2 Operation Sources and Sinks
 
-An abstract operation type has no associated Node.js implementation. It is a standalone operation type definition which must be implemented by a "subtype" in order to be instantiated in components. An abstract operation type is the union of all its subtypes.
+Each operation type definition must have a key called `"sources"`, whose value is a JSON object which has one or more keys which are names of sources, for which each value is a JSON object with a single key called `"of"` whose value is the type of the source. Each definition may also have a key called `"sink"` whose value has the same format as a source. Within a component, operations are composed by connecting the sink from one operation to a source from another by referencing the name of the source. Each operation source has an associated *event queue*, which is a JavaScript Array of values of the source type. Immediately after an operation sink "broadcasts" an event, then for each connected source, it is pushed onto the end of associated event queue and a native method is called which may broadcast 0 or more events from the associated sink, synchronously or asynchronously.
 
+#### 5.2 Operation Implementations
 
-#### Sources
+An *operation implementation* is a JavaScript file with a extension of `.word.js`, which contains a Node.js module with a default class export. The class must meet three requirements:
+1. Extend `Operation`, which is a class that is part of the `vocalize` runtime engine.
+2. Implement a constructor which calls `super` with the operation type or generic name.
+3. Implement a method for each operation source name, which is called immediately after a new event is pushed onto the source event queue. Each method may perform three kinds of actions:
+  - Manipulate any source event queue, which is an Array of values of the source type, returned by `this.events(SourceName)`.
+  - Broadcast an event of the sink type from the operation sink by calling `this.broadcast(Event)`.
+  - Read and update private state, start and stop external resources, or manage any other actions which fall outside the `vocalize` operation lifecycle.
 
-Each operation type has 0 or more sources, each associated with a name and a type. A source acts as an incoming event queue for an operation, to which 0 or more other operation sinks which match the source's type may broadcast events asynchronously, as defined by a component type. Immediately upon receipt of an event, the operation calls a native method that is associated with the event's source, in order to accomplish two important tasks:
-1. reduce the operation's next state, if any, as a function of its current state and its event queues
-2. push events out from its sink, if any, synchronously or asynchronously
+The name of the file, excluding the `.word.js` extension, should be equivalent to the name of the operation type or generic.
 
-#### Sinks
+###### (Figure 5.2) An operation type implementation
+```
+module.exports = class OperationSubclass extends Operation {
+    constructor() {
+        super(OperationName)
+    }
+    OperationSourceName1() {
+        OperationSourceImplementation1()
+    }
+    OperationSourceName2() {
+        OperationSourceImplementation2()
+    }
+    ...
+}]
+```
 
-Each operation has either 0 or 1 sink, associated with a type. A sink broadcasts data to 0 or more other operation sources which match its type.
+#### 5.3 Abstract Operations
 
-#### Native Implementation
+##### 5.3.1 Abstract Operation Definitions
 
-An operation type's specific behavior is implemented by a Node.js module which controls its sources and sinks and runs methods which are beyond the scope of the `vocalize` runtime engine, such as native features from JavaScript, Chrome, Node.js, or any other executable resource available to `vocalize` at runtime. Moreover, the behavior of each implementation must be *normalized*, meaning that it cannot be reduced to a composition of any other `vocalize` operations. 
+An operation definition is *abstract* if it contains a key called `"abstract"` with a value of `true`. An abstract operation has no JavaScript implementation, but instead it has subclasses each with the same sources and sink, but each has a unique implementation. As with all operation defintions, an abstract operation definition may be generic.
 
-#### Headless Operations
-
-An operation with 0 sources is called a *headless operation*. Such an operation is associated with a "purely input" task like mouse and keyboard events, and incoming network responses.
-
-#### Tailless Operations
-
-An operation with no sink is called a *tailless operation*. Such an operation is associated with a "purely output" task like printing, rendering, and outgoing network requests.
-
-An operation must have at least 1 source OR 1 sink. Otherwise, it would be unusable within a component and therefore worthless.
-
-*TODO - explain type definition and implementation file formats*
-
-#### Type Aliases
-
-Any type may be associated with a kind of type definition called a *type alias*, which may be generic.
+###### (Figure 5.3.1) An abstract operation defintion
 ```
 {
-    "alias": AliasTypeName,
-    "template": AliasTypeTemplate,
-    "of": Type
+    "name": AbstractOperationName,
+    "behavior": "operation",
+    "abstract": true,
+    "generic": OperationGenericTemplate,
+    "sources": OperationSources,
+    "sink": OperationSink
 }
 ```
 
-### Component Types
+##### 5.3.2 Abstract Operation Subclass Definitions
 
-A component type is an operation type which is composed of other operation types with connected sources and sinks. There is no associated JavaScript implementation. The vast majority of a `vocalize` developer's time will be spent writing components, and not operations.
+An operation definition is an *abstract subclass* definition if it contains a key called `"of"`, instead of `"sources"` and `"sinks"`. The value of this key is an abstract operation type which this subclass implements.
 
-*TODO*
-
-### Application Types
-
-An application type is a specific component type which has a single source named `"runnable"` of type `{ "vector": "string" }`, which broadcasts one event with command line arguments on application start-up. An application may not be generic because a generic component must be instantiated by another component, and an application is instantiated directly by the `vocalize` runtime engine, from the command line.
-
-An application type may have a sink, which is routed to a debug logger unless the application is composed within another application's operations.
-
-For example, a simple application which prints its command line arguments, one by one:
+###### (Figure 5.3.2) An abstract operation subclass defintion
 ```
 {
-   "component": "print arguments",
-   "sources": {
-       "runnable": {
-           "of": {
-               "vector": "string"
-           },
-           "to": {
-               "Chain": "feed"
-           }
-       }
-   },
-   "operations": {
-       "Chain": {
-           "of": {
-               "chain": "string"
-           },
-           "to": {
-               "Print": "feed"
-           }
-       },
-       "Print": {
-           "of": "print"
-       }
-   }
+    "name": AbstractOperationSubclassName,
+    "behavior": "operation",
+    "generic": OperationGenericTemplate,
+    "of": AbstractOperationType
 }
 ```

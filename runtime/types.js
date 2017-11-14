@@ -1,4 +1,48 @@
-const exceptions = require('./exceptions');
+const {
+    genericTemplateException,
+    nativeTypeException,
+    typeArgumentApplicationException,
+    typeArgumentsException,
+} = require('./exceptions')
+
+function applies(typeArgument, typeTemplate) {
+    const normalizedArgument = normalize(typeArgument)
+    const normalizedTemplate = normalize(typeTemplate)
+    if (normalizedTemplate === null) {
+        return true
+    }
+    if (normalizedTemplate instanceof Array) {
+
+    } else if (typeof normalizedTemplate === 'object') {
+
+    } else {
+        if (typeof normalizedArgument === 'object') {
+            return false
+        } else {
+
+        }
+    }
+}
+
+function deriveType(definition, typeArguments) {
+    if (definition.generic === undefined) {
+        return definition.name
+    }
+    if (typeof definition.generic !== 'object' || definition.generic === null) {
+        throw genericTemplateException(definition.generic)
+    }
+    if (typeof typeArguments !== 'object' || typeArguments === null) {
+        throw typeArgumentsException(typeArguments, definition.generic)
+    }
+    for (const key in definition.generic) {
+        if (!applies(typeArguments[key], definition.generic[key])) {
+            throw typeArgumentApplicationException(typeArguments[key], definition.generic[key])
+        }
+    }
+    return {
+        [definition.name]: typeArguments,
+    }
+}
 
 function inferType(value) {
     const nativeType = typeof value
@@ -11,16 +55,16 @@ function inferType(value) {
             return value === null
                 ? null
                 : value instanceof Array
-                    ? inferVectorType(value)
-                    : inferStructType(value)
+                    ? inferTypeOfVector(value)
+                    : inferTypeOfStruct(value)
         default:
-            throw exceptions.nativeType(nativeType, value)
+            throw nativeTypeException(nativeType, value)
     }
 }
 
-function inferStructType(object) {
+function inferTypeOfStruct(object) {
     const type = {
-        struct: {}
+        struct: {},
     }
     for (const key in object) {
         type.struct[key] = inferType(object[key])
@@ -28,7 +72,7 @@ function inferStructType(object) {
     return type
 }
 
-function inferVectorType(array) {
+function inferTypeOfVector(array) {
     const set = {}
     for (const element of array) {
         set[pack(inferType(element))] = null
@@ -38,12 +82,12 @@ function inferVectorType(array) {
         union.push(unpack(type))
     }
     return {
-        vector: union.length === 0
-            ? null
-            : union.length === 1
-                ? union[0]
-                : union
+        vector: normalize(union),
     }
+}
+
+function normalize(type) {
+    // TODO
 }
 
 function pack(type) {
@@ -55,5 +99,6 @@ function unpack(type) {
 }
 
 module.exports = {
-    infer: inferType,
+    deriveType,
+    inferType,
 }

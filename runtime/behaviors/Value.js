@@ -1,11 +1,12 @@
-const types = require('../types');
+const { inferType } = require('../types')
 
-module.exports =
-    class Value {
-        constructor(value) {
-            this.value = value
-            this.type = new.target === Value
-                ? types.infer(value)
-                : value
-        }
+class Value {
+    constructor(value) {
+        this.value = value
+        this.type = new.target === Value
+            ? inferType(value)
+            : value
     }
+}
+
+module.exports = Value

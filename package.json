@@ -1,10 +1,6 @@
 {
     "name": "vocalize",
     "version": "0.0.1",
-    "main": "runtime/main.js",
     "author": "Alex Yuly",
-    "license": "MIT",
-    "dependencies": {
-
-    }
+    "license": "MIT"
 }

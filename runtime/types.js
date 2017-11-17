@@ -1,27 +1,45 @@
-const {
-    genericTemplateException,
-    nativeTypeException,
-    typeArgumentApplicationException,
-    typeArgumentsException,
-} = require('./exceptions')
+const fs = require('fs')
+const path = require('path')
+const exceptions = require('./exceptions')
 
-function applies(typeArgument, typeTemplate) {
-    const normalizedArgument = normalize(typeArgument)
-    const normalizedTemplate = normalize(typeTemplate)
-    if (normalizedTemplate === null) {
-        return true
-    }
-    if (normalizedTemplate instanceof Array) {
+const fsOptions = { encoding: 'utf8' }
 
-    } else if (typeof normalizedTemplate === 'object') {
+function applies(type, domain) {
+    // TODO
+}
 
-    } else {
-        if (typeof normalizedArgument === 'object') {
-            return false
-        } else {
-
+function definePath(pathToFile) {
+    return new Promise(function (resolve, reject) {
+        let fsPath
+        try {
+            fsPath = path.resolve(pathToFile)
+        } catch (error) {
+            reject(exceptions.definitionPath(name, pathToFile))
+            return
         }
-    }
+        fs.readFile(
+            fsPath,
+            fsOptions,
+            function (error, file) {
+                if (file) {
+                    let definition
+                    try {
+                        definition = JSON.parse(file)
+                    } catch {
+                        reject(exceptions.definitionParse(name, pathToFile))
+                        return
+                    }
+                    resolve(definition)
+                } else {
+                    reject(exceptions.definitionPath(name, pathToFile))
+                }
+            }
+        )
+    })
+}
+
+function deriveDefinition(definition, typeArguments) {
+    // TODO
 }
 
 function deriveType(definition, typeArguments) {
@@ -29,14 +47,14 @@ function deriveType(definition, typeArguments) {
         return definition.name
     }
     if (typeof definition.generic !== 'object' || definition.generic === null) {
-        throw genericTemplateException(definition.generic)
+        throw exceptions.genericTemplateFormat(definition.generic)
     }
     if (typeof typeArguments !== 'object' || typeArguments === null) {
-        throw typeArgumentsException(typeArguments, definition.generic)
+        throw exceptions.typeArgumentFormat(typeArguments)
     }
     for (const key in definition.generic) {
         if (!applies(typeArguments[key], definition.generic[key])) {
-            throw typeArgumentApplicationException(typeArguments[key], definition.generic[key])
+            throw exceptions.typeArgumentApplication(typeArguments[key], definition.generic[key])
         }
     }
     return {
@@ -58,7 +76,7 @@ function inferType(value) {
                     ? inferTypeOfVector(value)
                     : inferTypeOfStruct(value)
         default:
-            throw nativeTypeException(nativeType, value)
+            throw exceptions.nativeType(nativeType, value)
     }
 }
 
@@ -99,6 +117,9 @@ function unpack(type) {
 }
 
 module.exports = {
+    applies,
+    definePath,
+    deriveDefinition,
     deriveType,
     inferType,
 }

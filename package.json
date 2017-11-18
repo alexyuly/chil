@@ -5,9 +5,10 @@
     "license": "MIT",
     "main": "main.js",
     "devDependencies": {
+        "eslint": "^4.11.0",
         "jest": "^21.2.1"
     },
     "scripts": {
-        "test": "jest"
+        "test": "eslint main.js runtime/** && jest"
     }
 }

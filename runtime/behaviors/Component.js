@@ -1,9 +1,7 @@
 const Operation = require('./Operation')
 
 class Component extends Operation {
-    constructor(definition, typeArguments) {
-        super(definition, typeArguments)
-    }
+    // TODO
 }
 
 module.exports = Component

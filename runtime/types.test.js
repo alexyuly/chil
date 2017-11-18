@@ -1,100 +1,100 @@
 const types = require('./types')
 
-describe('types', function () {
-    it('reduceGeneric', function () {
-        expect(types.reduceGeneric({
-            "A": null,
-            "B": {
-                "BA": "A"
+describe('types', () => {
+    it('template', () => {
+        expect(types.template({
+            'A': null,
+            'B': {
+                'BA': 'A',
             },
-            "C": {
-                "CA": "A",
-                "CB": "B"
+            'C': {
+                'CA': 'A',
+                'CB': 'B',
             },
-            "D": {
-                "DA": {
-                    "DB": "C"
-                }
+            'D': {
+                'DA': {
+                    'DB': 'C',
+                },
             },
-            "E": [
-                "A"
+            'E': [
+                'A',
             ],
-            "F": [
-                "A",
-                "B"
+            'F': [
+                'A',
+                'B',
             ],
-            "G": [
+            'G': [
                 [
-                    "C"
-                ]
+                    'C',
+                ],
             ],
-            "H": [
+            'H': [
                 {
-                    "HA": "D",
-                    "HB": {
-                        "HC": "E"
-                    }
-                }
-            ]
-        })).toEqual({
-            "A": null,
-            "B": {
-                "BA": null
-            },
-            "C": {
-                "CA": null,
-                "CB": {
-                    "BA": null
-                }
-            },
-            "D": {
-                "DA": {
-                    "DB": {
-                        "CA": null,
-                        "CB": {
-                            "BA": null
-                        }
-                    }
-                }
-            },
-            "E": [
-                null
+                    'HA': 'D',
+                    'HB': {
+                        'HC': 'E',
+                    },
+                },
             ],
-            "F": [
+        })).toEqual({
+            'A': null,
+            'B': {
+                'BA': null,
+            },
+            'C': {
+                'CA': null,
+                'CB': {
+                    'BA': null,
+                },
+            },
+            'D': {
+                'DA': {
+                    'DB': {
+                        'CA': null,
+                        'CB': {
+                            'BA': null,
+                        },
+                    },
+                },
+            },
+            'E': [
+                null,
+            ],
+            'F': [
                 null,
                 {
-                    "BA": null
-                }
+                    'BA': null,
+                },
             ],
-            "G": [
+            'G': [
                 [
                     {
-                        "CA": null,
-                        "CB": {
-                            "BA": null
-                        }
-                    }
-                ]
-            ],
-            "H": [
-                {
-                    "HA": {
-                        "DA": {
-                            "DB": {
-                                "CA": null,
-                                "CB": {
-                                    "BA": null
-                                }
-                            }
-                        }
+                        'CA': null,
+                        'CB': {
+                            'BA': null,
+                        },
                     },
-                    "HB": {
-                        "HC": [
-                            null
-                        ]
-                    }
-                }
-            ]
+                ],
+            ],
+            'H': [
+                {
+                    'HA': {
+                        'DA': {
+                            'DB': {
+                                'CA': null,
+                                'CB': {
+                                    'BA': null,
+                                },
+                            },
+                        },
+                    },
+                    'HB': {
+                        'HC': [
+                            null,
+                        ],
+                    },
+                },
+            ],
         })
     })
 })

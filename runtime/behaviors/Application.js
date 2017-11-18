@@ -1,9 +1,7 @@
 const Component = require('./Component')
 
 class Application extends Component {
-    constructor(definition) {
-        super(definition)
-    }
+    // TODO
 }
 
 module.exports = Application

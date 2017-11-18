@@ -1,42 +1,30 @@
-function broadcastTypeApplication(eventType, sinkType) {
-    return new Error(`Event of type ${eventType} does not apply to sink of type ${sinkType}`)
-}
+const definitionArgumentsNotExpected = (name) =>
+    new Error(`Definition of '${name}': arguments are not expected`)
 
-function connectTypeApplication(sinkType, sourceType) {
-    return new Error(`Sink of type ${sinkType} does not apply to source of type ${sourceType}`)
-}
+const definitionArgumentsNotValid = (name) =>
+    new Error(`Definition of '${name}': arguments are not valid`)
 
-function definitionParse(name, path) {
-    return new Error(`Definition of '${name}' at ${path} cannot be parsed`)
-}
+const definitionGenericNotValid = (name) =>
+    new Error(`Definition of '${name}': generic is not valid`)
 
-function definitionPath(name, path) {
-    return new Error(`Definition of '${name}' at ${path} cannot be resolved`)
-}
+const nativeTypeNotValid = (nativeType) =>
+    new Error(`Native type of '${nativeType}': not valid`)
 
-function genericTemplateFormat(genericTemplate) {
-    return new Error(`Generic template ${genericTemplate} is not a non-null object`)
-}
+const typeNotApplicable = (type, domain) =>
+    new Error(`Type of '${type}': not applicable to domain '${domain}'`)
 
-function nativeType(nativeType, value) {
-    return new Error(`Native type ${nativeType} of value ${value} is not supported`)
-}
+const typeNotValid = (type) =>
+    new Error(`Type of '${type}': not valid`)
 
-function typeArgumentApplication(typeArgument, domain) {
-    return new Error(`Type argument ${typeArgument} does not apply to domain ${domain}`)
-}
-
-function typeArgumentFormat(typeArguments) {
-    return new Error(`Type arguments ${typeArguments} is not a non-null object`)
-}
+const valueNotApplicable = (value, name) =>
+    new Error(`Value of '${value}': not applicable to name '${name}'`)
 
 module.exports = {
-    broadcastTypeApplication,
-    connectTypeApplication,
-    definitionParse,
-    definitionPath,
-    genericTemplateFormat,
-    nativeType,
-    typeArgumentApplication,
-    typeArgumentFormat,
+    definitionArgumentsNotExpected,
+    definitionArgumentsNotValid,
+    definitionGenericNotValid,
+    nativeTypeNotValid,
+    typeNotApplicable,
+    typeNotValid,
+    valueNotApplicable,
 }

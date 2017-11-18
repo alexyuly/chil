@@ -1,13 +1,9 @@
-const { inferType } = require('../types')
+const types = require('../types')
 
 class Value {
-    constructor(x) {
-        if (new.target === Value) {
-            this.value = x
-            this.type = inferType(x)
-        } else {
-            this.type = x
-        }
+    constructor(value) {
+        this.type = types.inferType(value)
+        this.value = value
     }
 }
 

@@ -17,7 +17,7 @@ If an application's model of data flow and user experience is more significant t
 
 ## Specification
 
-This specification contains figures which describe various `vocalize` JSON expressions, with Pascal-case "identifiers" in place of keys or values which must be replaced in order to produce valid expressions. An ellipsis (`...`) indicates a repeating pattern based on the preceding two elements.
+This specification contains figures which describe various `vocalize` JSON expressions, with Pascal-case "identifiers" in place of keys or values which must be replaced in order to produce valid expressions. An ellipsis (`...`) indicates a repeating pattern based on the preceding element or elements.
 
 ### 1 Behavior
 
@@ -26,17 +26,13 @@ This specification contains figures which describe various `vocalize` JSON expre
 - Value: a source or sink of strongly typed data
 - Operation: a value which is composed of source and sink values, with a well-defined execution plan
 - Component: an operation which is composed of other operations with connected sources and sinks
-- AppLication: a component with a "runnable source" of command line arguments
-
-Each behavior contains *IS* and *HAS* relationships with the other behaviors:
-1. An application *IS A* component, which *IS AN* operation, which *IS A* value.
-2. Values *MUST NOT HAVE* operations, which *MUST NOT HAVE* components, which *MUST NOT HAVE* applications.
+- Application: a component with a "runnable source" of command line arguments
 
 *VOCAL* models the interactions of types of behaviors which communicate, but never query or control each other directly. It is a fusion of functional reactive [streams programming](https://cycle.js.org/streams.html) with the pure object-orientation of [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk#Object-oriented_programming), with no imperative syntax.
 
 ### 2 Name
 
-A *name* is a JSON string which identifies a type or generic. Some names are part of the `vocalize` "dictionary", which means they may be referenced globally. Other names are "dependencies" which means their definitions and implementations must be retrieved from external sources specified within an operation definition which depends on them. Operation definitions are described in **Section 5.1**.
+A *name* is a JSON string which identifies a type or generic.
 
 ### 3 Type
 
@@ -127,34 +123,29 @@ The union of all value types globally is called *Any Value* and is expressed as 
 
 #### 5.1 Operation Definition
 
-An *operation definition* is a file with an extension of `.word`, in JSON format, which declares the traits of a unique operation type or generic, which is composed of a name, zero or more dependencies, an optional generic template, at least one source, and an optional sink. The name of the file, excluding the `.word` extension, should be equivalent to the name of the operation type or generic.
+An *operation definition* is a file with an extension of `.word`, in JSON format, which declares the traits of a unique operation type or generic, which is composed of a name, an optional generic template, at least one source, and an optional sink. The name of the file, excluding the `.word` extension, should be equivalent to the name of the operation type or generic.
 
 ###### (Figure 5.1) An operation definition
 ```
 {
     "name": OperationName,
     "behavior": "operation",
-    "dependencies": {
-        TypeDependencyKey1: TypeDependencyPath1,
-        TypeDependencyKey2: TypeDependencyPath2,
-        ...
-    },
     "generic": {
         TypeArgumentKey1: TypeArgument1,
         TypeArgumentKey2: TypeArgument2,
         ...
     },
     "sources": {
-        Source1Name: {
-            "of": Source1Type
+        OperationSourceName1: {
+            "of": OperationSourceType1
         },
-        Source2Name: {
-            "of": Source2Type
+        OperationSourceName2: {
+            "of": OperationSourceType2
         },
         ...
     },
     "sink": {
-        "of": SinkType
+        "of": OperationSinkType
     }
 }
 ```
@@ -162,8 +153,6 @@ An *operation definition* is a file with an extension of `.word`, in JSON format
 ##### 5.1.1 Operation Dependencies
 
 Each operation definition may optionally have a key called `"dependencies"`, paired with a JSON object which defines the dependencies for an operation in terms of pairs of distinct keys and paths to resolve a `vocalize` operation definition. A path may be a relative file system path or an HTTP url.
-
-Operation definition dependencies must be operations. Components and applications are not allowed. This conforms to the behavioral hierarchy described in **Section 1**.
 
 ##### 5.1.2 Operation Generic Template
 
@@ -191,11 +180,11 @@ module.exports = class OperationSubclass extends Operation {
     constructor() {
         super(OperationName)
     }
-    OperationSourceName1() {
-        OperationSourceImplementation1()
+    OperationSourceName1(event) {
+        OperationSourceImplementation1(event)
     }
-    OperationSourceName2() {
-        OperationSourceImplementation2()
+    OperationSourceName2(event) {
+        OperationSourceImplementation2(event)
     }
     ...
 }]
@@ -235,7 +224,36 @@ An operation definition is an *abstract subclass* if it contains a key called `"
 
 ### 6 Component
 
+#### 6.1 Component Definition 
+
 *TODO*
+
+###### (Figure 6.1) A component definition
+```
+{
+    "name": ComponentName,
+    "behavior": "component",
+    "dependencies": {
+        TypeDependencyKey1: TypeDependencyPath1,
+        TypeDependencyKey2: TypeDependencyPath2,
+        ...
+    },
+    "generic": OperationGenericTemplate,
+    "sources": OperationSources,
+    "operations": {
+        ComponentOperationName1: {
+            "of": ComponentOperationType1,
+            "to": {
+                ComponentOperationNameX: ComponentOperationXSourceName,
+                ComponentOperationNameY: ComponentOperationYSourceName,
+                ...
+            }
+        },
+        ...
+    },
+    "sink": OperationSink
+}
+```
 
 ### 7 Application
 

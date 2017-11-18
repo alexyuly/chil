@@ -1,13 +1,17 @@
 function broadcastTypeApplication(eventType, sinkType) {
-    return new Error(`Event type ${eventType} does not apply to sink of type ${sinkType}`)
+    return new Error(`Event of type ${eventType} does not apply to sink of type ${sinkType}`)
 }
 
-function definitionPath(name, path) {
-    return new Error(`Definition of '${name}' at ${path} cannot be resolved`)
+function connectTypeApplication(sinkType, sourceType) {
+    return new Error(`Sink of type ${sinkType} does not apply to source of type ${sourceType}`)
 }
 
 function definitionParse(name, path) {
     return new Error(`Definition of '${name}' at ${path} cannot be parsed`)
+}
+
+function definitionPath(name, path) {
+    return new Error(`Definition of '${name}' at ${path} cannot be resolved`)
 }
 
 function genericTemplateFormat(genericTemplate) {
@@ -28,8 +32,9 @@ function typeArgumentFormat(typeArguments) {
 
 module.exports = {
     broadcastTypeApplication,
-    definitionPath,
+    connectTypeApplication,
     definitionParse,
+    definitionPath,
     genericTemplateFormat,
     nativeType,
     typeArgumentApplication,

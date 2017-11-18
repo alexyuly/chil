@@ -9,16 +9,20 @@ class Operation extends Value {
         this.sinks = []
     }
     broadcast(event) {
-        if (!types.applies(types.inferType(event), this.definition.sink.of)) {
-            throw exceptions.broadcastTypeApplication()
+        const eventType = types.inferType(event)
+        const sinkType = this.definition.sink.of
+        if (!types.applies(eventType, sinkType)) {
+            throw exceptions.broadcastTypeApplication(eventType, sinkType)
         }
         for (const { operation, source } of this.sinks) {
             operation[source](event)
         }
     }
     connect(operation, source) {
-        if (!types.applies(this.definition.sink.of, operation.definition.sources[source].of)) {
-            throw new Error('operation sink type does not match source type')
+        const sinkType = this.definition.sink.of
+        const sourceType = operation.definition.sources[source].of
+        if (!types.applies(sinkType, sourceType)) {
+            throw exceptions.connectTypeApplication(sinkType, sourceType)
         }
         this.sinks.push({ operation, source })
     }

@@ -25,7 +25,7 @@ function definePath(pathToFile) {
                     let definition
                     try {
                         definition = JSON.parse(file)
-                    } catch {
+                    } catch (error) {
                         reject(exceptions.definitionParse(name, pathToFile))
                         return
                     }
@@ -52,9 +52,10 @@ function deriveType(definition, typeArguments) {
     if (typeof typeArguments !== 'object' || typeArguments === null) {
         throw exceptions.typeArgumentFormat(typeArguments)
     }
-    for (const key in definition.generic) {
-        if (!applies(typeArguments[key], definition.generic[key])) {
-            throw exceptions.typeArgumentApplication(typeArguments[key], definition.generic[key])
+    const generic = reduceGeneric(definition.generic)
+    for (const key in generic) {
+        if (!applies(typeArguments[key], generic[key])) {
+            throw exceptions.typeArgumentApplication(typeArguments[key], generic[key])
         }
     }
     return {
@@ -104,12 +105,34 @@ function inferTypeOfVector(array) {
     }
 }
 
-function normalize(type) {
+function normalize(union) {
     // TODO
 }
 
 function pack(type) {
     return JSON.stringify(type)
+}
+
+function reduceGeneric(object, overallReduction = {}, objectReduction = overallReduction) {
+    return Object.keys(object).reduce(
+        function (reduction, key) {
+            const domain = object[key]
+            if (typeof domain === 'string') {
+                for (const overallKey in overallReduction) {
+                    if (domain === overallKey) {
+                        reduction[key] = overallReduction[overallKey]
+                        break
+                    }
+                }
+            } else if (typeof domain === 'object' && domain !== null) {
+                reduction[key] = reduceGeneric(domain, overallReduction, domain instanceof Array ? [] : {})
+            } else {
+                reduction[key] = domain
+            }
+            return reduction
+        },
+        objectReduction,
+    )
 }
 
 function unpack(type) {
@@ -122,4 +145,5 @@ module.exports = {
     deriveDefinition,
     deriveType,
     inferType,
+    reduceGeneric,
 }

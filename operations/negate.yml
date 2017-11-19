@@ -1,4 +1,4 @@
 name: negate
-operation:
+behavior: operation
+of: number
 sources: { dispatch: { of: number } }
-sink: { of: number }

@@ -1,15 +1,5 @@
-const Operation = require('../runtime/behaviors/Operation')
-const { definePath } = require('../runtime/require')
-const definition = definePath('./negate')
+const pipe = require('../runtime/pipe')
 
-class negate extends Operation {
-    constructor() {
-        super(definition)
-    }
-
-    dispatch(action) {
-        this.broadcast(-action)
-    }
-}
+const negate = pipe((push, action) => push(-action))
 
 module.exports = negate

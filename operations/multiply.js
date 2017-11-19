@@ -1,7 +1,5 @@
-const reducerClass = require('../runtime/reducerClass')
-const { definePath } = require('../runtime/require')
-const definition = definePath('./multiply')
+const valve = require('../runtime/valve')
 
-const multiply = reducerClass(definition, (state, action) => state * action)
+const multiply = valve((push, state, action) => push(state * action))
 
 module.exports = multiply

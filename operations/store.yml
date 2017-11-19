@@ -1,6 +1,7 @@
 name: store
-operation: { Value Type: }
+behavior: operation
+generic: { Value Type: }
+of: Value Type
 sources:
     control: { of: Value Type }
-    dispatch: { of: }
-sink: { of: Value Type }
+    dispatch: { of: - }

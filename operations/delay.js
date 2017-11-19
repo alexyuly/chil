@@ -1,21 +1,5 @@
-const Operation = require('../runtime/behaviors/Operation')
-const { definePath } = require('../runtime/require')
-const definition = definePath('./delay')
+const valve = require('../runtime/valve')
 
-class delay extends Operation {
-    constructor() {
-        super(definition)
-    }
-
-    control(state) {
-        this.state = state
-    }
-
-    dispatch(action) {
-        if (this.state !== undefined) {
-            setTimeout(() => this.broadcast(action), this.state)
-        }
-    }
-}
+const delay = valve((push, state, action) => setTimeout(() => push(action), state))
 
 module.exports = delay

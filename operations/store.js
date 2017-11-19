@@ -1,7 +1,5 @@
-const reducerClass = require('../runtime/reducerClass')
-const { definePath } = require('../runtime/require')
-const definition = definePath('./store')
+const valve = require('../runtime/valve')
 
-const store = reducerClass(definition, (state) => state)
+const store = valve((push, state) => push(state))
 
 module.exports = store

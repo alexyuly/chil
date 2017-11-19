@@ -10,8 +10,8 @@ const definitionGenericNotValid = (name) =>
 const nativeTypeNotValid = (nativeType) =>
     new Error(`Native type of '${nativeType}': not valid`)
 
-const operationNotValid = (componentName, operationName) =>
-    new Error(`Definition of '${componentName}': operation ${operationName} is not valid`)
+const operationBehaviorNotValid = (componentName, operationName) =>
+    new Error(`Definition of '${componentName}': behavior of '${operationName}' is not valid`)
 
 const typeNotApplicable = (type, domain) =>
     new Error(`Type of '${type}': not applicable to domain '${domain}'`)
@@ -24,7 +24,7 @@ module.exports = {
     definitionArgumentsNotValid,
     definitionGenericNotValid,
     nativeTypeNotValid,
-    operationNotValid,
+    operationBehaviorNotValid,
     typeNotApplicable,
     typeNotValid,
 }

@@ -1,6 +1,6 @@
 name: multiply
-operation:
+behavior: operation
+of: number
 sources:
     control: { of: number }
     dispatch: { of: number }
-sink: { of: number }

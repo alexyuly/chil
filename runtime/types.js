@@ -1,11 +1,6 @@
-const fs = require('fs')
-const path = require('path')
 const exceptions = require('./exceptions')
 
-const fsEncoding = 'utf8'
-
-const isTree = (node) =>
-    typeof node === 'object' && node !== null
+const isTree = (node) => typeof node === 'object' && node !== null
 
 const template = (tree, spec = {}, initial = spec) =>
     Object.keys(tree).reduce(
@@ -40,7 +35,8 @@ const isApplicable = () => {
     // TODO
 }
 
-const applyDefinition = (definition, typeArguments) => {
+const constructDefinition = (definition, typeArguments) => {
+    // TODO - resolve dependency definitions
     if (definition.generic === undefined) {
         if (typeArguments === undefined) {
             return definition
@@ -55,24 +51,41 @@ const applyDefinition = (definition, typeArguments) => {
     }
     const generic = template(definition.generic)
     for (const key in generic) {
-        if (!isApplicable(typeArguments[key], generic[key])) {
+        if (!isApplicable(typeArguments[key], generic[key], definition.dependencies)) {
             throw exceptions.typeNotApplicable(typeArguments[key], generic[key])
         }
     }
     return template(definition, typeArguments, {})
 }
 
-const normalize = (type) => {
-    if (isTree(type)) {
+const normalize = (valueType) => {
+    if (isTree(valueType)) {
         // TODO
     }
+    if (typeof valueType === 'string' || valueType === null) {
+        return valueType
+    }
+    throw exceptions.typeNotValid(valueType)
+}
+
+const decompose = (type) => {
+    if (isTree(type)) {
+        for (const name in type) {
+            return {
+                name,
+                typeArguments: type[name],
+            }
+        }
+    }
     if (typeof type === 'string' || type === null) {
-        return type
+        return {
+            name: type,
+        }
     }
     throw exceptions.typeNotValid(type)
 }
 
-const inferType = (value) => {
+const inferValueType = (value) => {
     const nativeType = typeof value
     switch (nativeType) {
         case 'number':
@@ -81,28 +94,22 @@ const inferType = (value) => {
             return nativeType
         case 'object': {
             if (value instanceof Array) {
-                if (!isTree(value) || !(value instanceof Array)) {
-                    throw exceptions.valueNotApplicable(value, 'vector')
-                }
-                const type = { 'vector': [], }
-                const typeSet = {}
+                const valueType = { vector: [], }
+                const valueTypeSet = {}
                 for (const element of value) {
-                    typeSet[JSON.stringify(inferType(element))] = null
+                    valueTypeSet[JSON.stringify(inferValueType(element))] = null
                 }
-                for (const serializedType in typeSet) {
-                    type.vector.push(JSON.parse(serializedType))
+                for (const serializedValueType in valueTypeSet) {
+                    valueType.vector.push(JSON.parse(serializedValueType))
                 }
-                return normalize(type)
+                return normalize(valueType)
             }
             if (value !== null) {
-                if (!isTree(value) || value instanceof Array) {
-                    throw exceptions.valueNotApplicable(value, 'struct')
-                }
-                const type = { 'struct': {}, }
+                const valueType = { struct: {}, }
                 for (const key in value) {
-                    type.struct[key] = inferType(value[key])
+                    valueType.struct[key] = inferValueType(value[key])
                 }
-                return normalize(type)
+                return normalize(valueType)
             }
             return null
         }
@@ -111,25 +118,10 @@ const inferType = (value) => {
     }
 }
 
-const requireDefinition = (pathToFile) =>
-    new Promise((resolve, reject) => {
-        fs.readFile(
-            path.resolve(pathToFile),
-            fsEncoding,
-            (error, file) => {
-                if (file) {
-                    resolve(JSON.parse(file))
-                } else {
-                    reject(error)
-                }
-            }
-        )
-    })
-
 module.exports = {
-    applyDefinition,
-    inferType,
+    constructDefinition,
+    decompose,
+    inferValueType,
     isApplicable,
-    requireDefinition,
     template,
 }

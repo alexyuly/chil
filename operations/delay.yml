@@ -1,0 +1,6 @@
+name: delay
+operation:
+sources:
+    control: { of: number }
+    dispatch: { of: }
+sink: { of: }

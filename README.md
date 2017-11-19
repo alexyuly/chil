@@ -123,7 +123,7 @@ The union of all value types globally is called *Any Value* and is expressed as 
 
 #### 5.1 Operation Definition
 
-An *operation definition* is a file with an extension of `.word`, in JSON format, which declares the traits of a unique operation type or generic, which is composed of a name, an optional generic template, at least one source, and an optional sink. The name of the file, excluding the `.word` extension, should be equivalent to the name of the operation type or generic.
+An *operation definition* is a file with an extension of `.verb`, in JSON format, which declares the traits of a unique operation type or generic, which is composed of a name, an optional generic template, at least one source, and an optional sink. The name of the file, excluding the `.verb` extension, should be equivalent to the name of the operation type or generic.
 
 ###### (Figure 5.1) An operation definition
 ```
@@ -150,21 +150,17 @@ An *operation definition* is a file with an extension of `.word`, in JSON format
 }
 ```
 
-##### 5.1.1 Operation Dependencies
+##### 5.1.1 Operation Generic Template
 
-Each operation definition may optionally have a key called `"dependencies"`, paired with a JSON object which defines the dependencies for an operation in terms of pairs of distinct keys and paths to resolve a `vocalize` operation definition. A path may be a relative file system path or an HTTP url.
+Each operation definition may optionally have a key called `"generic"`, paired with a *generic template*. A generic template is a JSON object which defines the type arguments for an operation generic in terms of pairs of distinct keys and type arguments. When the generic is "called" with specific arguments, those arguments must "match" the template which means they are also in the form of a JSON object with the same keys, each paired with a type which is a subset of the corresponding type defined by the template. A type argument key may be referenced in any place within the type definition for which a type must be specified, including other type arguments so long as no cycles exist between arguments.
 
-##### 5.1.2 Operation Generic Template
-
-Each operation definition may optionally have a key called `"generic"`, paired with a *generic template*. A generic template is a JSON object which defines the type arguments for an operation generic in terms of pairs of distinct keys and type arguments. The keys must not conflict with any keys defined as dependencies, and the arguments must all be value or operation types. When the generic is "called" with specific arguments, those arguments must "match" the template which means they are also in the form of a JSON object with the same keys, each paired with a type which is a subset of the corresponding type defined by the template. A type argument key may be referenced in any place within the type definition for which a type must be specified, including other type arguments so long as no cycles exist between arguments.
-
-##### 5.1.3 Operation Sources and Sink
+##### 5.1.2 Operation Sources and Sink
 
 Each operation definition must have a key called `"sources"`, paired with a JSON object which has one or more keys which are names of sources, each paired with a JSON object with a single key called `"of"` paired with the type of the source. Each definition may also have a key called `"sink"` paired with a JSON object in the same format as a source. Within a component, operations are composed by connecting the sink from one operation to a source from another by referencing the name of the source. Each operation source has an associated *event queue*, which is a JavaScript Array of values of the source type. Immediately after an operation sink "broadcasts" an event, then for each connected source, it is pushed onto the end of associated event queue and a native JavaScript method is called which may broadcast 0 or more events from the associated sink, synchronously or asynchronously.
 
 #### 5.2 Operation Implementation
 
-An *operation implementation* is a JavaScript file with a extension of `.word.js`, which contains a Node.js module with a default class export. The class must meet three requirements:
+An *operation implementation* is a JavaScript file with a extension of `.verb.js`, which contains a Node.js module with a default class export. The class must meet three requirements:
 1. Extend `Operation`, which is a class that is part of the `vocalize` runtime engine.
 2. Implement a constructor which calls `super` with the operation type or generic name.
 3. Implement a method for each operation source name, which is called immediately after a new event is pushed onto the source event queue. Each method may perform three kinds of actions:
@@ -172,7 +168,7 @@ An *operation implementation* is a JavaScript file with a extension of `.word.js
   - Broadcast an event of the sink type from the operation sink by calling `this.broadcast(Event)`.
   - Read and update private state, start and stop external resources, or manage any other actions which fall outside the `vocalize` operation lifecycle.
 
-The name of the file, excluding the `.word.js` extension, should be equivalent to the name of an operation definition with the same name in the same directory.
+The name of the file, excluding the `.verb.js` extension, should be equivalent to the name of an operation definition with the same name in the same directory.
 
 ###### (Figure 5.2) An operation type implementation
 ```
@@ -254,6 +250,10 @@ An operation definition is an *abstract subclass* if it contains a key called `"
     "sink": OperationSink
 }
 ```
+
+##### 6.1.1 Component Dependencies
+
+Each component definition may optionally have a key called `"dependencies"`, paired with a JSON object which defines the dependencies for an component in terms of pairs of distinct keys and paths which resolve a `vocalize` operation definition and possibly also an implementation. A path may be a relative file system path or an HTTP url.
 
 ### 7 Application
 

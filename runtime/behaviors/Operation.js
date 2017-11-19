@@ -3,34 +3,27 @@ const types = require('../types')
 
 class Operation {
     constructor(definition, typeArguments) {
-        this.definition = types.applyDefinition(definition, typeArguments)
-        this.type = typeArguments
-            ? { [definition.name]: typeArguments, }
-            : definition.name
-        this.sinks = []
+        this.definition = types.constructDefinition(definition, typeArguments)
+        this.listeners = []
     }
 
-    broadcast(event) {
-        const eventType = types.inferType(event)
+    broadcast(value) {
+        const valueType = types.inferValueType(value)
         const sinkType = this.definition.sink.of
-        if (!types.isApplicable(eventType, sinkType)) {
-            throw exceptions.typeNotApplicable(eventType, sinkType)
+        if (!types.isApplicable(valueType, sinkType, this.definition.dependencies)) {
+            throw exceptions.typeNotApplicable(valueType, sinkType)
         }
-        for (const { operation, source, } of this.sinks) {
-            operation[source](event)
+        for (const listener of this.listeners) {
+            listener(value)
         }
     }
 
-    connect(operation, source) {
+    connect(domain, listener) {
         const sinkType = this.definition.sink.of
-        const sourceType = operation.definition.sources[source].of
-        if (!types.isApplicable(sinkType, sourceType)) {
-            throw exceptions.typeNotApplicable(sinkType, sourceType)
+        if (!types.isApplicable(sinkType, domain, this.definition.dependencies)) {
+            throw exceptions.typeNotApplicable(sinkType, domain)
         }
-        this.sinks.push({
-            operation,
-            source,
-        })
+        this.listeners.push(listener)
     }
 }
 

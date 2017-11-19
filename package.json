@@ -9,6 +9,6 @@
         "jest": "^21.2.1"
     },
     "scripts": {
-        "test": "eslint main.js runtime/** && jest"
+        "test": "eslint main.js 'runtime/**' && jest"
     }
 }

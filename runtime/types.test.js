@@ -3,93 +3,93 @@ const types = require('./types')
 describe('types', () => {
     it('template', () => {
         expect(types.template({
-            'A': null,
-            'B': {
-                'BA': 'A',
+            A: null,
+            B: {
+                BA: 'A',
             },
-            'C': {
-                'CA': 'A',
-                'CB': 'B',
+            C: {
+                CA: 'A',
+                CB: 'B',
             },
-            'D': {
-                'DA': {
-                    'DB': 'C',
+            D: {
+                DA: {
+                    DB: 'C',
                 },
             },
-            'E': [
+            E: [
                 'A',
             ],
-            'F': [
+            F: [
                 'A',
                 'B',
             ],
-            'G': [
+            G: [
                 [
                     'C',
                 ],
             ],
-            'H': [
+            H: [
                 {
-                    'HA': 'D',
-                    'HB': {
-                        'HC': 'E',
+                    HA: 'D',
+                    HB: {
+                        HC: 'E',
                     },
                 },
             ],
         })).toEqual({
-            'A': null,
-            'B': {
-                'BA': null,
+            A: null,
+            B: {
+                BA: null,
             },
-            'C': {
-                'CA': null,
-                'CB': {
-                    'BA': null,
+            C: {
+                CA: null,
+                CB: {
+                    BA: null,
                 },
             },
-            'D': {
-                'DA': {
-                    'DB': {
-                        'CA': null,
-                        'CB': {
-                            'BA': null,
+            D: {
+                DA: {
+                    DB: {
+                        CA: null,
+                        CB: {
+                            BA: null,
                         },
                     },
                 },
             },
-            'E': [
+            E: [
                 null,
             ],
-            'F': [
+            F: [
                 null,
                 {
-                    'BA': null,
+                    BA: null,
                 },
             ],
-            'G': [
+            G: [
                 [
                     {
-                        'CA': null,
-                        'CB': {
-                            'BA': null,
+                        CA: null,
+                        CB: {
+                            BA: null,
                         },
                     },
                 ],
             ],
-            'H': [
+            H: [
                 {
-                    'HA': {
-                        'DA': {
-                            'DB': {
-                                'CA': null,
-                                'CB': {
-                                    'BA': null,
+                    HA: {
+                        DA: {
+                            DB: {
+                                CA: null,
+                                CB: {
+                                    BA: null,
                                 },
                             },
                         },
                     },
-                    'HB': {
-                        'HC': [
+                    HB: {
+                        HC: [
                             null,
                         ],
                     },

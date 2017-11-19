@@ -1,0 +1,6 @@
+name: multiply
+operation:
+sources:
+    control: { of: number }
+    dispatch: { of: number }
+sink: { of: number }

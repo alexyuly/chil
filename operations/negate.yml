@@ -1,0 +1,4 @@
+name: negate
+operation:
+sources: { dispatch: { of: number } }
+sink: { of: number }

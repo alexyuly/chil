@@ -1,0 +1,29 @@
+name: aggregate
+component:
+    Value Type:
+    Operation Type:
+        operation:
+            sources:
+                control: { of: Value Type }
+                dispatch: { of: Value Type }
+            sink: { of: Value Type }
+sources:
+    control:
+        seed:
+        of: Value Type
+        to: { store: control }
+    dispatch:
+        of: Value Type
+        to:
+            operation: control
+            store: dispatch
+sink: { of: Value Type }
+operations:
+    store:
+        of: { store: { Value Type: Value Type } }
+        to: { operation: dispatch }
+    operation:
+        of: Operation Type
+        to:
+            store: control
+            sink:

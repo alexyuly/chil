@@ -1,5 +1,5 @@
 const pipe = require('../runtime/pipe')
 
-const negate = pipe((push, action) => push(-action))
+const negate = pipe((next, action) => next(-action))
 
 module.exports = negate

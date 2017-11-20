@@ -1,6 +1,6 @@
 name: add
 behavior: operation
 of: number
-sources:
+values:
     control: { of: number }
     dispatch: { of: number }

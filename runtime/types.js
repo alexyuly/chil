@@ -85,18 +85,18 @@ const decompose = (type) => {
     throw exceptions.typeNotValid(type)
 }
 
-const inferValueType = (value) => {
-    const nativeType = typeof value
+const inferValueType = (event) => {
+    const nativeType = typeof event
     switch (nativeType) {
         case 'number':
         case 'string':
         case 'boolean':
             return nativeType
         case 'object': {
-            if (value instanceof Array) {
+            if (event instanceof Array) {
                 const valueType = { vector: [], }
                 const valueTypeSet = {}
-                for (const element of value) {
+                for (const element of event) {
                     valueTypeSet[JSON.stringify(inferValueType(element))] = null
                 }
                 for (const serializedValueType in valueTypeSet) {
@@ -104,10 +104,10 @@ const inferValueType = (value) => {
                 }
                 return normalize(valueType)
             }
-            if (value !== null) {
+            if (event !== null) {
                 const valueType = { struct: {}, }
-                for (const key in value) {
-                    valueType.struct[key] = inferValueType(value[key])
+                for (const key in event) {
+                    valueType.struct[key] = inferValueType(event[key])
                 }
                 return normalize(valueType)
             }

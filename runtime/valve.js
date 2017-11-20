@@ -1,23 +1,24 @@
 const Operation = require('./behaviors/Operation')
 
-const valve = (next) => class extends Operation {
+const valve = (reducer) => class extends Operation {
     constructor(definition, typeArguments) {
-        super(definition, typeArguments, {
+        super(definition, typeArguments)
+        this.queue = []
+        this.constructValues((next) => ({
             control: (state) => {
                 this.state = state
                 while (this.queue.length > 0) {
-                    next(this.push, this.state, this.queue.shift())
+                    reducer(next, this.state, this.queue.shift())
                 }
             },
             dispatch: (action) => {
                 if (this.state === undefined) {
                     this.queue.push(action)
                 } else {
-                    next(this.push, this.state, action)
+                    reducer(next, this.state, action)
                 }
             },
-        })
-        this.queue = []
+        }))
     }
 }
 

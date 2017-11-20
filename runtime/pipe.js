@@ -1,13 +1,13 @@
 const Operation = require('./behaviors/Operation')
 
-const pipe = (next) => class extends Operation {
+const pipe = (reducer) => class extends Operation {
     constructor(definition, typeArguments) {
-        super(definition, typeArguments, {
+        super(definition, typeArguments)
+        this.constructValues((next) => ({
             dispatch: (action) => {
-                next(this.push, action)
+                reducer(next, action)
             },
-        })
-        this.queue = []
+        }))
     }
 }
 

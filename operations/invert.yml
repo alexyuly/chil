@@ -1,4 +1,4 @@
 name: invert
 behavior: operation
 of: number
-sources: { dispatch: { of: number } }
+values: { dispatch: { of: number } }

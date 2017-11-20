@@ -1,61 +1,46 @@
 const Operation = require('./Operation')
 const exceptions = require('../exceptions')
-const { defineName, requireName, } = require('../require')
 const types = require('../types')
+const { defineName, requireName, } = require('../require')
 
 class Component extends Operation {
-    constructor(componentDefinition, componentTypeArguments) {
-        super(componentDefinition, componentTypeArguments)
-        this.operations = { null: this }
-        // Construct operation instances from the component definition.
+    constructor(...args) {
+        super(...args)
+        this.operations = { null: this, }
         for (const operationName in this.definition.operations) {
-            const operationType = this.definition.operations[operationName]
-            const { name, typeArguments, } = types.decompose(operationType.of)
-            const operationDefinition = defineName(name, this.definition.dependencies)
-            if (operationDefinition.behavior === 'operation') {
-                const Class = requireName(name)
-                this.operations[operationName] = new Class(operationDefinition, typeArguments)
-            } else if (operationDefinition.behavior === 'component') {
-                this.operations[operationName] = new Component(operationDefinition, typeArguments)
+            const operationDefinition = this.definition.operations[operationName]
+            const { name, typeArguments, } = types.decompose(operationDefinition.of)
+            const definition = defineName(name, this.definition.dependencies)
+            if (definition.behavior === 'operation') {
+                const OperationClass = requireName(name)
+                this.operations[operationName] = new OperationClass(definition, typeArguments)
+            } else if (definition.behavior === 'component') {
+                this.operations[operationName] = new Component(definition, typeArguments)
             } else {
-                throw exceptions.operationBehaviorNotValid(componentDefinition.name, name)
+                throw exceptions.operationBehaviorNotValid(this.definition.name, name)
             }
         }
-        // Construct component source methods, and connect them to operation instances.
-        for (const sourceName in this.definition.sources) {
-            this.connectFrom(sourceName)
+        this.constructValues(this.delegate)
+        for (const value of this.values) {
+            this.connectValue(value, value.definition.to)
         }
-        // Connect operation instances amongst themselves.
         for (const operationName in this.definition.operations) {
+            const operationDefinition = this.definition.operations[operationName]
             const operation = this.operations[operationName]
-            const operationType = this.definition.operations[operationName]
-            for (const connectedName in operationType.to) {
-                const connectedOperation = this.operations[connectedName]
-                const connectedSourceName = operationType.to[connectedName]
-                const listener = connectedOperation.sources[connectedSourceName]
-                const listenerDomain = connectedOperation.definition.sources[connectedSourceName].of
-                operation.connect(listener, listenerDomain)
-            }
+            this.connectValue(operation, operationDefinition.to)
         }
     }
 
-    connectFrom(sourceName) {
-        const sourceType = this.definition.sources[sourceName]
-        const listeners = []
-        for (const connectedName in sourceType.to) {
-            const connectedOperation = this.operations[connectedName]
-            const connectedSourceName = sourceType.to[connectedName]
-            const listener = connectedOperation.sources[connectedSourceName]
-            const listenerDomain = connectedOperation.definition.sources[connectedSourceName].of
-            if (!types.isApplicable(sourceType, listenerDomain, this.definition.dependencies)) {
-                throw exceptions.typeNotApplicable(sourceType, listenerDomain)
-            }
-            listeners.push(listener)
+    connectValue(value, targets) {
+        for (const name in targets) {
+            value.connect(this.operations[name].values[targets[name]])
         }
-        this[sourceName] = (value) => {
-            for (const listener of this.listeners) {
-                listener(value)
-            }
+    }
+
+    delegate(next) {
+        const delegates = {}
+        for (const name in this.definition.values) {
+            delegates[name] = next
         }
     }
 }

@@ -1,6 +1,6 @@
 name: delay
 behavior: operation
 of: -
-sources:
+values:
     control: { of: number }
     dispatch: { of: - }

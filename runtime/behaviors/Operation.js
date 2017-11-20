@@ -14,7 +14,8 @@ class Operation extends Value {
                     delegates[name](event)
                 }
             }
-            this.values[name] = new ValueClass(this.definition.values[name], this.typeArguments)
+            const definition = this.definition.values[name]
+            this.values[name] = new ValueClass(definition, this.typeArguments)
         }
     }
 }

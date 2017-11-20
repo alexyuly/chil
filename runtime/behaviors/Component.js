@@ -7,17 +7,17 @@ class Component extends Operation {
     constructor(...args) {
         super(...args)
         this.operations = { null: this, }
-        for (const operationName in this.definition.operations) {
-            const operationDefinition = this.definition.operations[operationName]
-            const { name, typeArguments, } = types.decompose(operationDefinition.of)
-            const definition = defineName(name, this.definition.dependencies)
+        for (const name in this.definition.operations) {
+            const instance = this.definition.operations[name]
+            const { typeName, typeArguments, } = types.decompose(instance.of)
+            const definition = defineName(typeName, this.definition.dependencies)
             if (definition.behavior === 'operation') {
-                const OperationClass = requireName(name)
-                this.operations[operationName] = new OperationClass(definition, typeArguments)
+                const OperationClass = requireName(typeName)
+                this.operations[name] = new OperationClass(definition, typeArguments)
             } else if (definition.behavior === 'component') {
-                this.operations[operationName] = new Component(definition, typeArguments)
+                this.operations[name] = new Component(definition, typeArguments)
             } else {
-                throw exceptions.operationBehaviorNotValid(this.definition.name, name)
+                throw exceptions.componentHierarchyNotValid(this.definition.name, typeName)
             }
         }
         this.constructValues(this.delegate)
@@ -26,8 +26,7 @@ class Component extends Operation {
         }
         for (const operationName in this.definition.operations) {
             const operationDefinition = this.definition.operations[operationName]
-            const operation = this.operations[operationName]
-            this.connectValue(operation, operationDefinition.to)
+            this.connectValue(this.operations[operationName], operationDefinition.to)
         }
     }
 

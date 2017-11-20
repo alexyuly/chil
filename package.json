@@ -2,6 +2,7 @@
     "name": "vocalize",
     "version": "0.0.1",
     "author": "Alex Yuly",
+    "description": "data driven runtime engine for Node.js and Chrome",
     "license": "MIT",
     "main": "main.js",
     "devDependencies": {

@@ -70,16 +70,16 @@ const normalize = (valueType) => {
 
 const decompose = (type) => {
     if (isTree(type)) {
-        for (const name in type) {
+        for (const typeName in type) {
             return {
-                name,
-                typeArguments: type[name],
+                typeName,
+                typeArguments: type[typeName],
             }
         }
     }
     if (typeof type === 'string' || type === null) {
         return {
-            name: type,
+            typeName: type,
         }
     }
     throw exceptions.typeNotValid(type)

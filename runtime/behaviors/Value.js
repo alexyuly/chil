@@ -2,8 +2,8 @@ const exceptions = require('../exceptions')
 const types = require('../types')
 
 class Value {
-    constructor(instance, typeArgs) {
-        this.instance = types.construct(instance, typeArgs)
+    constructor(instance = {}) {
+        this.instance = instance
         this.listeners = []
     }
 
@@ -15,9 +15,9 @@ class Value {
     }
 
     next(event) {
-        const valueType = types.inferValueType(event)
-        if (!types.isApplicable(valueType, this.instance.of)) {
-            throw exceptions.typeNotApplicable(valueType, this.instance.of)
+        const eventType = types.typeOf(event)
+        if (!types.isApplicable(eventType, this.instance.of)) {
+            throw exceptions.typeNotApplicable(eventType, this.instance.of)
         }
         for (const listener of this.listeners) {
             listener.next(event)

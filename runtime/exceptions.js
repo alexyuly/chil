@@ -1,6 +1,12 @@
 const componentTypeNotRunnable = (name) =>
     new Error(`Component name '${name}': not runnable`)
 
+const componentTypeNotValid = (name) =>
+    new Error(`Component name '${name}': not valid`)
+
+const componentValueNotValid = (name, value) =>
+    new Error(`Component name '${name}': value ${value} is not valid`)
+
 const nativeTypeNotValid = (nativeType) =>
     new Error(`Native type '${nativeType}': not valid`)
 
@@ -24,6 +30,8 @@ const typeNotValid = (type) =>
 
 module.exports = {
     componentTypeNotRunnable,
+    componentTypeNotValid,
+    componentValueNotValid,
     nativeTypeNotValid,
     operationTypeNotValid,
     typeArgumentsNotExpected,

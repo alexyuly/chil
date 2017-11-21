@@ -1,26 +1,34 @@
 const Value = require('./Value')
+const exceptions = require('../exceptions')
 const types = require('../types')
 
 class Operation extends Value {
-    constructor(definition, instance, typeArgs) {
-        super(instance, typeArgs)
-        this.definition = types.construct(definition, typeArgs)
-        this.typeArgs = typeArgs
+    constructor(definition, instance) {
+        super(instance)
+        this.definition = types.construct(definition, instance)
     }
 
     constructValues(delegates = {}) {
-        this.values = {}
-        for (const name in this.definition.values) {
-            const ValueClass = delegates[name]
-                ? class extends Value {
-                    next(event) {
-                        delegates[name](event)
-                    }
-                }
-                : Value
-            const instance = this.definition.values[name]
-            this.values[name] = new ValueClass(instance, this.typeArgs)
+        if (!types.isGraph(this.definition.values)) {
+            throw exceptions.operationTypeNotValid(this.definition.name)
         }
+        this.values = {}
+        for (const key in this.definition.values) {
+            const instance = this.definition.values[key]
+            this.values[key] = this.value(instance, delegates[key])
+        }
+    }
+
+    value(instance, delegate) {
+        if (!delegate) {
+            return new Value(instance)
+        }
+        const ValueClass = class extends Value {
+            next(event) {
+                delegate(event)
+            }
+        }
+        return new ValueClass(instance)
     }
 }
 

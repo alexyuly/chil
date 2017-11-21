@@ -1,12 +1,12 @@
 const exceptions = require('./exceptions')
 
-const isTree = (node) => typeof node === 'object' && node !== null
+const isGraph = (node) => typeof node === 'object' && node !== null
 
 const template = (tree, spec = {}, initial = spec) =>
     Object.keys(tree).reduce(
         (next, key) => {
             const node = tree[key]
-            if (isTree(node)) {
+            if (isGraph(node)) {
                 next[key] = template(
                     node,
                     spec,
@@ -35,30 +35,12 @@ const isApplicable = () => {
     // TODO
 }
 
-const construct = (definition, typeArgs) => {
-    if (definition.generic === undefined) {
-        if (typeArgs === undefined) {
-            return definition
-        }
-        throw exceptions.typeArgumentsNotExpected(definition.name)
-    }
-    if (!isTree(definition.generic)) {
-        throw exceptions.typeGenericNotValid(definition.name)
-    }
-    if (!isTree(typeArgs)) {
-        throw exceptions.typeArgumentsNotValid(definition.name)
-    }
-    const generic = template(definition.generic)
-    for (const key in generic) {
-        if (!isApplicable(typeArgs[key], generic[key], definition.dependencies)) {
-            throw exceptions.typeNotApplicable(typeArgs[key], generic[key])
-        }
-    }
-    return template(definition, typeArgs, {})
+const construct = () => {
+    // TODO
 }
 
 const normalize = (valueType) => {
-    if (isTree(valueType)) {
+    if (isGraph(valueType)) {
         // TODO
     }
     if (typeof valueType === 'string' || valueType === null) {
@@ -67,24 +49,19 @@ const normalize = (valueType) => {
     throw exceptions.typeNotValid(valueType)
 }
 
-const decompose = (type) => {
-    if (isTree(type)) {
-        for (const name in type) {
-            return {
-                name,
-                args: type[name],
-            }
+const name = (instance) => {
+    if (isGraph(instance.of)) {
+        for (const key in instance.of) {
+            return key
         }
     }
-    if (typeof type === 'string' || type === null) {
-        return {
-            name: type,
-        }
+    if (typeof instance.of === 'string' || instance.of === null) {
+        return instance.of
     }
-    throw exceptions.typeNotValid(type)
+    throw exceptions.typeNotValid(instance.of)
 }
 
-const inferValueType = (event) => {
+const typeOf = (event) => {
     const nativeType = typeof event
     switch (nativeType) {
         case 'number':
@@ -96,7 +73,7 @@ const inferValueType = (event) => {
                 const valueType = { vector: [] }
                 const valueTypeSet = {}
                 for (const element of event) {
-                    valueTypeSet[JSON.stringify(inferValueType(element))] = null
+                    valueTypeSet[JSON.stringify(typeOf(element))] = null
                 }
                 for (const serializedValueType in valueTypeSet) {
                     valueType.vector.push(JSON.parse(serializedValueType))
@@ -106,7 +83,7 @@ const inferValueType = (event) => {
             if (event !== null) {
                 const valueType = { struct: {} }
                 for (const key in event) {
-                    valueType.struct[key] = inferValueType(event[key])
+                    valueType.struct[key] = typeOf(event[key])
                 }
                 return normalize(valueType)
             }
@@ -117,7 +94,7 @@ const inferValueType = (event) => {
     }
 }
 
-const testEventEquality = (a, b) => {
+const isEqual = (a, b) => {
     const nativeType = typeof a
     if (nativeType !== typeof b) {
         return false
@@ -132,7 +109,7 @@ const testEventEquality = (a, b) => {
                 return b === null
             }
             for (const key in a) {
-                if (!testEventEquality(a[key], b[key])) {
+                if (!isEqual(a[key], b[key])) {
                     return false
                 }
             }
@@ -145,9 +122,10 @@ const testEventEquality = (a, b) => {
 
 module.exports = {
     construct,
-    decompose,
-    inferValueType,
     isApplicable,
+    isEqual,
+    isGraph,
+    name,
     template,
-    testEventEquality,
+    typeOf,
 }

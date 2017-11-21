@@ -3,8 +3,8 @@ const exceptions = require('../exceptions')
 const types = require('../types')
 
 class Component extends Operation {
-    constructor(definition, instance, typeArgs) {
-        super(definition, instance, typeArgs)
+    constructor(definition, instance = { of: definition.name }) {
+        super(definition, instance)
         this.constructValues()
         this.constructOperations()
         for (const value of this.values) {
@@ -16,26 +16,38 @@ class Component extends Operation {
     }
 
     connectValue(value) {
-        for (const name in value.instance.to) {
-            value.connect(this.operations[name].values[value.instance.to[name]])
+        if (!types.isGraph(value.instance.to)) {
+            throw exceptions.componentValueNotValid(this.definition.name, value.instance)
+        }
+        for (const key in value.instance.to) {
+            const child = value.instance.to[key]
+            const target = child
+                ? this.operations[key].values[child]
+                : this.operations[key]
+            value.connect(target)
         }
     }
 
     constructOperations() {
-        this.operations = { null: this }
-        for (const name in this.definition.operations) {
-            const instance = this.definition.operations[name]
-            const type = types.decompose(instance.of)
-            const definition = this.definition.dictionary[type.name]
-            if (definition.dictionary) {
-                this.operations[name] = new Component(definition, instance, type.args)
-            } else if (definition.implementation) {
-                const OperationClass = definition.implementation
-                this.operations[name] = new OperationClass(definition, instance, type.args)
-            } else {
-                throw exceptions.operationTypeNotValid(definition.name)
-            }
+        if (!types.isGraph(this.definition.operations)) {
+            throw exceptions.componentTypeNotValid(this.definition.name)
         }
+        this.operations = { null: this }
+        for (const key in this.definition.operations) {
+            const instance = this.definition.operations[key]
+            const definition = this.definition.dictionary[types.name(instance)]
+            this.operations[key] = this.operation(definition, instance)
+        }
+    }
+
+    operation(definition, instance) {
+        if (types.isGraph(definition.dictionary)) {
+            return new Component(definition, instance)
+        }
+        if (typeof definition.implementation === 'function') {
+            return new definition.implementation(definition, instance)
+        }
+        throw exceptions.operationTypeNotValid(definition.name)
     }
 }
 

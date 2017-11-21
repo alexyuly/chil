@@ -2,7 +2,7 @@ const { valve } = require('../runtime/factories')
 const types = require('../runtime/types')
 
 const equal = valve((action, state, next) => {
-    if (types.testEventEquality(action, state)) {
+    if (types.isEqual(action, state)) {
         next(action)
     }
 })

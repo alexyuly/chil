@@ -1,34 +1,34 @@
-const applicationNotValid = (name) =>
-    new Error(`Application of '${name}' has no value 'run': not valid`)
-
-const componentHierarchyNotValid = (componentName, childName) =>
-    new Error(`Definition of component '${componentName}': '${childName}' is not valid`)
-
-const definitionArgumentsNotExpected = (name) =>
-    new Error(`Definition of '${name}': arguments are not expected`)
-
-const definitionArgumentsNotValid = (name) =>
-    new Error(`Definition of '${name}': arguments are not valid`)
-
-const definitionGenericNotValid = (name) =>
-    new Error(`Definition of '${name}': generic is not valid`)
+const componentTypeNotRunnable = (name) =>
+    new Error(`Component name '${name}': not runnable`)
 
 const nativeTypeNotValid = (nativeType) =>
-    new Error(`Native type of '${nativeType}': not valid`)
+    new Error(`Native type '${nativeType}': not valid`)
+
+const operationTypeNotValid = (name) =>
+    new Error(`Operation name '${name}': not valid`)
+
+const typeArgumentsNotExpected = (name) =>
+    new Error(`Name '${name}': arguments are not expected`)
+
+const typeArgumentsNotValid = (name) =>
+    new Error(`Name '${name}': arguments are not valid`)
+
+const typeGenericNotValid = (name) =>
+    new Error(`Name '${name}': generic is not valid`)
 
 const typeNotApplicable = (type, domain) =>
-    new Error(`Type of '${type}': not applicable to domain '${domain}'`)
+    new Error(`Type ${type}: not applicable to domain ${domain}`)
 
 const typeNotValid = (type) =>
-    new Error(`Type of '${type}': not valid`)
+    new Error(`Type ${type}: not valid`)
 
 module.exports = {
-    applicationNotValid,
-    componentHierarchyNotValid,
-    definitionArgumentsNotExpected,
-    definitionArgumentsNotValid,
-    definitionGenericNotValid,
+    componentTypeNotRunnable,
     nativeTypeNotValid,
+    operationTypeNotValid,
+    typeArgumentsNotExpected,
+    typeArgumentsNotValid,
+    typeGenericNotValid,
     typeNotApplicable,
     typeNotValid,
 }

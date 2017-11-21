@@ -1,6 +1,0 @@
-name: multiply
-behavior: operation
-of: number
-values:
-    control: { of: number }
-    dispatch: { of: number }

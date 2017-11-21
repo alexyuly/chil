@@ -5,11 +5,14 @@
     "description": "data driven runtime engine for Node.js and Chrome",
     "license": "MIT",
     "main": "main.js",
+    "dependencies": {
+        "js-yaml": "^3.10.0"
+    },
     "devDependencies": {
         "eslint": "^4.11.0",
         "jest": "^21.2.1"
     },
     "scripts": {
-        "test": "eslint main.js 'runtime/**' && jest"
+        "test": "eslint '**/*.js' && jest"
     }
 }

@@ -1,7 +1,0 @@
-name: store
-behavior: operation
-generic: { Value Type: }
-of: Value Type
-values:
-    control: { of: Value Type }
-    dispatch: { of: - }

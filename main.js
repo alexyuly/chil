@@ -1,7 +1,7 @@
-const Application = require('./runtime/behaviors/Application')
-const { definePath, } = require('./runtime/require')
+const Component = require('./runtime/behaviors/Component')
+const define = require('./runtime/define')
+const run = require('./runtime/run')
 
-const pathToFile = process.argv[2]
-const definition = definePath(pathToFile)
+const path = process.argv[2]
 const args = process.argv.slice(3)
-new Application(definition).run(args)
+run(new Component(define(path)), args)

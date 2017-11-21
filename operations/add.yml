@@ -1,6 +1,0 @@
-name: add
-behavior: operation
-of: number
-values:
-    control: { of: number }
-    dispatch: { of: number }

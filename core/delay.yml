@@ -1,0 +1,6 @@
+name: delay
+behavior: operation
+of: -
+values:
+    seed: { of: number }
+    feed: { of: - }

@@ -1,6 +1,0 @@
-name: delay
-behavior: operation
-of: -
-values:
-    control: { of: number }
-    dispatch: { of: - }

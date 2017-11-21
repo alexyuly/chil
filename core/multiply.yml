@@ -1,0 +1,6 @@
+name: multiply
+behavior: operation
+of: number
+values:
+    seed: { of: number }
+    feed: { of: number }

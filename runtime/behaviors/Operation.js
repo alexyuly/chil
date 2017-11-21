@@ -1,21 +1,25 @@
 const Value = require('./Value')
+const types = require('../types')
 
 class Operation extends Value {
-    constructor(...args) {
-        super(...args)
-        this.values = {}
+    constructor(definition, instance, typeArgs) {
+        super(instance, typeArgs)
+        this.definition = types.construct(definition, typeArgs)
+        this.typeArgs = typeArgs
     }
 
-    constructValues(delegate) {
-        const delegates = delegate(this.next)
-        for (const name in delegates) {
-            const ValueClass = class extends Value {
-                next(event) {
-                    delegates[name](event)
+    constructValues(delegates = {}) {
+        this.values = {}
+        for (const name in this.definition.values) {
+            const ValueClass = delegates[name]
+                ? class extends Value {
+                    next(event) {
+                        delegates[name](event)
+                    }
                 }
-            }
-            const definition = this.definition.values[name]
-            this.values[name] = new ValueClass(definition, this.typeArguments)
+                : Value
+            const instance = this.definition.values[name]
+            this.values[name] = new ValueClass(instance, this.typeArgs)
         }
     }
 }

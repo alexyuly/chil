@@ -35,27 +35,26 @@ const isApplicable = () => {
     // TODO
 }
 
-const constructDefinition = (definition, typeArguments) => {
-    // TODO - resolve dependency definitions
+const construct = (definition, typeArgs) => {
     if (definition.generic === undefined) {
-        if (typeArguments === undefined) {
+        if (typeArgs === undefined) {
             return definition
         }
-        throw exceptions.definitionArgumentsNotExpected(definition.name)
+        throw exceptions.typeArgumentsNotExpected(definition.name)
     }
     if (!isTree(definition.generic)) {
-        throw exceptions.definitionGenericNotValid(definition.name)
+        throw exceptions.typeGenericNotValid(definition.name)
     }
-    if (!isTree(typeArguments)) {
-        throw exceptions.definitionArgumentsNotValid(definition.name)
+    if (!isTree(typeArgs)) {
+        throw exceptions.typeArgumentsNotValid(definition.name)
     }
     const generic = template(definition.generic)
     for (const key in generic) {
-        if (!isApplicable(typeArguments[key], generic[key], definition.dependencies)) {
-            throw exceptions.typeNotApplicable(typeArguments[key], generic[key])
+        if (!isApplicable(typeArgs[key], generic[key], definition.dependencies)) {
+            throw exceptions.typeNotApplicable(typeArgs[key], generic[key])
         }
     }
-    return template(definition, typeArguments, {})
+    return template(definition, typeArgs, {})
 }
 
 const normalize = (valueType) => {
@@ -70,16 +69,16 @@ const normalize = (valueType) => {
 
 const decompose = (type) => {
     if (isTree(type)) {
-        for (const typeName in type) {
+        for (const name in type) {
             return {
-                typeName,
-                typeArguments: type[typeName],
+                name,
+                args: type[name],
             }
         }
     }
     if (typeof type === 'string' || type === null) {
         return {
-            typeName: type,
+            name: type,
         }
     }
     throw exceptions.typeNotValid(type)
@@ -94,7 +93,7 @@ const inferValueType = (event) => {
             return nativeType
         case 'object': {
             if (event instanceof Array) {
-                const valueType = { vector: [], }
+                const valueType = { vector: [] }
                 const valueTypeSet = {}
                 for (const element of event) {
                     valueTypeSet[JSON.stringify(inferValueType(element))] = null
@@ -105,7 +104,7 @@ const inferValueType = (event) => {
                 return normalize(valueType)
             }
             if (event !== null) {
-                const valueType = { struct: {}, }
+                const valueType = { struct: {} }
                 for (const key in event) {
                     valueType.struct[key] = inferValueType(event[key])
                 }
@@ -118,10 +117,37 @@ const inferValueType = (event) => {
     }
 }
 
+const testEventEquality = (a, b) => {
+    const nativeType = typeof a
+    if (nativeType !== typeof b) {
+        return false
+    }
+    switch (nativeType) {
+        case 'number':
+        case 'string':
+        case 'boolean':
+            return a === b
+        case 'object': {
+            if (a === null) {
+                return b === null
+            }
+            for (const key in a) {
+                if (!testEventEquality(a[key], b[key])) {
+                    return false
+                }
+            }
+            return true
+        }
+        default:
+            throw exceptions.nativeTypeNotValid(nativeType)
+    }
+}
+
 module.exports = {
-    constructDefinition,
+    construct,
     decompose,
     inferValueType,
     isApplicable,
     template,
+    testEventEquality,
 }

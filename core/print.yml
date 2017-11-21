@@ -1,0 +1,3 @@
+name: print
+behavior: operation
+values: { feed: { of: - } }

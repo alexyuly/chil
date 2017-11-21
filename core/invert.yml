@@ -1,4 +1,4 @@
 name: invert
 behavior: operation
 of: number
-values: { dispatch: { of: number } }
+values: { feed: { of: number } }

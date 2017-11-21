@@ -1,0 +1,33 @@
+name: map
+behavior: component
+dictionary:
+    collect:
+    count:
+    dissect:
+generic:
+    Input Type: -
+    Output Type: -
+    Operation Type:
+        operation:
+            of: Output Type
+            values: { feed: Input Type }
+of: Output Type
+values:
+    feed:
+        of: { vector: Input Type }
+        to:
+            count: feed
+            dissect: feed
+operations:
+    count:
+        of: count
+        to: { collect: seed }
+    dissect:
+        of: { dissect: { Value Type: Input Type } }
+        to: { operation: feed }
+    operation:
+        of: Operation Type
+        to: { collect: feed }
+    collect:
+        of: { collect: { Value Type: Output Type } }
+        to: -

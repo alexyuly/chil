@@ -33,12 +33,10 @@
         "block-scoped-var": "error",
         "block-spacing": "error",
         "brace-style": "error",
-        "camelcase": "error",
         "capitalized-comments": "error",
-        "class-methods-use-this": "warn",
         "comma-dangle": [
             "error",
-            "always"
+            "always-multiline"
         ],
         "comma-spacing": "error",
         "comma-style": "error",
@@ -62,7 +60,6 @@
         "function-paren-newline": "error",
         "generator-star-spacing": "error",
         "getter-return": "error",
-        "global-require": "error",
         "handle-callback-err": "error",
         "id-blacklist": "error",
         "id-match": "error",
@@ -107,6 +104,7 @@
         "no-caller": "error",
         "no-catch-shadow": "error",
         "no-confusing-arrow": "error",
+        "no-console": "warn",
         "no-continue": "error",
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
@@ -240,7 +238,6 @@
         "semi-spacing": "error",
         "semi-style": "error",
         "sort-imports": "error",
-        "sort-keys": "error",
         "sort-vars": "error",
         "space-before-blocks": "error",
         "space-before-function-paren": [

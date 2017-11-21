@@ -1,0 +1,44 @@
+name: reduce
+behavior: component
+dictionary:
+    collect:
+    count:
+    dissect:
+    last:
+generic:
+    Input Type: -
+    Output Type: -
+    Operation Type:
+        operation:
+            of: Output Type
+            values:
+                seed: Output Type
+                feed: Input Type
+of: Output Type
+values:
+    seed:
+        of: Output Type
+        to: { operation: seed }
+    feed:
+        of: { vector: Input Type }
+        to:
+            count: feed
+            dissect: feed
+operations:
+    count:
+        of: count
+        to: { collect: seed }
+    dissect:
+        of: { dissect: { Value Type: Input Type } }
+        to: { operation: feed }
+    operation:
+        of: Operation Type
+        to:
+            operation: seed
+            collect: feed
+    collect:
+        of: { collect: { Value Type: Output Type } }
+        to: { last: feed }
+    last:
+        of: { last: Output Type }
+        to: -

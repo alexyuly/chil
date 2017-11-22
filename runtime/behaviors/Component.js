@@ -35,7 +35,7 @@ class Component extends Operation {
         this.operations = { null: this }
         for (const key in this.definition.operations) {
             const instance = this.definition.operations[key]
-            const definition = this.definition.dictionary[types.name(instance)]
+            const definition = this.definition.dictionary[types.nameOf(instance)]
             this.operations[key] = this.operation(definition, instance)
         }
     }

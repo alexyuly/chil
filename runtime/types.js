@@ -1,20 +1,11 @@
 const exceptions = require('./exceptions')
 
-const isGraph = (node) => typeof node === 'object' && node !== null
-const isSpecific = (type) => typeof type === 'string' || type === null
+const reservedKeys = [
+    'dictionary',
+    'implementation',
+]
 
-const construct = (definition, instance) => {
-    if (isSpecific(instance.of)) {
-        return definition
-    }
-    // TODO
-}
-
-const isApplicable = () => {
-    // TODO
-}
-
-const isEqual = (a, b) => {
+const compareEvents = (a, b) => {
     const nativeType = typeof a
     if (nativeType !== typeof b) {
         return false
@@ -24,33 +15,89 @@ const isEqual = (a, b) => {
         case 'string':
         case 'boolean':
             return a === b
-        case 'object': {
-            if (a === null) {
-                return b === null
+        case 'object':
+        case 'undefined': {
+            if (!a || !b) {
+                return a === b
             }
             for (const key in a) {
-                if (!isEqual(a[key], b[key])) {
+                if (!compareEvents(a[key], b[key])) {
                     return false
                 }
             }
             return true
         }
         default:
-            throw exceptions.nativeTypeNotValid(nativeType)
+            throw exceptions.eventNotValid(a)
     }
 }
 
-const normalize = (valueType) => {
-    if (isSpecific(valueType)) {
-        return valueType
+const isGraph = (node) => typeof node === 'object' && node !== null
+const isSpecific = (type) => typeof type === 'string'
+
+const parametersOf = (instance) => {
+    if (isGraph(instance.of)) {
+        for (const key in instance.of) {
+            return instance.of[key]
+        }
     }
-    if (isGraph(valueType)) {
+    return undefined
+}
+
+const replace = (input, parameters = {}, output = parameters) => {
+    for (const key in input) {
+        const node = input[key]
+        if (reservedKeys.includes(key)) {
+            output[key] = input[key]
+        } else if (isGraph(node)) {
+            output[key] = replace(
+                node,
+                parameters,
+                node instanceof Array
+                    ? []
+                    : {}
+            )
+        } else if (typeof node === 'string') {
+            for (const alias in parameters) {
+                if (node === alias) {
+                    output[key] = parameters[alias]
+                    break
+                }
+            }
+        } else {
+            output[key] = null
+        }
+    }
+    return output
+}
+
+const assertApplicable = (type, domain) => {
+    const isNotApplicable = () => {
         // TODO
     }
-    throw exceptions.typeNotValid(valueType)
+    if (isNotApplicable(type, domain)) {
+        throw exceptions.typeNotApplicable(type, domain)
+    }
 }
 
-const name = (instance) => {
+const construct = (definition, instance) => {
+    const genericDefinition = isGraph(definition.generic)
+    const specificInstance = isSpecific(instance.of)
+    if ((specificInstance && genericDefinition) || (!specificInstance && !genericDefinition)) {
+        throw exceptions.instanceNotApplicable(instance.of, definition.name)
+    }
+    if (specificInstance) {
+        return definition
+    }
+    definition.generic = replace(definition.generic)
+    const parameters = parametersOf(instance)
+    for (const key in definition.generic) {
+        assertApplicable(parameters[key], definition.generic[key])
+    }
+    return replace(definition, parameters, {})
+}
+
+const nameOf = (instance) => {
     if (isSpecific(instance.of)) {
         return instance.of
     }
@@ -62,35 +109,6 @@ const name = (instance) => {
     throw exceptions.typeNotValid(instance.of)
 }
 
-const template = (graph, spec = {}, initial = spec) =>
-    Object.keys(graph).reduce(
-        (next, key) => {
-            const node = graph[key]
-            if (isGraph(node)) {
-                next[key] = template(
-                    node,
-                    spec,
-                    node instanceof Array
-                        ? []
-                        : {}
-                )
-            } else if (typeof node === 'string') {
-                for (const specKey in spec) {
-                    if (node === specKey) {
-                        next[key] = spec[specKey]
-                        break
-                    }
-                }
-            } else if (node === null) {
-                next[key] = node
-            } else {
-                throw exceptions.typeNotValid(node)
-            }
-            return next
-        },
-        initial
-    )
-
 const typeOf = (event) => {
     const nativeType = typeof event
     switch (nativeType) {
@@ -98,38 +116,41 @@ const typeOf = (event) => {
         case 'string':
         case 'boolean':
             return nativeType
-        case 'object': {
+        case 'object':
+        case 'undefined': {
             if (event instanceof Array) {
-                const valueType = { vector: [] }
-                const valueTypeSet = {}
+                const type = { vector: [] }
+                const typeSet = {}
                 for (const element of event) {
-                    valueTypeSet[JSON.stringify(typeOf(element))] = null
+                    typeSet[JSON.stringify(typeOf(element))] = null
                 }
-                for (const serializedValueType in valueTypeSet) {
-                    valueType.vector.push(JSON.parse(serializedValueType))
+                for (const typeHash in typeSet) {
+                    type.vector.push(JSON.parse(typeHash))
                 }
-                return normalize(valueType)
+                return type
             }
-            if (event !== null) {
-                const valueType = { struct: {} }
+            if (event) {
+                const type = { struct: {} }
                 for (const key in event) {
-                    valueType.struct[key] = typeOf(event[key])
+                    type.struct[key] = typeOf(event[key])
                 }
-                return normalize(valueType)
+                return type
             }
             return null
         }
         default:
-            throw exceptions.nativeTypeNotValid(nativeType)
+            throw exceptions.eventNotValid(event)
     }
 }
 
 module.exports = {
+    assertApplicable,
+    compareEvents,
     construct,
-    isApplicable,
-    isEqual,
     isGraph,
-    name,
-    template,
+    isSpecific,
+    nameOf,
+    parametersOf,
+    replace,
     typeOf,
 }

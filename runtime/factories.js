@@ -1,32 +1,33 @@
 const Operation = require('./behaviors/Operation')
 
-const pipe = (reducer) => class extends Operation {
-    constructor(definition, typeArgs) {
-        super(definition, typeArgs)
+const pipe = (reduce) => class extends Operation {
+    constructor(definition, instance) {
+        super(definition, instance)
         this.constructValues({
             feed: (action) => {
-                reducer(action, this.next)
+                reduce(action, this.next)
             },
         })
     }
 }
 
-const valve = (reducer) => class extends Operation {
-    constructor(definition, typeArgs) {
-        super(definition, typeArgs)
+const valve = (reduce) => class extends Operation {
+    constructor(definition, instance) {
+        super(definition, instance)
         this.queue = []
         this.constructValues({
             seed: (state) => {
                 this.state = state
                 while (this.queue.length > 0) {
-                    reducer(this.queue.shift(), this.state, this.next)
+                    const action = this.queue.shift()
+                    reduce(action, this.state, this.next)
                 }
             },
             feed: (action) => {
                 if (this.state === undefined) {
                     this.queue.push(action)
                 } else {
-                    reducer(action, this.state, this.next)
+                    reduce(action, this.state, this.next)
                 }
             },
         })

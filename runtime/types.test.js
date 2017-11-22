@@ -1,8 +1,8 @@
 const types = require('./types')
 
 describe('types', () => {
-    it('template', () => {
-        expect(types.template({
+    it('replace', () => {
+        expect(types.replace({
             A: null,
             B: {
                 BA: 'A',

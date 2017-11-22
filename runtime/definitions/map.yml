@@ -1,12 +1,11 @@
 name: map
-behavior: component
 dictionary:
     collect:
     count:
     dissect:
 generic:
-    Input Type: -
-    Output Type: -
+    Input Type:
+    Output Type:
     Operation Type:
         operation:
             of: Output Type

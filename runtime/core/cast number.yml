@@ -1,4 +1,0 @@
-name: cast number
-behavior: operation
-of: number
-values: { feed: { of: - } }

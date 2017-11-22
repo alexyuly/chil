@@ -1,5 +1,4 @@
-name: dissect
-behavior: operation
-generic: { Value Type: - }
+name: last
+generic: { Value Type: }
 of: Value Type
 values: { feed: { of: { vector: Value Type } } }

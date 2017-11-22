@@ -4,11 +4,12 @@ const yaml = require('js-yaml')
 const exceptions = require('./exceptions')
 const types = require('./types')
 
-const path = (name, root, branch) => (
-    branch
-        ? resolve(parse(root).dir, branch)
-        : resolve(__dirname, `./core/${name}`)
-)
+const path = (name, root, branch) => {
+    if (branch) {
+        return resolve(parse(root).dir, branch)
+    }
+    return resolve(__dirname, `./definitions/${name}`)
+}
 
 const define = (root) => {
     const file = fs.readFileSync(`${root}.yml`, 'utf8')

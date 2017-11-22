@@ -2,7 +2,7 @@ const { valve } = require('../factories')
 const types = require('../types')
 
 const compare = valve((action, state, next) => {
-    if (types.isEqual(action, state)) {
+    if (types.compareEvents(action, state)) {
         next(action)
     }
 })

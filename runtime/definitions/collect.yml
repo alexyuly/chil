@@ -1,6 +1,5 @@
 name: collect
-behavior: operation
-generic: { Value Type: - }
+generic: { Value Type: }
 of: { vector: Value Type }
 values:
     seed: { of: number }

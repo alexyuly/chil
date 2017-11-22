@@ -1,4 +1,3 @@
-name: invert
-behavior: operation
+name: negate
 of: number
 values: { feed: { of: number } }

@@ -1,6 +1,6 @@
 name: delay
 behavior: operation
-of: -
+of:
 values:
     seed: { of: number }
-    feed: { of: - }
+    feed: { of: }

@@ -1,4 +1,3 @@
-const exceptions = require('../exceptions')
 const types = require('../types')
 
 class Value {
@@ -8,17 +7,12 @@ class Value {
     }
 
     connect(value) {
-        if (!types.isApplicable(this.instance.of, value.instance.of)) {
-            throw exceptions.typeNotApplicable(this.instance.of, value.instance.of)
-        }
+        types.assertApplicable(this.instance.of, value.instance.of)
         this.listeners.push(value)
     }
 
     next(event) {
-        const eventType = types.typeOf(event)
-        if (!types.isApplicable(eventType, this.instance.of)) {
-            throw exceptions.typeNotApplicable(eventType, this.instance.of)
-        }
+        types.assertApplicable(types.typeOf(event), this.instance.of)
         for (const listener of this.listeners) {
             listener.next(event)
         }

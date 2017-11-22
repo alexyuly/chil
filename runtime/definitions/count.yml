@@ -1,4 +1,4 @@
 name: count
 behavior: operation
 of: number
-values: { feed: { of: { vector: - } } }
+values: { feed: { of: { vector: } } }

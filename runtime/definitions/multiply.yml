@@ -1,5 +1,4 @@
 name: multiply
-behavior: operation
 of: number
 values:
     seed: { of: number }

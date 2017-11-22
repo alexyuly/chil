@@ -1,4 +1,4 @@
-const { pipe } = require('../runtime/factories')
+const { pipe } = require('../factories')
 
 const negate = pipe((action, next) => next(-action))
 

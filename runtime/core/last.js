@@ -1,4 +1,4 @@
-const { pipe } = require('../runtime/factories')
+const { pipe } = require('../factories')
 
 const last = pipe((action, next) => {
     if (action.length > 0) {

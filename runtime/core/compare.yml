@@ -1,4 +1,4 @@
-name: equal
+name: compare
 behavior: operation
 generic: { Value Type: - }
 of: Value Type

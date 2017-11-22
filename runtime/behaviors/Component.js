@@ -3,7 +3,7 @@ const exceptions = require('../exceptions')
 const types = require('../types')
 
 class Component extends Operation {
-    constructor(definition, instance = { of: definition.name }) {
+    constructor(definition, instance) {
         super(definition, instance)
         this.constructValues()
         this.constructOperations()
@@ -20,9 +20,9 @@ class Component extends Operation {
             throw exceptions.componentValueNotValid(this.definition.name, value.instance)
         }
         for (const key in value.instance.to) {
-            const child = value.instance.to[key]
-            const target = child
-                ? this.operations[key].values[child]
+            const connection = value.instance.to[key]
+            const target = connection
+                ? this.operations[key].values[connection]
                 : this.operations[key]
             value.connect(target)
         }

@@ -9,7 +9,7 @@ Vocalize is a runtime engine for building applications with as little code as po
 
 ## Notation
 
-Vocalize is notated with [YAML](http://yaml.org/), because of its brevity, readability, and interoperability with JSON.
+Vocalize type definitions are notated with [YAML](http://yaml.org/), because of its brevity, readability, and interoperability with JSON.
 
 ## Types
 

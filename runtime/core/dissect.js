@@ -1,4 +1,4 @@
-const { pipe } = require('../runtime/factories')
+const { pipe } = require('../factories')
 
 const dissect = pipe((action, next) => {
     for (const element of action) {

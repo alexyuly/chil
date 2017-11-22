@@ -1,24 +1,24 @@
 const fs = require('fs')
-const path = require('path')
+const { parse, resolve } = require('path')
 const yaml = require('js-yaml')
 const exceptions = require('./exceptions')
+const types = require('./types')
 
-const define = (pathToFile) => {
-    const file = fs.readFileSync(`${pathToFile}.yml`, 'utf8')
+const path = (name, root, branch) => (
+    branch
+        ? resolve(parse(root).dir, branch)
+        : resolve(__dirname, `./core/${name}`)
+)
+
+const define = (root) => {
+    const file = fs.readFileSync(`${root}.yml`, 'utf8')
     const definition = yaml.safeLoad(file)
-    const root = path.parse(pathToFile).dir
-    if (definition.dictionary) {
+    if (types.isGraph(definition.dictionary)) {
         for (const name in definition.dictionary) {
-            const pathToName = definition.dictionary[name]
-                ? path.resolve(root, definition.dictionary[name])
-                : path.resolve(__dirname, `../core/${name}`)
-            definition.dictionary[name] = define(pathToName)
+            definition.dictionary[name] = define(path(name, root, definition.dictionary[name]))
         }
     } else if (definition.implementation) {
-        const pathToName = definition.implementation
-            ? path.resolve(root, definition.implementation)
-            : path.resolve(__dirname, `../core/${definition.name}`)
-        definition.implementation = require(pathToName)
+        definition.implementation = require(path(definition.name, root, definition.implementation))
     } else {
         throw exceptions.operationTypeNotValid(definition.name)
     }

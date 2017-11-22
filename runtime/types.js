@@ -1,11 +1,71 @@
 const exceptions = require('./exceptions')
 
 const isGraph = (node) => typeof node === 'object' && node !== null
+const isSpecific = (type) => typeof type === 'string' || type === null
 
-const template = (tree, spec = {}, initial = spec) =>
-    Object.keys(tree).reduce(
+const construct = (definition, instance) => {
+    if (isSpecific(instance.of)) {
+        return definition
+    }
+    // TODO
+}
+
+const isApplicable = () => {
+    // TODO
+}
+
+const isEqual = (a, b) => {
+    const nativeType = typeof a
+    if (nativeType !== typeof b) {
+        return false
+    }
+    switch (nativeType) {
+        case 'number':
+        case 'string':
+        case 'boolean':
+            return a === b
+        case 'object': {
+            if (a === null) {
+                return b === null
+            }
+            for (const key in a) {
+                if (!isEqual(a[key], b[key])) {
+                    return false
+                }
+            }
+            return true
+        }
+        default:
+            throw exceptions.nativeTypeNotValid(nativeType)
+    }
+}
+
+const normalize = (valueType) => {
+    if (isSpecific(valueType)) {
+        return valueType
+    }
+    if (isGraph(valueType)) {
+        // TODO
+    }
+    throw exceptions.typeNotValid(valueType)
+}
+
+const name = (instance) => {
+    if (isSpecific(instance.of)) {
+        return instance.of
+    }
+    if (isGraph(instance.of)) {
+        for (const key in instance.of) {
+            return key
+        }
+    }
+    throw exceptions.typeNotValid(instance.of)
+}
+
+const template = (graph, spec = {}, initial = spec) =>
+    Object.keys(graph).reduce(
         (next, key) => {
-            const node = tree[key]
+            const node = graph[key]
             if (isGraph(node)) {
                 next[key] = template(
                     node,
@@ -30,36 +90,6 @@ const template = (tree, spec = {}, initial = spec) =>
         },
         initial
     )
-
-const isApplicable = () => {
-    // TODO
-}
-
-const construct = () => {
-    // TODO
-}
-
-const normalize = (valueType) => {
-    if (isGraph(valueType)) {
-        // TODO
-    }
-    if (typeof valueType === 'string' || valueType === null) {
-        return valueType
-    }
-    throw exceptions.typeNotValid(valueType)
-}
-
-const name = (instance) => {
-    if (isGraph(instance.of)) {
-        for (const key in instance.of) {
-            return key
-        }
-    }
-    if (typeof instance.of === 'string' || instance.of === null) {
-        return instance.of
-    }
-    throw exceptions.typeNotValid(instance.of)
-}
 
 const typeOf = (event) => {
     const nativeType = typeof event
@@ -88,32 +118,6 @@ const typeOf = (event) => {
                 return normalize(valueType)
             }
             return null
-        }
-        default:
-            throw exceptions.nativeTypeNotValid(nativeType)
-    }
-}
-
-const isEqual = (a, b) => {
-    const nativeType = typeof a
-    if (nativeType !== typeof b) {
-        return false
-    }
-    switch (nativeType) {
-        case 'number':
-        case 'string':
-        case 'boolean':
-            return a === b
-        case 'object': {
-            if (a === null) {
-                return b === null
-            }
-            for (const key in a) {
-                if (!isEqual(a[key], b[key])) {
-                    return false
-                }
-            }
-            return true
         }
         default:
             throw exceptions.nativeTypeNotValid(nativeType)

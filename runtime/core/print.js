@@ -1,4 +1,4 @@
-const { pipe } = require('../runtime/factories')
+const { pipe } = require('../factories')
 
 const print = pipe((action) => console.log(action))
 

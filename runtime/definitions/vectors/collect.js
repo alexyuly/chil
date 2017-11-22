@@ -1,4 +1,4 @@
-const { valve } = require('../factories')
+const { valve } = require('../../factories')
 
 const collect = valve((action, state, next) => {
     (this.collection = this.collection || []).push(action)

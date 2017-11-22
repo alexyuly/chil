@@ -1,7 +1,9 @@
+const Serializable = require('../serialization/Serializable')
 const types = require('../types')
 
-class Value {
-    constructor(instance = {}) {
+class Value extends Serializable {
+    constructor(instance = {}, serialization) {
+        super(serialization)
         this.instance = instance
         this.listeners = []
     }

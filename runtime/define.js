@@ -1,7 +1,6 @@
 const fs = require('fs')
 const { parse, resolve } = require('path')
 const yaml = require('js-yaml')
-const exceptions = require('./exceptions')
 const types = require('./types')
 
 const path = (name, root, branch) => {
@@ -18,10 +17,8 @@ const define = (root) => {
         for (const name in definition.dictionary) {
             definition.dictionary[name] = define(path(name, root, definition.dictionary[name]))
         }
-    } else if (definition.implementation) {
-        definition.implementation = require(path(definition.name, root, definition.implementation))
     } else {
-        throw exceptions.operationTypeNotValid(definition.name)
+        definition.implementation = require(path(definition.name, root, definition.implementation))
     }
     return definition
 }

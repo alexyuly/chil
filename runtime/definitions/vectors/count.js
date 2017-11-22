@@ -1,4 +1,4 @@
-const { pipe } = require('../factories')
+const { pipe } = require('../../factories')
 
 const count = pipe((action, next) => next(action.length))
 

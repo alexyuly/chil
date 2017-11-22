@@ -1,4 +1,4 @@
-const { valve } = require('../factories')
+const { valve } = require('../../factories')
 
 const add = valve((action, state, next) => next(action + state))
 

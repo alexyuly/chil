@@ -1,8 +1,8 @@
 name: map
 dictionary:
-    collect:
-    count:
-    dissect:
+    vectors/count:
+    vectors/dissect:
+    vectors/collect:
 generic:
     Input Type:
     Output Type:
@@ -19,14 +19,14 @@ values:
             dissect: feed
 operations:
     count:
-        of: count
+        of: vectors/count
         to: { collect: seed }
     dissect:
-        of: { dissect: { Value Type: Input Type } }
+        of: { vectors/dissect: { Value Type: Input Type } }
         to: { operation: feed }
     operation:
         of: Operation Type
         to: { collect: feed }
     collect:
-        of: { collect: { Value Type: Output Type } }
+        of: { vectors/collect: { Value Type: Output Type } }
         to: -

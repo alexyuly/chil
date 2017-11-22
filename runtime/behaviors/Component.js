@@ -3,8 +3,8 @@ const exceptions = require('../exceptions')
 const types = require('../types')
 
 class Component extends Operation {
-    constructor(definition, instance) {
-        super(definition, instance)
+    constructor(definition, instance, serialization) {
+        super(definition, instance, serialization)
         this.constructValues()
         this.constructOperations()
         for (const value of this.values) {

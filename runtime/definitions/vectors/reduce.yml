@@ -1,9 +1,9 @@
 name: reduce
 dictionary:
-    collect:
-    count:
-    dissect:
-    last:
+    vectors/count:
+    vectors/dissect:
+    vectors/collect:
+    vectors/last:
 generic:
     Input Type:
     Output Type:
@@ -25,10 +25,10 @@ values:
             dissect: feed
 operations:
     count:
-        of: count
+        of: vectors/count
         to: { collect: seed }
     dissect:
-        of: { dissect: { Value Type: Input Type } }
+        of: { vectors/dissect: { Value Type: Input Type } }
         to: { operation: feed }
     operation:
         of: Operation Type
@@ -36,8 +36,8 @@ operations:
             operation: seed
             collect: feed
     collect:
-        of: { collect: { Value Type: Output Type } }
+        of: { vectors/collect: { Value Type: Output Type } }
         to: { last: feed }
     last:
-        of: { last: Output Type }
+        of: { vectors/last: Output Type }
         to: -

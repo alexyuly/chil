@@ -1,5 +1,5 @@
-const { pipe } = require('../../factories')
+const { store } = require('../../factories')
 
-const intersect = pipe((action, next) => next(action))
+const intersect = store(({ state, next }, action) => next(action && state))
 
 module.exports = intersect

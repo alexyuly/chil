@@ -1,2 +1,3 @@
 name: prepend
+dictionary: { string/abstract/mapping: }
 is: string/abstract/mapping

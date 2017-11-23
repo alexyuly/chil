@@ -1,5 +1,5 @@
-const { valve } = require('../../factories')
+const { store } = require('../../factories')
 
-const add = valve((action, state, next) => next(action + state))
+const add = store(({ state, next }, action) => next(action + state))
 
 module.exports = add

@@ -1,4 +1,5 @@
 name: collect
+dictionary: { vector/abstract/collection: }
 generic: { Value Type: }
 is:
     vector/abstract/collection:

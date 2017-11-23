@@ -1,5 +1,5 @@
 const { pipe } = require('../../factories')
 
-const count = pipe((action, next) => next(action.length))
+const count = pipe(({ next }, action) => next(action.length))
 
 module.exports = count

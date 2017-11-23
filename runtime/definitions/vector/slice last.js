@@ -1,6 +1,6 @@
 const { pipe } = require('../../factories')
 
-const slice_last = pipe((action, next) => {
+const slice_last = pipe(({ next }, action) => {
     if (action.length > 0) {
         next(action[action.length - 1])
     }

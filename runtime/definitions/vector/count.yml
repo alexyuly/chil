@@ -1,4 +1,5 @@
 name: count
+dictionary: { vector/abstract/reduction: }
 is:
     vector/abstract/reduction:
         Input Type:

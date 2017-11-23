@@ -1,5 +1,6 @@
 name: reduction
 abstract: true
+dictionary: { any/abstract/mapping: }
 generic:
     Input Type:
     Output Type:

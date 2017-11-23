@@ -1,5 +1,5 @@
 const { pipe } = require('../../factories')
 
-const negate = pipe((action, next) => next(-action))
+const negate = pipe(({ next }, action) => next(-action))
 
 module.exports = negate

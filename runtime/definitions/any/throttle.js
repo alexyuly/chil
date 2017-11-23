@@ -1,5 +1,9 @@
-const { timer } = require('../../factories')
+const { batch } = require('../../factories')
 
-const throttle = timer((queue, next) => next(queue.shift()))
+const throttle = batch(({ queue, next }) => {
+    if (queue.length > 0) {
+        next(queue.shift())
+    }
+})
 
 module.exports = throttle

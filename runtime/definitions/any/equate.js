@@ -1,7 +1,7 @@
-const { valve } = require('../../factories')
+const { store } = require('../../factories')
 const types = require('../../types')
 
-const equate = valve((action, state, next) => {
+const equate = store(({ state, next }, action) => {
     if (types.compareEvents(action, state)) {
         next(action)
     }

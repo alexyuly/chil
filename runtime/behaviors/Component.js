@@ -41,7 +41,7 @@ class Component extends Operation {
     }
 
     operation(definition, instance) {
-        if (types.isGraph(definition.dictionary)) {
+        if (types.isGraph(definition.operations)) {
             return new Component(definition, instance)
         }
         if (typeof definition.implementation === 'function') {

@@ -1,6 +1,6 @@
-const { valve } = require('../../factories')
+const { store } = require('../../factories')
 
-const collect = valve((action, state, next) => {
+const collect = store(({ state, next }, action) => {
     (this.collection = this.collection || []).push(action)
     while (this.collection.length >= state) {
         next(this.collection.splice(0, state))

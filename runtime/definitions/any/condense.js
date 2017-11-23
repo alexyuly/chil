@@ -1,5 +1,9 @@
-const { timer } = require('../../factories')
+const { batch } = require('../../factories')
 
-const condense = timer((queue, next) => next(queue.splice(0).shift()))
+const condense = batch(({ queue, next }) => {
+    if (queue.length > 0) {
+        next(queue.splice(0).shift())
+    }
+})
 
 module.exports = condense

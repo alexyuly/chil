@@ -1,2 +1,3 @@
 name: differ
+dictionary: { any/abstract/arithmetic: }
 is: any/abstract/arithmetic

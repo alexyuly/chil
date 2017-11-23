@@ -1,4 +1,5 @@
 name: dissect
+dictionary: { vector/abstract/reduction: }
 generic: { Value Type: }
 is:
     vector/abstract/reduction:

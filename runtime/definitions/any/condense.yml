@@ -1,2 +1,3 @@
 name: condense
+dictionary: { any/abstract/timing: }
 is: any/abstract/timing

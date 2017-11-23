@@ -3,7 +3,8 @@ dictionary:
     vector/count:
     vector/dissect:
     vector/collect:
-    vector/pop:
+    vector/slice last:
+    vector/reduction:
 generic:
     Input Type:
     Output Type:
@@ -39,7 +40,7 @@ operations:
             collect: feed
     collect:
         of: { vector/collect: { Value Type: Output Type } }
-        to: { pop: feed }
-    pop:
-        of: { vector/pop: Output Type }
+        to: { slice last: feed }
+    slice last:
+        of: { vector/slice last: Output Type }
         to: -

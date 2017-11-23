@@ -1,2 +1,3 @@
 name: append
+dictionary: { string/abstract/mapping: }
 is: string/abstract/mapping

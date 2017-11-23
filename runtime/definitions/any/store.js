@@ -1,5 +1,3 @@
-const { valve } = require('../../factories')
+const { store } = require('../../factories')
 
-const store = valve((action, state, next) => next(state))
-
-module.exports = store
+module.exports = store(({ next, state }) => next(state))

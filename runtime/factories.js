@@ -1,24 +1,13 @@
 const Operation = require('./behaviors/Operation')
 
-const pipe = (reduce) => class extends Operation {
-    constructor(definition, instance) {
-        super(definition, instance)
-        this.constructValues({
-            feed: (action) => {
-                reduce(action, this.next)
-            },
-        })
-    }
-}
-
-const timer = (reduce) => class extends Operation {
+const batch = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
         this.queue = []
         this.constructValues({
             seed: (rate) => {
                 clearInterval(this.interval)
-                this.interval = setInterval(() => reduce(this.queue, this.next), rate)
+                this.interval = setInterval(() => delegate(this), rate)
             },
             feed: (action) => {
                 this.queue.push(action)
@@ -27,23 +16,33 @@ const timer = (reduce) => class extends Operation {
     }
 }
 
-const valve = (reduce) => class extends Operation {
+const pipe = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
-        this.queue = []
+        this.constructValues({
+            feed: (action) => {
+                delegate(this, action)
+            },
+        })
+    }
+}
+
+const store = (delegate) => class extends Operation {
+    constructor(definition, instance) {
+        super(definition, instance)
+        this.backlog = []
         this.constructValues({
             seed: (state) => {
                 this.state = state
-                while (this.queue.length > 0) {
-                    const action = this.queue.shift()
-                    reduce(action, this.state, this.next)
+                while (this.backlog.length > 0) {
+                    delegate(this, this.backlog.shift())
                 }
             },
             feed: (action) => {
                 if (this.state === undefined) {
-                    this.queue.push(action)
+                    this.backlog.push(action)
                 } else {
-                    reduce(action, this.state, this.next)
+                    delegate(this, action)
                 }
             },
         })
@@ -51,7 +50,7 @@ const valve = (reduce) => class extends Operation {
 }
 
 module.exports = {
+    batch,
     pipe,
-    timer,
-    valve,
+    store,
 }

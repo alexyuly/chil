@@ -1,5 +1,5 @@
 const { pipe } = require('../../factories')
 
-const invert = pipe((action, next) => next(!action))
+const invert = pipe(({ next }, action) => next(!action))
 
 module.exports = invert

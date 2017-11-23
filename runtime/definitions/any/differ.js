@@ -1,8 +1,8 @@
 const { store } = require('../../factories')
-const types = require('../../types')
+const events = require('../../events')
 
 const differ = store(({ state, next }, action) => {
-    if (!types.compareEvents(action, state)) {
+    if (!events.compare(action, state)) {
         next(action)
     }
 })

@@ -1,8 +1,8 @@
-const types = require('./types')
+const replace = require('./replace')
 
-describe('types', () => {
-    it('replace', () => {
-        expect(types.replace({
+describe('replace', () => {
+    it('iteratively replaces values which reference keys', () => {
+        expect(replace({
             A: null,
             B: {
                 BA: 'A',

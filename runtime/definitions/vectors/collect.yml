@@ -1,6 +1,0 @@
-name: collect
-generic: { Value Type: }
-of: { vector: Value Type }
-values:
-    seed: { of: number }
-    feed: { of: Value Type }

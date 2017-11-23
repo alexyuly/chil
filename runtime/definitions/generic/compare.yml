@@ -1,6 +1,0 @@
-name: compare
-generic: { Value Type: }
-of: Value Type
-values:
-    seed: { of: Value Type }
-    feed: { of: Value Type }

@@ -1,0 +1,6 @@
+name: dissect
+generic: { Value Type: }
+is:
+    vector/abstract/reduction:
+        Input Type: Value Type
+        Output Type: Value Type

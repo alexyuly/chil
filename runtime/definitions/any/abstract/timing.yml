@@ -1,0 +1,6 @@
+name: timing
+abstract: true
+of:
+values:
+    seed: { of: number }
+    feed: { of: }

@@ -1,0 +1,5 @@
+name: mapping
+is:
+    any/abstract/mapping:
+        Input Type: boolean
+        Output Type: boolean

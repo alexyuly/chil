@@ -1,5 +1,0 @@
-name: multiply
-of: number
-values:
-    seed: { of: number }
-    feed: { of: number }

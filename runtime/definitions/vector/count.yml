@@ -1,0 +1,5 @@
+name: count
+is:
+    vector/abstract/reduction:
+        Input Type:
+        Output Type: number

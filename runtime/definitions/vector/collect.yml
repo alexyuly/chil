@@ -1,0 +1,6 @@
+name: collect
+generic: { Value Type: }
+is:
+    vector/abstract/collection:
+        Seed Type: number
+        Feed Type: { vector: Value Type }

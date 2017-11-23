@@ -1,4 +1,0 @@
-name: dissect
-generic: { Value Type: }
-of: Value Type
-values: { feed: { of: { vector: Value Type } } }

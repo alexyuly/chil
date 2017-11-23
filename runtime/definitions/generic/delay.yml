@@ -1,5 +1,0 @@
-name: delay
-of:
-values:
-    seed: { of: number }
-    feed: { of: }

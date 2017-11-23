@@ -1,0 +1,9 @@
+name: reduction
+abstract: true
+generic:
+    Input Type:
+    Output Type:
+is:
+    any/abstract/mapping:
+        Input Type: { vector: Input Type }
+        Output Type: Output Type

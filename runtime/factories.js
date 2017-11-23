@@ -11,6 +11,22 @@ const pipe = (reduce) => class extends Operation {
     }
 }
 
+const timer = (reduce) => class extends Operation {
+    constructor(definition, instance) {
+        super(definition, instance)
+        this.queue = []
+        this.constructValues({
+            seed: (rate) => {
+                clearInterval(this.interval)
+                this.interval = setInterval(() => reduce(this.queue, this.next), rate)
+            },
+            feed: (action) => {
+                this.queue.push(action)
+            },
+        })
+    }
+}
+
 const valve = (reduce) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
@@ -36,5 +52,6 @@ const valve = (reduce) => class extends Operation {
 
 module.exports = {
     pipe,
+    timer,
     valve,
 }

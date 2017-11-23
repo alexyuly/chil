@@ -1,5 +1,0 @@
-name: add
-of: number
-values:
-    seed: { of: number }
-    feed: { of: number }

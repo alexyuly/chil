@@ -1,0 +1,7 @@
+name: mapping
+abstract: true
+generic:
+    Input Type:
+    Output Type:
+of: Output Type
+values: { feed: { of: Input Type } }

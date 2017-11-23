@@ -1,3 +1,0 @@
-name: count
-of: number
-values: { feed: { of: { vector: } } }

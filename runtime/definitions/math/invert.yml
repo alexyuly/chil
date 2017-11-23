@@ -1,3 +1,0 @@
-name: invert
-of: number
-values: { feed: { of: number } }

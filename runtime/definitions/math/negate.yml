@@ -1,3 +1,0 @@
-name: negate
-of: number
-values: { feed: { of: number } }

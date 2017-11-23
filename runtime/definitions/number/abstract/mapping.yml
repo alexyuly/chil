@@ -1,0 +1,5 @@
+name: mapping
+is:
+    any/abstract/mapping:
+        Input Type: number
+        Output Type: number

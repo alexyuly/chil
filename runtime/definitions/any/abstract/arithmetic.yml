@@ -1,0 +1,7 @@
+name: arithmetic
+abstract: true
+generic: Value Type
+of: Value Type
+values:
+    seed: { of: Value Type }
+    feed: { of: Value Type }

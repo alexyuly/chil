@@ -1,0 +1,7 @@
+name: mapping
+abstract: true
+generic: { Value Type: }
+is:
+    any/abstract/mapping:
+        Input Type: { vector: Value Type }
+        Output Type: { vector: Value Type }

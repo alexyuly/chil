@@ -1,16 +1,16 @@
 const Value = require('./Value')
-const definitions = require('../definitions')
 const exceptions = require('../exceptions')
-const graph = require('../graph')
+const { construct } = require('../construct')
+const { isGraph } = require('../utility')
 
 class Operation extends Value {
     constructor(definition, instance = { of: definition.name }, serialization) {
         super(instance, serialization)
-        this.definition = definitions.construct(definition, instance)
+        this.definition = construct(definition, instance)
     }
 
     constructValues(delegates = {}) {
-        if (!graph(this.definition.values)) {
+        if (!isGraph(this.definition.values)) {
             throw exceptions.operationTypeNotValid(this.definition.name)
         }
         this.values = {}

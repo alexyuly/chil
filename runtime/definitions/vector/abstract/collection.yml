@@ -1,9 +1,0 @@
-name: collect
-abstract: true
-generic:
-    Seed Type:
-    Feed Type:
-of: { vector: Feed Type }
-values:
-    seed: { of: Seed Type }
-    feed: { of: Feed Type }

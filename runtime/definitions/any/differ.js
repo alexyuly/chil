@@ -1,9 +1,10 @@
 const { store } = require('../../factories')
 const events = require('../../events')
 
-const differ = store(({ state, next }, action) => {
-    if (!events.compare(action, state)) {
-        next(action)
+const differ = store((operation) => {
+    const action = operation.queue.shift()
+    if (!events.compare(action, operation.state)) {
+        operation.next(action)
     }
 })
 

@@ -1,0 +1,9 @@
+name: aggregate
+parameters: { Type: { any/abstract/gate: } }
+is: Type
+operations:
+    operate:
+        of: Type
+        to:
+            operate: set state
+            aggregate:

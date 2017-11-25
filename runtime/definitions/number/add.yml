@@ -1,3 +1,2 @@
 name: add
-dictionary: { number/abstract/arithmetic: }
-is: number/abstract/arithmetic
+is: { any/abstract/arithmetic: { Type: number } }

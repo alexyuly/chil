@@ -1,7 +1,7 @@
 const Operation = require('./Operation')
 const exceptions = require('../exceptions')
-const graph = require('../graph')
-const types = require('../types')
+const { nameOf } = require('../types')
+const { isGraph } = require('../utility')
 
 class Component extends Operation {
     constructor(definition, instance, serialization) {
@@ -17,7 +17,7 @@ class Component extends Operation {
     }
 
     connectValue(value) {
-        if (!graph(value.instance.to)) {
+        if (!isGraph(value.instance.to)) {
             throw exceptions.componentValueNotValid(this.definition.name, value.instance)
         }
         for (const key in value.instance.to) {
@@ -30,19 +30,19 @@ class Component extends Operation {
     }
 
     constructOperations() {
-        if (!graph(this.definition.operations)) {
+        if (!isGraph(this.definition.operations)) {
             throw exceptions.componentTypeNotValid(this.definition.name)
         }
         this.operations = { null: this }
         for (const key in this.definition.operations) {
             const instance = this.definition.operations[key]
-            const definition = this.definition.dictionary[types.nameOf(instance.of)]
+            const definition = this.definition.dictionary[nameOf(instance.of)]
             this.operations[key] = this.operation(definition, instance)
         }
     }
 
     operation(definition, instance) {
-        if (graph(definition.operations)) {
+        if (isGraph(definition.operations)) {
             return new Component(definition, instance)
         }
         if (typeof definition.implementation === 'function') {

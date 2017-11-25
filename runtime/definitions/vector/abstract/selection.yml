@@ -1,0 +1,6 @@
+name: selection
+parameters: { Type: }
+is:
+    any/abstract/mapping:
+        Input Type: { vector: Type }
+        Output Type: Type

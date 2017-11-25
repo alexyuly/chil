@@ -1,8 +1,8 @@
 const { batch } = require('../../factories')
 
-const condense = batch(({ queue, next }) => {
-    if (queue.length > 0) {
-        next(queue.splice(0).shift())
+const condense = batch((operation) => {
+    if (operation.queue.length > 0) {
+        operation.next(operation.queue.splice(0).shift())
     }
 })
 

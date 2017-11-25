@@ -1,6 +1,0 @@
-name: mapping
-dictionary: { any/abstract/mapping: }
-is:
-    any/abstract/mapping:
-        Input Type: boolean
-        Output Type: boolean

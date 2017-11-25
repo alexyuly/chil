@@ -1,5 +1,6 @@
 const Serializable = require('../serialization/Serializable')
-const types = require('../types')
+const { assertApplicable } = require('../types')
+const { typeOf } = require('../events')
 
 class Value extends Serializable {
     constructor(instance = {}, serialization) {
@@ -9,12 +10,12 @@ class Value extends Serializable {
     }
 
     connect(value) {
-        types.assertApplicable(this.instance.of, value.instance.of)
+        assertApplicable(this.instance.of, value.instance.of)
         this.listeners.push(value)
     }
 
     next(event) {
-        types.assertApplicable(types.typeOf(event), this.instance.of)
+        assertApplicable(typeOf(event), this.instance.of)
         for (const listener of this.listeners) {
             listener.next(event)
         }

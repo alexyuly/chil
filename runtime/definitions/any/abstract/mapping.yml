@@ -1,7 +1,6 @@
 name: mapping
-abstract: true
-generic:
+parameters:
     Input Type:
     Output Type:
 of: Output Type
-values: { feed: { of: Input Type } }
+values: { dispatch: { of: Input Type } }

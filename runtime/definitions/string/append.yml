@@ -1,3 +1,2 @@
 name: append
-dictionary: { string/abstract/mapping: }
-is: string/abstract/mapping
+is: { any/abstract/arithmetic: { Type: string } }

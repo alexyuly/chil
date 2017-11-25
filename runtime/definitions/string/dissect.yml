@@ -1,3 +1,2 @@
 name: dissect
-dictionary: { string/abstract/mapping: }
-is: string/abstract/mapping
+is: { any/abstract/inversion: { Type: string } }

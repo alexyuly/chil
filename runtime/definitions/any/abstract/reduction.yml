@@ -1,0 +1,4 @@
+name: reduction
+parameters: { State Type: }
+is: any/abstract/mapping
+values: { set state: { of: State Type } }

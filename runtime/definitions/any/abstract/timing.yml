@@ -1,6 +1,5 @@
 name: timing
-abstract: true
-of:
-values:
-    seed: { of: number }
-    feed: { of: }
+is:
+    any/abstract/gate:
+        State Type: number
+        Action Type:

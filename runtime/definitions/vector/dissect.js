@@ -1,8 +1,8 @@
 const { pipe } = require('../../factories')
 
-const dissect = pipe(({ next }, action) => {
+const dissect = pipe((operation, action) => {
     for (const element of action) {
-        next(element)
+        operation.next(element)
     }
 })
 

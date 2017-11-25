@@ -1,5 +1,0 @@
-name: arithmetic
-dictionary: { any/abstract/arithmetic: }
-is:
-    any/abstract/arithmetic:
-        Value Type: number

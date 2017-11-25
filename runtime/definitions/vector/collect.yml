@@ -1,7 +1,7 @@
 name: collect
-dictionary: { vector/abstract/collection: }
-generic: { Value Type: }
+parameters: { Type: }
 is:
-    vector/abstract/collection:
-        Seed Type: number
-        Feed Type: { vector: Value Type }
+    any/abstract/reduction:
+        State Type: number
+        Input Type: Type
+        Output Type: { vector: Type }

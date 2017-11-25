@@ -1,8 +1,8 @@
 const { batch } = require('../../factories')
 
-const throttle = batch(({ queue, next }) => {
-    if (queue.length > 0) {
-        next(queue.shift())
+const throttle = batch((operation) => {
+    if (operation.queue.length > 0) {
+        operation.next(operation.queue.shift())
     }
 })
 

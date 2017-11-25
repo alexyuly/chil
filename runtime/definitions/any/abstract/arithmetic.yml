@@ -1,7 +1,6 @@
 name: arithmetic
-abstract: true
-generic: Value Type
-of: Value Type
-values:
-    seed: { of: Value Type }
-    feed: { of: Value Type }
+parameters: { Type: }
+is:
+    any/abstract/gate:
+        State Type: Type
+        Action Type: Type

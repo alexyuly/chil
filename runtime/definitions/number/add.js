@@ -1,5 +1,5 @@
 const { store } = require('../../factories')
 
-const add = store(({ state, next }, action) => next(action + state))
+const add = store((operation) => operation.next(operation.queue.shift() + operation.state))
 
 module.exports = add

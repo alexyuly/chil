@@ -1,6 +1,6 @@
 name: store
-generic: { Value Type: }
-of: Value Type
-values:
-    seed: { of: Value Type }
-    feed: { of: }
+parameters: { Type: }
+is:
+    any/abstract/gate:
+        State Type: Type
+        Action Type:

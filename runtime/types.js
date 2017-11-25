@@ -1,5 +1,5 @@
 const exceptions = require('./exceptions')
-const graph = require('./graph')
+const { isGraph } = require('./utility')
 
 const assertApplicable = (type, domain) => {
     const isNotApplicable = () => {
@@ -16,7 +16,7 @@ const nameOf = (type) => {
     if (isSpecific(type)) {
         return type
     }
-    if (graph(type)) {
+    if (isGraph(type)) {
         for (const key in type) {
             return key
         }
@@ -25,12 +25,15 @@ const nameOf = (type) => {
 }
 
 const parametersOf = (type) => {
-    if (graph(type)) {
+    if (isSpecific(type)) {
+        return undefined
+    }
+    if (isGraph(type)) {
         for (const key in type) {
             return type[key]
         }
     }
-    return undefined
+    throw exceptions.typeNotValid(type)
 }
 
 module.exports = {

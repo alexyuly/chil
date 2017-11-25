@@ -1,7 +1,7 @@
 const { store } = require('../../factories')
 
-const delay = store(({ state, next }, action) => {
-    setTimeout(() => next(action), state)
+const delay = store((operation) => {
+    setTimeout(() => operation.next(operation.queue.shift()), operation.state)
 })
 
 module.exports = delay

@@ -1,0 +1,9 @@
+name: gate
+parameters:
+    State Type:
+    Action Type:
+is:
+    any/abstract/reduction:
+        State Type: State Type
+        Input Type: Action Type
+        Output Type: Action Type

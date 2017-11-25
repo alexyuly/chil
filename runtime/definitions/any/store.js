@@ -1,3 +1,3 @@
 const { store } = require('../../factories')
 
-module.exports = store(({ next, state }) => next(state))
+module.exports = store((operation) => operation.next(operation.state))

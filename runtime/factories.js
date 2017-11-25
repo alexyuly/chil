@@ -5,11 +5,11 @@ const batch = (delegate) => class extends Operation {
         super(definition, instance)
         this.queue = []
         this.constructValues({
-            seed: (rate) => {
+            'set state': (rate) => {
                 clearInterval(this.interval)
                 this.interval = setInterval(() => delegate(this), rate)
             },
-            feed: (action) => {
+            dispatch: (action) => {
                 this.queue.push(action)
             },
         })
@@ -20,7 +20,7 @@ const pipe = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
         this.constructValues({
-            feed: (action) => {
+            dispatch: (action) => {
                 delegate(this, action)
             },
         })
@@ -30,19 +30,18 @@ const pipe = (delegate) => class extends Operation {
 const store = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
-        this.backlog = []
+        this.queue = []
         this.constructValues({
-            seed: (state) => {
+            'set state': (state) => {
                 this.state = state
-                while (this.backlog.length > 0) {
-                    delegate(this, this.backlog.shift())
+                while (this.queue.length > 0) {
+                    delegate(this)
                 }
             },
-            feed: (action) => {
-                if (this.state === undefined) {
-                    this.backlog.push(action)
-                } else {
-                    delegate(this, action)
+            dispatch: (action) => {
+                this.queue.push(action)
+                if (this.state !== undefined) {
+                    delegate(this)
                 }
             },
         })

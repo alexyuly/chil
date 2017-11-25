@@ -1,7 +1,2 @@
 name: dissect
-dictionary: { vector/abstract/reduction: }
-generic: { Value Type: }
-is:
-    vector/abstract/reduction:
-        Input Type: Value Type
-        Output Type: Value Type
+is: vector/abstract/selection

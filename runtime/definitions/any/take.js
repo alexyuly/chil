@@ -1,8 +1,8 @@
 const { store } = require('../../factories')
 
-const take = store((operation, action) => {
+const take = store((operation) => {
     if (operation.state-- > 0) {
-        operation.next(action)
+        operation.next(operation.queue.shift())
     }
 })
 

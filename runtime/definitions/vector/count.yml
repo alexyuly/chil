@@ -1,6 +1,5 @@
 name: count
-dictionary: { vector/abstract/reduction: }
 is:
-    vector/abstract/reduction:
-        Input Type:
+    any/abstract/mapping:
+        Input Type: { vector: }
         Output Type: number

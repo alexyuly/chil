@@ -1,5 +1,0 @@
-name: mapping
-is:
-    any/abstract/mapping:
-        Input Type: string
-        Output Type: string

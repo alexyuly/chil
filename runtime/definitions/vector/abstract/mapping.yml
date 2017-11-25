@@ -1,8 +1,0 @@
-name: mapping
-abstract: true
-dictionary: { any/abstract/mapping: }
-generic: { Value Type: }
-is:
-    any/abstract/mapping:
-        Input Type: { vector: Value Type }
-        Output Type: { vector: Value Type }

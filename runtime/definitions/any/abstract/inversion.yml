@@ -1,6 +1,0 @@
-name: inversion
-parameters: { Type: }
-is:
-    any/abstract/mapping:
-        Input Type: Type
-        Output Type: Type

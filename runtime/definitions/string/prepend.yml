@@ -1,2 +1,2 @@
 name: prepend
-is: { any/abstract/arithmetic: { Type: string } }
+is: string/abstract/concatenation

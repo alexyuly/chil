@@ -1,4 +1,4 @@
-name: reduction
+name: store
 parameters: { State Type: }
-is: any/abstract/mapping
+is: any/abstract/pipe
 values: { set state: { of: State Type } }

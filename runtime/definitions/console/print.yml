@@ -1,2 +1,2 @@
 name: print
-values: { dispatch: { of: } }
+is: { any/abstract/sink: }

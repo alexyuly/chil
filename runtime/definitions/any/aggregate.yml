@@ -1,5 +1,5 @@
 name: aggregate
-parameters: { Type: { any/abstract/gate: } }
+parameters: { Type: { any/abstract/reducer: } }
 is: Type
 operations:
     operate:

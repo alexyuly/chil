@@ -85,7 +85,7 @@
         "max-depth": "error",
         "max-len": [
             "error",
-            100
+            120
         ],
         "max-lines": "error",
         "max-nested-callbacks": "error",

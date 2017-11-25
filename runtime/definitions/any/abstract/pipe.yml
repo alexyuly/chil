@@ -1,0 +1,4 @@
+name: pipe
+parameters: { Output Type: }
+is: any/abstract/sink
+of: Output Type

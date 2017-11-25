@@ -1,0 +1,3 @@
+name: sink
+parameters: { Type: }
+values: { dispatch: { of: Type } }

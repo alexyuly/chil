@@ -1,6 +1,6 @@
 name: selection
 parameters: { Type: }
 is:
-    any/abstract/mapping:
+    any/abstract/pipe:
         Input Type: { vector: Type }
         Output Type: Type

@@ -1,2 +1,2 @@
 name: negate
-is: { any/abstract/inversion: { Type: number } }
+is: { any/abstract/mapping: { Type: number } }

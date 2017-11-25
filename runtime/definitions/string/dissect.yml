@@ -1,2 +1,2 @@
 name: dissect
-is: { any/abstract/inversion: { Type: string } }
+is: { any/abstract/mapping: { Type: string } }

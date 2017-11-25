@@ -1,2 +1,2 @@
 name: invert
-is: { any/abstract/inversion: { Type: boolean } }
+is: { any/abstract/mapping: { Type: boolean } }

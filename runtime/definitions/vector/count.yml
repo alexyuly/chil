@@ -1,5 +1,5 @@
 name: count
 is:
-    any/abstract/mapping:
+    any/abstract/pipe:
         Input Type: { vector: }
         Output Type: number

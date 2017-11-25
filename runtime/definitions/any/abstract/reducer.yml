@@ -1,4 +1,4 @@
-name: gate
+name: reducer
 parameters:
     State Type:
     Action Type:
@@ -6,4 +6,4 @@ is:
     any/abstract/store:
         State Type: State Type
         Input Type: Action Type
-        Output Type: Action Type
+        Output Type: State Type

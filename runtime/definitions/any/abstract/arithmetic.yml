@@ -1,6 +1,6 @@
 name: arithmetic
 parameters: { Type: }
 is:
-    any/abstract/gate:
+    any/abstract/reducer:
         State Type: Type
         Action Type: Type

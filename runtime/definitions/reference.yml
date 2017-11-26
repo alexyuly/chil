@@ -1,8 +1,21 @@
+###################################################
+## Vocalize operation definition quick reference ##
+###################################################
+
 name: the locally scoped name of this operation
-implementation: (a relative File System path which references) a Node.js module with a default export which is a subclass of Operation (by default, ./{name})
-dependencies: a map of locally scoped type names to (relative File System paths which reference) type definitions
-parameters: a map of locally scoped type aliases to domains of type parameters required to construct this operation
-is: the base type definition for this operation, which may optionally include specific type parameters
-of: the value type for this operation's sink
-values: a map of locally scoped names to value types to construct and inter-connect for this operation's sources
-operations: a map of locally scoped names to types of operations to construct and inter-connect for a component
+
+# type construction prerequisites
+dependencies: a map of locally scoped names to relative File System paths which reference definitions required to construct an instance of this operation
+parameters: a map of locally scoped type aliases to domains of type parameters required to construct an instance of this operation
+
+# defines the base definition, which MUST NOT be deeply overridden by this definition or an exception will be thrown
+is: the base definition for this operation, which may optionally include specific type parameters
+
+# defines the type of a Value ("sink"):
+of: a value type instance to construct
+
+# defines the type of an Operation in terms of Value instances ("sources"):
+values: a map of locally scoped names to value type instances to construct and inter-connect
+
+# defines the type of a Component in terms of Operation instances:
+operations: a map of locally scoped names to operation type instances to construct and inter-connect for a component

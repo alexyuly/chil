@@ -33,7 +33,6 @@
         "block-scoped-var": "error",
         "block-spacing": "error",
         "brace-style": "error",
-        "capitalized-comments": "error",
         "comma-dangle": [
             "error",
             "always-multiline"
@@ -91,7 +90,6 @@
         "max-nested-callbacks": "error",
         "max-params": "error",
         "max-statements-per-line": "error",
-        "multiline-comment-style": "error",
         "multiline-ternary": "error",
         "new-parens": "error",
         "newline-after-var": "off",
@@ -268,7 +266,12 @@
             "error",
             "never"
         ],
-        "valid-jsdoc": "error",
+        "valid-jsdoc": [
+            "error",
+            {
+                "requireReturn": false
+            }
+        ],
         "vars-on-top": "error",
         "wrap-iife": "error",
         "wrap-regex": "error",

@@ -10,35 +10,41 @@ const assertApplicable = (type, domain) => {
     }
 }
 
-const isSpecific = (type) => typeof type === 'string'
-
-const nameOf = (type) => {
-    if (isSpecific(type)) {
-        return type
+const branch = ({ type, specific, generic }) => {
+    if (typeof type === 'string') {
+        return specific()
     }
     if (isGraph(type)) {
+        return generic()
+    }
+    throw exceptions.typeNotValid(type)
+}
+
+const nameOf = (type) => branch({
+    type,
+    specific: () => type,
+    generic: () => {
         for (const key in type) {
             return key
         }
-    }
-    throw exceptions.typeNotValid(type)
-}
-
-const parametersOf = (type) => {
-    if (isSpecific(type)) {
         return undefined
-    }
-    if (isGraph(type)) {
+    },
+})
+
+const parametersOf = (type) => branch({
+    type,
+    specific: () => undefined,
+    generic: () => {
         for (const key in type) {
             return type[key]
         }
-    }
-    throw exceptions.typeNotValid(type)
-}
+        return undefined
+    },
+})
 
 module.exports = {
     assertApplicable,
-    isSpecific,
+    branch,
     nameOf,
     parametersOf,
 }

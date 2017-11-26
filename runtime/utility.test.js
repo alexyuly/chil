@@ -1,4 +1,4 @@
-const { replace } = require('./construct')
+const { replace } = require('./utility')
 
 describe('replace', () => {
     it('iteratively replaces values which reference keys', () => {

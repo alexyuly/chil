@@ -8,35 +8,34 @@ class Component extends Operation {
         super(definition, instance, serialization)
         this.constructValues()
         this.constructOperations()
-        for (const value of this.values) {
-            this.connectValue(value)
-        }
-        for (const operation of this.operations) {
-            this.connectValue(operation)
-        }
+        this.connectValues(this.values)
+        this.connectValues(this.operations)
     }
 
-    connectValue(value) {
-        if (!isGraph(value.instance.to)) {
-            throw exceptions.componentValueNotValid(this.definition.name, value.instance)
-        }
-        for (const key in value.instance.to) {
-            const connection = value.instance.to[key]
-            const target = connection
-                ? this.operations[key].values[connection]
-                : this.operations[key]
-            value.connect(target)
+    connectValues(values) {
+        for (const key in values) {
+            const value = values[key]
+            if (!isGraph(value.instance.to)) {
+                throw exceptions.componentValueNotConnected(this.definition, key)
+            }
+            for (const connectedKey in value.instance.to) {
+                const connection = value.instance.to[connectedKey]
+                const target = connection
+                    ? this.operations[connectedKey].values[connection]
+                    : this.operations[connectedKey]
+                value.connect(target)
+            }
         }
     }
 
     constructOperations() {
         if (!isGraph(this.definition.operations)) {
-            throw exceptions.componentTypeNotValid(this.definition.name)
+            throw exceptions.definitionNotValid(this.definition)
         }
-        this.operations = { null: this }
+        this.operations = { [this.definition.name]: this }
         for (const key in this.definition.operations) {
             const instance = this.definition.operations[key]
-            const definition = this.definition.dictionary[nameOf(instance.of)]
+            const definition = this.definition.dependencies[nameOf(instance.of)]
             this.operations[key] = this.operation(definition, instance)
         }
     }
@@ -48,7 +47,7 @@ class Component extends Operation {
         if (typeof definition.implementation === 'function') {
             return new definition.implementation(definition, instance)
         }
-        throw exceptions.operationTypeNotValid(definition.name)
+        throw exceptions.definitionNotValid(definition)
     }
 }
 

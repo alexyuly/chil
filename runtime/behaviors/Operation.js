@@ -1,6 +1,6 @@
 const Value = require('./Value')
 const exceptions = require('../exceptions')
-const { construct } = require('../construct')
+const construct = require('../construct')
 const { isGraph } = require('../utility')
 
 class Operation extends Value {
@@ -11,7 +11,7 @@ class Operation extends Value {
 
     constructValues(delegates = {}) {
         if (!isGraph(this.definition.values)) {
-            throw exceptions.operationTypeNotValid(this.definition.name)
+            throw exceptions.definitionNotValid(this.definition)
         }
         this.values = {}
         for (const key in this.definition.values) {

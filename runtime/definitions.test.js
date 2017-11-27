@@ -1,100 +1,151 @@
 const { replaceParameters } = require('./definitions')
 
 describe('replaceParameters', () => {
-    it('iteratively replaces values which reference keys', () => {
-        expect(replaceParameters({
-            A: null,
-            B: {
-                BA: 'A',
+    const parameters = {
+        A: null,
+        B: {
+            BA: 'A',
+        },
+        C: {
+            CA: 'A',
+            CB: 'B',
+        },
+        D: {
+            DA: {
+                DB: 'C',
             },
-            C: {
-                CA: 'A',
-                CB: 'B',
-            },
-            D: {
-                DA: {
-                    DB: 'C',
+        },
+        E: [
+            'A',
+        ],
+        F: [
+            'A',
+            'B',
+        ],
+        G: [
+            [
+                'C',
+            ],
+        ],
+        H: [
+            {
+                HA: 'D',
+                HB: {
+                    HC: 'E',
                 },
             },
-            E: [
-                'A',
-            ],
-            F: [
-                'A',
-                'B',
-            ],
-            G: [
-                [
-                    'C',
-                ],
-            ],
-            H: [
-                {
-                    HA: 'D',
-                    HB: {
-                        HC: 'E',
-                    },
-                },
-            ],
-        })).toEqual({
-            A: null,
-            B: {
+        ],
+    }
+    const replacedParameters = {
+        A: null,
+        B: {
+            BA: null,
+        },
+        C: {
+            CA: null,
+            CB: {
                 BA: null,
             },
-            C: {
-                CA: null,
-                CB: {
-                    BA: null,
-                },
-            },
-            D: {
-                DA: {
-                    DB: {
-                        CA: null,
-                        CB: {
-                            BA: null,
-                        },
+        },
+        D: {
+            DA: {
+                DB: {
+                    CA: null,
+                    CB: {
+                        BA: null,
                     },
                 },
             },
-            E: [
-                null,
-            ],
-            F: [
-                null,
+        },
+        E: [
+            null,
+        ],
+        F: [
+            null,
+            {
+                BA: null,
+            },
+        ],
+        G: [
+            [
                 {
-                    BA: null,
+                    CA: null,
+                    CB: {
+                        BA: null,
+                    },
                 },
             ],
-            G: [
-                [
-                    {
-                        CA: null,
-                        CB: {
-                            BA: null,
-                        },
-                    },
-                ],
-            ],
-            H: [
-                {
-                    HA: {
-                        DA: {
-                            DB: {
-                                CA: null,
-                                CB: {
-                                    BA: null,
-                                },
+        ],
+        H: [
+            {
+                HA: {
+                    DA: {
+                        DB: {
+                            CA: null,
+                            CB: {
+                                BA: null,
                             },
                         },
                     },
-                    HB: {
-                        HC: [
-                            null,
-                        ],
-                    },
                 },
-            ],
-        })
+                HB: {
+                    HC: [
+                        null,
+                    ],
+                },
+            },
+        ],
+    }
+    it('when given no parameters, deeply replaces values which reference previous keys within a given object', () => {
+        expect(replaceParameters(parameters)).toEqual(replacedParameters)
+    })
+    it('when given parameters, deeply replaces values which reference parameter keys with parameters', () => {
+        const definition = {
+            parameters: replacedParameters,
+            is: 'C',
+            of: 'D',
+            values: {
+                x: {
+                    of: 'F',
+                },
+            },
+            operations: {
+                x: {
+                    of: 'G',
+                },
+                y: {
+                    of: 'H',
+                },
+            },
+        }
+        const parameterValues = {
+            A: 'A replacement',
+            B: 'B replacement',
+            C: 'C replacement',
+            D: 'D replacement',
+            E: 'E replacement',
+            F: 'F replacement',
+            G: 'G replacement',
+            H: 'H replacement',
+        }
+        const replacedDefinition = {
+            parameters: replacedParameters,
+            is: parameterValues.C,
+            of: parameterValues.D,
+            values: {
+                x: {
+                    of: parameterValues.F,
+                },
+            },
+            operations: {
+                x: {
+                    of: parameterValues.G,
+                },
+                y: {
+                    of: parameterValues.H,
+                },
+            },
+        }
+        expect(replaceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
     })
 })

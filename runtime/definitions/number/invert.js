@@ -1,4 +1,4 @@
-const { pipe } = require('../../factories')
+const { pipe } = require('../../factory')
 
 const invert = pipe((operation, action) => operation.next(1 / action))
 

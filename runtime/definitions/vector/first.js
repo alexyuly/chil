@@ -1,4 +1,4 @@
-const { pipe } = require('../../factories')
+const { pipe } = require('../../factory')
 
 const first = pipe((operation, action) => {
     if (action.length > 0) {

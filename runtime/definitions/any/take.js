@@ -1,4 +1,4 @@
-const { store } = require('../../factories')
+const { store } = require('../../factory')
 
 const take = store((operation) => {
     if (operation.state-- > 0) {

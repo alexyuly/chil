@@ -1,4 +1,4 @@
-const { store } = require('../../factories')
+const { store } = require('../../factory')
 
 const either = store((operation) => operation.next(operation.queue.shift() || operation.state))
 

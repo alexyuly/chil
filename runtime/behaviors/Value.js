@@ -1,6 +1,6 @@
 const Serializable = require('../serialization/Serializable')
-const { assertApplicable } = require('../types')
-const { typeOf } = require('../events')
+const { assertApplicable } = require('../type')
+const { typeOf } = require('../event')
 
 class Value extends Serializable {
     constructor(instance = {}, serialization) {

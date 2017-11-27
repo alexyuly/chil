@@ -1,4 +1,4 @@
-const exceptions = require('./exceptions')
+const exception = require('./exception')
 const { isGraph } = require('./utility')
 
 const assertApplicable = (type, domain) => {
@@ -6,7 +6,7 @@ const assertApplicable = (type, domain) => {
         // TODO
     }
     if (isNotApplicable(type, domain)) {
-        throw exceptions.typeNotApplicable(type, domain)
+        throw exception.typeNotApplicable(type, domain)
     }
 }
 
@@ -17,7 +17,7 @@ const branch = ({ type, specific, generic }) => {
     if (isGraph(type)) {
         return generic()
     }
-    throw exceptions.typeNotValid(type)
+    throw exception.typeNotValid(type)
 }
 
 const nameOf = (type) => branch({

@@ -1,5 +1,5 @@
 const Component = require('./runtime/behaviors/Component')
-const { define } = require('./runtime/definitions')
+const { define } = require('./runtime/definition')
 const run = require('./runtime/run')
 
 const path = process.argv[2]

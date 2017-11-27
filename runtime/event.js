@@ -1,4 +1,4 @@
-const exceptions = require('./exceptions')
+const exception = require('./exception')
 
 const compare = (a, b) => {
     const nativeType = typeof a
@@ -23,7 +23,7 @@ const compare = (a, b) => {
             return true
         }
         default:
-            throw exceptions.eventNotValid(a)
+            throw exception.eventNotValid(a)
     }
 }
 
@@ -57,7 +57,7 @@ const typeOf = (event) => {
             return null
         }
         default:
-            throw exceptions.eventNotValid(event)
+            throw exception.eventNotValid(event)
     }
 }
 

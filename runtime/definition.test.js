@@ -1,42 +1,7 @@
-const { replaceParameters } = require('./definitions')
+const { replaceParameters } = require('./definition')
 
 describe('replaceParameters', () => {
-    const parameters = {
-        A: null,
-        B: {
-            BA: 'A',
-        },
-        C: {
-            CA: 'A',
-            CB: 'B',
-        },
-        D: {
-            DA: {
-                DB: 'C',
-            },
-        },
-        E: [
-            'A',
-        ],
-        F: [
-            'A',
-            'B',
-        ],
-        G: [
-            [
-                'C',
-            ],
-        ],
-        H: [
-            {
-                HA: 'D',
-                HB: {
-                    HC: 'E',
-                },
-            },
-        ],
-    }
-    const replacedParameters = {
+    const parameters = () => ({
         A: null,
         B: {
             BA: null,
@@ -95,13 +60,48 @@ describe('replaceParameters', () => {
                 },
             },
         ],
-    }
+    })
     it('when given no parameters, deeply replaces values which reference previous keys within a given object', () => {
-        expect(replaceParameters(parameters)).toEqual(replacedParameters)
+        const selfReferencingParameters = {
+            A: null,
+            B: {
+                BA: 'A',
+            },
+            C: {
+                CA: 'A',
+                CB: 'B',
+            },
+            D: {
+                DA: {
+                    DB: 'C',
+                },
+            },
+            E: [
+                'A',
+            ],
+            F: [
+                'A',
+                'B',
+            ],
+            G: [
+                [
+                    'C',
+                ],
+            ],
+            H: [
+                {
+                    HA: 'D',
+                    HB: {
+                        HC: 'E',
+                    },
+                },
+            ],
+        }
+        expect(replaceParameters(selfReferencingParameters)).toEqual(parameters())
     })
     it('when given parameters, deeply replaces values which reference parameter keys with parameters', () => {
         const definition = {
-            parameters: replacedParameters,
+            parameters: parameters(),
             is: 'C',
             of: 'D',
             values: {
@@ -129,7 +129,7 @@ describe('replaceParameters', () => {
             H: 'H replacement',
         }
         const replacedDefinition = {
-            parameters: replacedParameters,
+            parameters: parameters(),
             is: parameterValues.C,
             of: parameterValues.D,
             values: {

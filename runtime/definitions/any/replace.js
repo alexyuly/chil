@@ -1,4 +1,4 @@
-const { store } = require('../../factories')
+const { store } = require('../../factory')
 
 const replace = store((operation) => {
     operation.queue.shift()

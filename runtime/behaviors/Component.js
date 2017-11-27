@@ -1,6 +1,6 @@
 const Operation = require('./Operation')
-const exceptions = require('../exceptions')
-const { nameOf } = require('../types')
+const exception = require('../exception')
+const { nameOf } = require('../type')
 const { isGraph } = require('../utility')
 
 class Component extends Operation {
@@ -16,7 +16,7 @@ class Component extends Operation {
         for (const key in values) {
             const value = values[key]
             if (!isGraph(value.instance.to)) {
-                throw exceptions.componentValueNotConnected(this.definition, key)
+                throw exception.componentValueNotConnected(this.definition, key)
             }
             for (const connectedKey in value.instance.to) {
                 const connection = value.instance.to[connectedKey]
@@ -30,7 +30,7 @@ class Component extends Operation {
 
     constructOperations() {
         if (!isGraph(this.definition.operations)) {
-            throw exceptions.definitionNotValid(this.definition)
+            throw exception.definitionNotValid(this.definition)
         }
         this.operations = { [this.definition.name]: this }
         for (const key in this.definition.operations) {
@@ -47,7 +47,7 @@ class Component extends Operation {
         if (typeof definition.implementation === 'function') {
             return new definition.implementation(definition, instance)
         }
-        throw exceptions.definitionNotValid(definition)
+        throw exception.definitionNotValid(definition)
     }
 }
 

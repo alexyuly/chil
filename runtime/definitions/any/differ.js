@@ -1,5 +1,5 @@
-const { store } = require('../../factories')
-const events = require('../../events')
+const { store } = require('../../factory')
+const events = require('../../event')
 
 const differ = store((operation) => {
     const action = operation.queue.shift()

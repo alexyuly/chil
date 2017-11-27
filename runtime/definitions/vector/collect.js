@@ -1,4 +1,4 @@
-const { store } = require('../../factories')
+const { store } = require('../../factory')
 
 module.exports = store((operation) => {
     while (operation.queue.length >= operation.state) {

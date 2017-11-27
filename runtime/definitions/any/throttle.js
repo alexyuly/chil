@@ -1,4 +1,4 @@
-const { batch } = require('../../factories')
+const { batch } = require('../../factory')
 
 const throttle = batch((operation) => {
     if (operation.queue.length > 0) {

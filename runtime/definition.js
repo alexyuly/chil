@@ -1,8 +1,8 @@
 const fs = require('fs')
 const { parse, resolve } = require('path')
 const yaml = require('js-yaml')
-const exceptions = require('./exceptions')
-const { assertApplicable, branch, nameOf, parametersOf } = require('./types')
+const exception = require('./exception')
+const { assertApplicable, branch, nameOf, parametersOf } = require('./type')
 const { isGraph } = require('./utility')
 
 /**
@@ -181,7 +181,7 @@ const construct = (definition, type) => branch({
     specific: () => definition,
     generic: () => {
         if (!isGraph(definition.parameters)) {
-            throw exceptions.constructionNotValid(definition, nameOf(type))
+            throw exception.constructionNotValid(definition, nameOf(type))
         }
         const parameters = parametersOf(type)
         definition.parameters = replaceParameters(definition.parameters)
@@ -205,7 +205,7 @@ const extendBase = (definition, base = branch({
         } else if (target === undefined) {
             definition[key] = source
         } else if (key !== 'name') {
-            throw exceptions.definitionBaseConflict(definition, base)
+            throw exception.definitionBaseConflict(definition, base)
         }
     }
 }

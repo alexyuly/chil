@@ -1,12 +1,12 @@
 const Value = require('./Value')
 const exceptions = require('../exceptions')
-const construct = require('../construct')
+const { construct } = require('../definitions')
 const { isGraph } = require('../utility')
 
 class Operation extends Value {
     constructor(definition, instance = { of: definition.name }, serialization) {
         super(instance, serialization)
-        this.definition = construct(definition, instance)
+        this.definition = construct(definition, instance.of)
     }
 
     constructValues(delegates = {}) {

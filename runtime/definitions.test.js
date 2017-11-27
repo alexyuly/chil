@@ -1,8 +1,8 @@
-const { replace } = require('./utility')
+const { replaceParameters } = require('./definitions')
 
-describe('replace', () => {
+describe('replaceParameters', () => {
     it('iteratively replaces values which reference keys', () => {
-        expect(replace({
+        expect(replaceParameters({
             A: null,
             B: {
                 BA: 'A',

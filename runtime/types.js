@@ -34,12 +34,7 @@ const nameOf = (type) => branch({
 const parametersOf = (type) => branch({
     type,
     specific: () => undefined,
-    generic: () => {
-        for (const key in type) {
-            return type[key]
-        }
-        return undefined
-    },
+    generic: () => type[0],
 })
 
 module.exports = {

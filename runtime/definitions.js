@@ -1,21 +1,22 @@
 const fs = require('fs')
 const { parse, resolve } = require('path')
 const yaml = require('js-yaml')
-const { branch } = require('./types')
+const exceptions = require('./exceptions')
+const { assertApplicable, branch, nameOf, parametersOf } = require('./types')
 const { isGraph } = require('./utility')
 
 /**
  * Assigns a given type definition's implementation class to the definition, if possible.
  * @param {object} definition a type definition
- * @param {string} root path to the type definition
+ * @param {string} path a path to the type definition
  */
-const requireImplementation = (definition, root) => {
+const requireImplementation = (definition, path) => {
     if (isGraph(definition.operations)) {
         // A definition with operations has no implementation.
         return
     }
     try {
-        definition.implementation = require(root)
+        definition.implementation = require(path)
     } finally {
         // This definition may be abstract, so the path may not exist. If the path doesn't exist and this definition is
         // constructed by an Operation, then a definitionNotValid exception will be thrown.
@@ -97,18 +98,18 @@ const reservedWords = (definition) => {
 }
 
 /**
- * Determines whether or not a given word is available (i.e., not reserved).
+ * Determines whether or not a given word is reserved
  * @param {string} word a string
  * @param {object} reserved a set of reserved words returned by reservedWords
- * @returns {boolean} True if and only if word is not reserved
+ * @returns {boolean} true if and only if word is reserved
  */
-const isWordAvailable = (word, reserved) => {
+const isReservedWord = (word, reserved) => {
     for (const reservedWord in reserved) {
         if (word === reservedWord) {
-            return false
+            return true
         }
     }
-    return true
+    return false
 }
 
 /**
@@ -118,7 +119,7 @@ const isWordAvailable = (word, reserved) => {
  * @param {string} name the name of a core dependency
  */
 const resolveCoreDependency = (definition, reserved, name) => {
-    if (!isWordAvailable(name, reserved)) {
+    if (isReservedWord(name, reserved)) {
         return
     }
     if (!isGraph(definition.dependencies)) {
@@ -136,49 +137,106 @@ const resolveCoreDependency = (definition, reserved, name) => {
  * @param {object} reserved a set of reserved words returned by reservedWords
  * @param {object} set an object which is the source of implied dependencies
  */
-const resolveImpliedDependencies = (definition, reserved = reservedWords(definition), set = definition) => {
+const resolveCoreDependencies = (definition, reserved = reservedWords(definition), set = definition) => {
     for (const key in set) {
-        if (isWordAvailable(key, reserved)) {
-            resolveCoreDependency(definition, reserved, key)
-        }
         const value = set[key]
+        resolveCoreDependency(definition, reserved, key)
         branch({
             type: value,
             specific: () => resolveCoreDependency(definition, reserved, value),
-            generic: () => resolveImpliedDependencies(definition, reserved, value),
+            generic: () => resolveCoreDependencies(definition, reserved, value),
         })
     }
 }
 
-const extendBase = () => {
-    // TODO
+const replaceParameters = (input, parameters = {}, output = parameters) => {
+    for (const key in input) {
+        const node = input[key]
+        if (key === 'name' || key === 'dependencies') {
+            output[key] = input[key]
+        } else if (isGraph(node)) {
+            output[key] = replaceParameters(
+                node,
+                parameters,
+                node instanceof Array
+                    ? []
+                    : {}
+            )
+        } else if (typeof node === 'string') {
+            for (const alias in parameters) {
+                if (node === alias) {
+                    output[key] = parameters[alias]
+                    break
+                }
+            }
+        } else {
+            output[key] = null
+        }
+    }
+    return output
+}
+
+const construct = (definition, type) => branch({
+    type,
+    specific: () => definition,
+    generic: () => {
+        if (!isGraph(definition.parameters)) {
+            throw exceptions.constructionNotValid(definition, nameOf(type))
+        }
+        const parameters = parametersOf(type)
+        definition.parameters = replaceParameters(definition.parameters)
+        for (const key in definition.parameters) {
+            assertApplicable(parameters[key], definition.parameters[key])
+        }
+        return replaceParameters(definition, parameters, {})
+    },
+})
+
+const extendBase = (definition, base = branch({
+    type: definition.is,
+    specific: () => definition.dependencies[definition.is],
+    generic: () => construct(definition.dependencies[definition.is], definition.is),
+})) => {
+    for (const key in base) {
+        const target = definition[key]
+        const source = base[key]
+        if (isGraph(target) && isGraph(source)) {
+            extendBase(target, source)
+        } else if (target === undefined) {
+            definition[key] = source
+        } else if (key !== 'name') {
+            throw exceptions.definitionBaseConflict(definition, base)
+        }
+    }
 }
 
 /**
  * Create a type definition based on a given file system path.
- * @param {string} root path to a type definition
+ * @param {string} path a path to a type definition
  * @returns {object} a type definition
  */
-const define = (root) => {
-    const file = fs.readFileSync(`${root}.yml`, 'utf8')
+const define = (path) => {
+    const file = fs.readFileSync(`${path}.yml`, 'utf8')
     const definition = yaml.safeLoad(file)
-    requireImplementation(definition, root)
-    resolveImpliedDependencies(definition)
+    requireImplementation(definition, path)
+    resolveCoreDependencies(definition)
     for (const name in definition.dependencies) {
-        const path = definition.dependencies[name]
-        definition.dependencies[name] = define(path.absolute || resolve(parse(root).dir, path))
+        const dependencyPath = definition.dependencies[name]
+        definition.dependencies[name] = define(dependencyPath.absolute || resolve(parse(path).dir, dependencyPath))
     }
     extendBase(definition)
     return definition
 }
 
 module.exports = {
+    construct,
     define,
     extendBase,
-    isWordAvailable,
+    isReservedWord,
+    replaceParameters,
     requireImplementation,
     reservedWords,
     reservedWordsApplyInstances,
     resolveCoreDependency,
-    resolveImpliedDependencies,
+    resolveCoreDependencies,
 }

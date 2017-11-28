@@ -1,6 +1,6 @@
 const Value = require('./Value')
 const exception = require('../exception')
-const { construct } = require('../definition')
+const { construct } = require('../type')
 const { isGraph } = require('../utility')
 
 class Operation extends Value {

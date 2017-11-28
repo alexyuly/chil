@@ -1,4 +1,4 @@
-const { replaceParameters } = require('./definition')
+const { replaceParameters } = require('./type')
 
 describe('replaceParameters', () => {
     const parameters = () => ({

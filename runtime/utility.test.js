@@ -1,4 +1,6 @@
-const { isGraph } = require('./utility')
+const {
+    isGraph,
+} = require('./utility')
 
 describe('isGraph', () => {
     it('returns true if and only if given a non-Array, non-null object', () => {

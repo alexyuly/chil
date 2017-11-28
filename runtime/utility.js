@@ -13,14 +13,14 @@ const isGraph = (node) => typeof node === 'object' && !(node instanceof Array) &
  */
 const extend = (output, input) => {
     for (const key in input) {
-        const targetNode = output[key]
-        const baseNode = input[key]
-        if (isGraph(targetNode) && isGraph(baseNode)) {
-            extend(targetNode, baseNode)
-        } else if (targetNode === undefined) {
-            output[key] = baseNode
+        const outputNode = output[key]
+        const inputNode = input[key]
+        if (isGraph(outputNode) && isGraph(inputNode)) {
+            extend(outputNode, inputNode)
+        } else if (outputNode === undefined) {
+            output[key] = inputNode
         } else {
-            throw exception.baseExtensionConflict(output, input)
+            throw exception.extensionConflict(output, input)
         }
     }
 }

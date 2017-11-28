@@ -1,6 +1,8 @@
-const { replaceParameters } = require('./type')
+const {
+    reduceParameters,
+} = require('./type')
 
-describe('replaceParameters', () => {
+describe('reduceParameters', () => {
     const parameters = () => ({
         A: null,
         B: {
@@ -61,7 +63,7 @@ describe('replaceParameters', () => {
             },
         ],
     })
-    it('when given no parameters, deeply replaces values which reference previous keys within a given object', () => {
+    it('when given no parameters, deeply replaces values which reference previous keys within the input object', () => {
         const selfReferencingParameters = {
             A: null,
             B: {
@@ -97,7 +99,7 @@ describe('replaceParameters', () => {
                 },
             ],
         }
-        expect(replaceParameters(selfReferencingParameters)).toEqual(parameters())
+        expect(reduceParameters(selfReferencingParameters)).toEqual(parameters())
     })
     it('when given parameters, deeply replaces values which reference parameter keys with parameters', () => {
         const definition = {
@@ -146,6 +148,6 @@ describe('replaceParameters', () => {
                 },
             },
         }
-        expect(replaceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
+        expect(reduceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
     })
 })

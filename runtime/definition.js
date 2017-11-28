@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { parse, resolve } = require('path')
 const yaml = require('js-yaml')
-const { branch, construct } = require('./type')
+const { branch, construct, nameOf } = require('./type')
 const { extend, isGraph } = require('./utility')
 
 /**
@@ -23,11 +23,11 @@ const requireImplementation = (definition, path) => {
 }
 
 /**
- * Assigns reserved words implied by a set of value instances, to a target object.
+ * Assigns reserved identifiers implied by a set of value instances, to a target object.
  * @param {object} target - an object which gets mutated by this function
  * @param {object} instances - an object which maps names to value instances
  */
-const reservedWordsApplyInstances = (target, instances) => {
+const reservedIdentifiersFromValues = (target, instances) => {
     if (!isGraph(instances)) {
         return
     }
@@ -50,13 +50,13 @@ const reservedWordsApplyInstances = (target, instances) => {
 }
 
 /**
- * Reserved words are identifiers which do not reference a dependency on an operation definition.
- * Reserved words will be ignored during dependency resolution for the operation definition.
+ * Reserved identifiers are names which do not reference a dependency on an operation definition.
+ * Reserved identifiers will be ignored during dependency resolution for the operation definition.
  * @param {object} definition - an operation definition
- * @returns {object} the set of reserved words implied by the definition
+ * @returns {object} the set of reserved identifiers implied by the definition
  */
-const reservedWords = (definition) => {
-    // A set of words are reserved by default.
+const reservedIdentifiers = (definition) => {
+    // A set of identifiers are reserved by default.
     const set = {
         boolean: null,
         dependencies: null,
@@ -91,19 +91,19 @@ const reservedWords = (definition) => {
         }
     }
     // Names of type instances are reserved.
-    reservedWordsApplyInstances(set, definition.values)
-    reservedWordsApplyInstances(set, definition.operations)
+    reservedIdentifiersFromValues(set, definition.values)
+    reservedIdentifiersFromValues(set, definition.operations)
     return set
 }
 
 /**
- * @param {string} word - any string
- * @param {object} reservedWordsSet - a set of reserved words returned by reservedWords
- * @returns {boolean} true if and only if the word is reserved
+ * @param {string} identifier - any string
+ * @param {object} reservedIdentifierSet - a set of reserved identifiers returned by reservedIdentifiers
+ * @returns {boolean} true if and only if the identifier is reserved
  */
-const isReservedWord = (word, reservedWordsSet) => {
-    for (const reservedWord in reservedWordsSet) {
-        if (word === reservedWord) {
+const isReservedIdentifier = (identifier, reservedIdentifierSet) => {
+    for (const reservedWord in reservedIdentifierSet) {
+        if (identifier === reservedWord) {
             return true
         }
     }
@@ -113,11 +113,11 @@ const isReservedWord = (word, reservedWordsSet) => {
 /**
  * Assigns the absolute path of a core dependency to an operation definition, if possible.
  * @param {object} definition - an operation definition which gets mutated by this function
- * @param {object} reservedWordsSet - a set of reserved words returned by reservedWords
+ * @param {object} reservedIdentifierSet - a set of reserved identifiers returned by reservedIdentifiers
  * @param {string} name - possibly the name of a core dependency
  */
-const resolveCoreDependency = (definition, reservedWordsSet, name) => {
-    if (isReservedWord(name, reservedWordsSet)) {
+const resolveCoreDependency = (definition, reservedIdentifierSet, name) => {
+    if (isReservedIdentifier(name, reservedIdentifierSet)) {
         return
     }
     if (!isGraph(definition.dependencies)) {
@@ -132,18 +132,18 @@ const resolveCoreDependency = (definition, reservedWordsSet, name) => {
 /**
  * Assigns absolute paths of core dependencies implied by an object, to an operation definition.
  * @param {object} definition - an operation definition which gets mutated by this function
- * @param {object} reservedWordsSet - a set of reserved words returned by reservedWords
+ * @param {object} reservedIdentifierSet - a set of reserved identifiers returned by reservedIdentifiers
  * @param {object} set - an object which is the source of implied core dependencies
  */
-const resolveCoreDependencies = (definition, reservedWordsSet = reservedWords(definition), set = definition) => {
+const resolveCoreDependencies = (definition, reservedIdentifierSet = reservedIdentifiers(definition), set = definition) => {
     for (const key in set) {
         const value = set[key]
-        resolveCoreDependency(definition, reservedWordsSet, key)
+        resolveCoreDependency(definition, reservedIdentifierSet, key)
         for (const type of value instanceof Array ? value : [ value ]) {
             branch({
                 type,
-                specific: () => resolveCoreDependency(definition, reservedWordsSet, type),
-                generic: () => resolveCoreDependencies(definition, reservedWordsSet, type),
+                specific: () => resolveCoreDependency(definition, reservedIdentifierSet, type),
+                generic: () => resolveCoreDependencies(definition, reservedIdentifierSet, type),
             })
         }
     }
@@ -157,7 +157,7 @@ const resolveCoreDependencies = (definition, reservedWordsSet = reservedWords(de
 const extendBase = (definition, base = branch({
     type: definition.is,
     specific: () => definition.dependencies[definition.is],
-    generic: () => construct(definition.dependencies[definition.is], definition.is),
+    generic: () => construct(definition.dependencies[nameOf(definition.is)], definition.is),
 })) => {
     for (const key in base) {
         if (key !== 'name' && key !== 'is') {
@@ -179,17 +179,19 @@ const define = (path) => {
         const dependencyPath = definition.dependencies[name]
         definition.dependencies[name] = define(dependencyPath.absolute || resolve(parse(path).dir, dependencyPath))
     }
-    extendBase(definition)
+    if (definition.is) {
+        extendBase(definition)
+    }
     return definition
 }
 
 module.exports = {
     define,
     extendBase,
-    isReservedWord,
+    isReservedIdentifier,
     requireImplementation,
-    reservedWords,
-    reservedWordsApplyInstances,
+    reservedIdentifiers,
+    reservedIdentifiersFromValues,
     resolveCoreDependency,
     resolveCoreDependencies,
 }

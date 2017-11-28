@@ -3,8 +3,8 @@ const { extend, isGraph } = require('./utility')
 
 /**
  * @param {string | object} type - a type
- * @param {function} specific - a function which is called if the type is specific
- * @param {function} generic - a function which is called if the type is generic
+ * @param {function} specific - a function which is called if the type no parameters
+ * @param {function} generic - a function which is called if the type has parameters
  * @returns {*} the result of a call to specific or generic
  */
 const branch = ({ type, specific, generic }) => {
@@ -52,15 +52,15 @@ const parametersOf = (type) => branch({
  * @param {object} [output] - an object to which properties are written
  * @returns {object} output
  */
-const replaceParameters = (input, parameters = {}, output = parameters) => {
+const reduceParameters = (input, parameters = {}, output = parameters) => {
     for (const key in input) {
         const node = input[key]
         if (key === 'name' || key === 'dependencies') {
             output[key] = input[key]
         } else if (node instanceof Array) {
-            output[key] = replaceParameters(node, parameters, [])
+            output[key] = reduceParameters(node, parameters, [])
         } else if (isGraph(node)) {
-            output[key] = replaceParameters(node, parameters, {})
+            output[key] = reduceParameters(node, parameters, {})
         } else if (typeof node === 'string') {
             for (const alias in parameters) {
                 if (node === alias) {
@@ -76,21 +76,41 @@ const replaceParameters = (input, parameters = {}, output = parameters) => {
 }
 
 /**
- * @param {object} definition - an operation definition
+ * @param {object} definition - an operation definition which is mutated by this function
  * @param {string | object} type - an operation type
- * @returns {object} an operation definition with parameters replaced according to the type
+ * @returns {object} an operation definition updated with parameters from the type
  */
-const appliedDefinition = (definition, type) => branch({
+const applyParameters = (definition, type) => branch({
     type,
     specific: () => definition,
     generic: () => {
         if (!isGraph(definition.parameters)) {
-            throw exception.constructionNotValid(definition, nameOf(type))
+            throw exception.typeParametersNotApplicable(definition, type)
         }
-        definition.parameters = replaceParameters(definition.parameters)
-        return replaceParameters(definition, parametersOf(type), {})
+        definition.parameters = reduceParameters(definition.parameters)
+        return reduceParameters(definition, parametersOf(type), {})
     },
 })
+
+/**
+ * @param {string | object} type - a type
+ * @returns {boolean} true if and only if the type is an operation type
+ */
+const isOperationType = (type) => {
+    if (type instanceof Array || type === null) {
+        return false
+    }
+    switch (nameOf(type)) {
+        case 'number':
+        case 'string':
+        case 'boolean':
+        case 'vector':
+        case 'struct':
+            return false
+        default:
+            return true
+    }
+}
 
 /**
  * @param {string | object} type - an operation type
@@ -98,7 +118,7 @@ const appliedDefinition = (definition, type) => branch({
  * @param {object} [target] - an object which is mutated by this function
  * @returns {object} target after mutations are performed
  */
-const normalizeOperationType = (type, dependencies, target = {}) => {
+const reduceOperationType = (type, dependencies, target = {}) => {
     if (isGraph(type.operation)) {
         return type
     }
@@ -112,7 +132,7 @@ const normalizeOperationType = (type, dependencies, target = {}) => {
     const definition = branch({
         type,
         specific: () => dependency,
-        generic: () => appliedDefinition(dependency, type),
+        generic: () => applyParameters(dependency, type),
     })
     const base = {
         operation: {},
@@ -125,21 +145,9 @@ const normalizeOperationType = (type, dependencies, target = {}) => {
     }
     extend(target, base)
     if (definition.is) {
-        normalizeOperationType(definition.is, dependencies, target)
+        reduceOperationType(definition.is, dependencies, target)
     }
     return target
-}
-
-/**
- * @param {string | object} type - a type
- * @returns {boolean} true if and only if the type is a value type
- */
-const isValueType = (type) => {
-    if (type === null || type instanceof Array) {
-        return true
-    }
-    const name = nameOf(type)
-    return name === 'number' || name === 'string' || name === 'boolean' || name === 'vector' || name === 'struct'
 }
 
 /**
@@ -152,55 +160,54 @@ const isApplicable = (type, domain, dependencies) => {
     if (type === undefined || domain === undefined) {
         return false
     }
-    if (isValueType(type)) {
-        if (!isValueType(domain)) {
+    if (isOperationType(type)) {
+        if (!isOperationType(domain)) {
             return false
         }
-        if (domain === null) {
-            return true
-        }
-        if (type === null) {
-            return false
-        }
-        const typeUnion = type instanceof Array
-        const domainUnion = domain instanceof Array
-        if (typeUnion && !domainUnion) {
-            return false
-        }
-        if (!typeUnion && domainUnion) {
-            return domain.some((child) => isApplicable(type, child))
-        }
-        if (typeUnion && domainUnion) {
-            return domain.every((child) => type.some((typeChild) => isApplicable(typeChild, child)))
-        }
-        return branch({
-            type,
-            specific: () => type === domain,
-            generic: () => {
-                const typeName = nameOf(type)
-                if (typeName !== nameOf(domain) || !isGraph(domain)) {
-                    return false
-                }
-                const typeParameters = parametersOf(type)
-                const domainParameters = parametersOf(domain)
-                if (typeName === 'vector') {
-                    return isApplicable(typeParameters, domainParameters)
-                }
-                if (typeName === 'struct') {
-                    return Object.keys(domainParameters).every((key) => isApplicable(typeParameters[key], domainParameters[key]))
-                }
-                // This should not occur if isValueType behaves as expected:
-                throw exception.typeNotValid(type)
-            },
-        })
+        const reducedType = reduceOperationType(type, dependencies)
+        const reducedDomain = reduceOperationType(domain, dependencies)
+        return isApplicable(reducedType.of, reducedDomain.of, dependencies) &&
+            Object.keys(reducedDomain.values).every((key) => isApplicable(reducedType.values[key], reducedDomain.values[key], dependencies))
     }
-    if (isValueType(domain)) {
+    if (isOperationType(domain)) {
         return false
     }
-    const normalType = normalizeOperationType(type, dependencies)
-    const normalDomain = normalizeOperationType(domain, dependencies)
-    return isApplicable(normalType.of, normalDomain.of, dependencies) &&
-        Object.keys(normalDomain.values).every((key) => isApplicable(normalType.values[key], normalDomain.values[key], dependencies))
+    if (domain === null) {
+        return true
+    }
+    if (type === null) {
+        return false
+    }
+    const typeUnion = type instanceof Array
+    const domainUnion = domain instanceof Array
+    if (typeUnion && !domainUnion) {
+        return false
+    }
+    if (!typeUnion && domainUnion) {
+        return domain.some((domainChild) => isApplicable(type, domainChild))
+    }
+    if (typeUnion && domainUnion) {
+        return type.every((typeChild) => domain.some((domainChild) => isApplicable(typeChild, domainChild)))
+    }
+    return branch({
+        type,
+        specific: () => type === domain,
+        generic: () => {
+            const typeName = nameOf(type)
+            if (typeName !== nameOf(domain) || !isGraph(domain)) {
+                return false
+            }
+            const typeParameters = parametersOf(type)
+            const domainParameters = parametersOf(domain)
+            if (typeName === 'vector') {
+                return isApplicable(typeParameters, domainParameters)
+            }
+            if (typeName === 'struct') {
+                return Object.keys(domainParameters).every((key) => isApplicable(typeParameters[key], domainParameters[key]))
+            }
+            throw exception.typeNotValid(type)
+        },
+    })
 }
 
 /**
@@ -216,13 +223,13 @@ const assertApplicable = (type, domain, dependencies) => {
 }
 
 /**
- * Construct an applied operation definition, with validation of type parameters.
- * @param {object} definition - an operation definition
+ * Construct an applied operation definition, and then validate type parameters.
+ * @param {object} definition - an operation definition which is mutated by this function
  * @param {string | object} type - an operation type
- * @returns {object} an operation definition with parameters replaced according to the type
+ * @returns {object} an operation definition updated with parameters from the type
  */
 const construct = (definition, type) => {
-    const result = appliedDefinition(definition, type)
+    const result = applyParameters(definition, type)
     const parameters = parametersOf(type)
     for (const key in result.parameters) {
         assertApplicable(parameters[key], result.parameters[key], result.dependencies)
@@ -231,14 +238,14 @@ const construct = (definition, type) => {
 }
 
 module.exports = {
-    appliedDefinition,
+    applyParameters,
     assertApplicable,
     branch,
     construct,
     isApplicable,
-    isValueType,
+    isOperationType,
     nameOf,
-    normalizeOperationType,
     parametersOf,
-    replaceParameters,
+    reduceOperationType,
+    reduceParameters,
 }

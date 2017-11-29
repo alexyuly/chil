@@ -1,6 +1,6 @@
 {
     "name": "starch",
-    "version": "0.0.1",
+    "version": "0.0.0",
     "author": "Alex Yuly",
     "description": "Streaming Architecture for Node.js and Chrome",
     "license": "MIT",

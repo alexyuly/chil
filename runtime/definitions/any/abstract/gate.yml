@@ -5,5 +5,5 @@ parameters:
 is:
     any/abstract/store:
         State Type: State Type
-        Input Type: Action Type
+        Action Type: Action Type
         Output Type: Action Type

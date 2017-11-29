@@ -1,3 +1,3 @@
 name: sink
-parameters: { Type: }
-values: { dispatch: { of: Type } }
+parameters: { Action Type: }
+values: { action: { of: Action Type } }

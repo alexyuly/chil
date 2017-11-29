@@ -1,8 +1,8 @@
 {
-    "name": "vocalize",
+    "name": "starch",
     "version": "0.0.1",
     "author": "Alex Yuly",
-    "description": "data driven YAML runtime engine for Node.js and Chrome",
+    "description": "Streaming Architecture for Node.js and Chrome",
     "license": "MIT",
     "main": "main.js",
     "dependencies": {

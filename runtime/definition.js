@@ -76,7 +76,9 @@ const reservedIdentifiers = (definition) => {
         vector: null,
     }
     // The name of the type definition is reserved.
-    set[definition.name] = null
+    if (typeof definition.name === 'string') {
+        set[definition.name] = null
+    }
     // Names and paths of dependencies are reserved.
     if (isGraph(definition.dependencies)) {
         for (const name in definition.dependencies) {

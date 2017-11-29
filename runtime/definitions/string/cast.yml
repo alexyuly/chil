@@ -1,3 +1,5 @@
 name: cast
-of: string
-values: { dispatch: { of: } }
+is:
+    any/abstract/pipe:
+        Action Type:
+        Output Type: string

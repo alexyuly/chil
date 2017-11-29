@@ -1,8 +1,155 @@
+const { resolve } = require('path')
 const {
-    isReservedIdentifier,
     requireImplementation,
+    reservedIdentifiers,
     reservedIdentifiersFromValues,
+    isReservedIdentifier,
+    resolveCoreDependency,
 } = require('./definition')
+
+const instances = () => ({
+    values: {
+        'value name 1': {
+            of: 'value type 1',
+            initial: 'event',
+            to: {
+                'operation name 1': 'operation target 1',
+                'operation name 2': 'operation target 1',
+            },
+        },
+        'value name 2': {
+            of: 'value type 2',
+            to: {
+                'operation name 1': 'operation target 2',
+            },
+        },
+    },
+    operations: {
+        'operation name 1': {
+            of: 'operation type 1',
+            initial: {
+                'operation target 1': 'event',
+            },
+        },
+    },
+})
+
+describe('requireImplementation', () => {
+    it('when the definition has a graph of operations, does not mutate the target', () => {
+        const definition = {
+            operations: {},
+        }
+        const path = 'not relevant'
+        requireImplementation(definition, path)
+        expect(definition).toEqual({
+            operations: {},
+        })
+    })
+    it('when the definition has no graph of operations, assigns an implementation required from the path', () => {
+        const definition = {}
+        const path = './definition'
+        requireImplementation(definition, path)
+        expect(definition.implementation).toBe(require('./definition'))
+    })
+})
+
+describe('reservedIdentifiersFromValues', () => {
+    it('when the set of values is not a graph, does not mutate the target', () => {
+        const target = {}
+        reservedIdentifiersFromValues(target, undefined)
+        expect(target).toEqual({})
+    })
+    it('when the set of values is a graph, mutates the target according to properties of the values', () => {
+        const target = {}
+        reservedIdentifiersFromValues(target, instances().values)
+        reservedIdentifiersFromValues(target, instances().operations)
+        expect(target).toEqual({
+            'operation name 1': null,
+            'operation target 1': null,
+            'operation target 2': null,
+            'value name 1': null,
+            'value name 2': null,
+        })
+    })
+})
+
+describe('reservedIdentifiers', () => {
+    const defaultIdentifiers = () => ({
+        boolean: null,
+        dependencies: null,
+        implementation: null,
+        initial: null,
+        is: null,
+        name: null,
+        number: null,
+        of: null,
+        operation: null,
+        operations: null,
+        parameters: null,
+        string: null,
+        struct: null,
+        to: null,
+        values: null,
+        vector: null,
+    })
+    it('when the definition is empty, returns the set of default identifiers', () => {
+        expect(reservedIdentifiers({})).toEqual(defaultIdentifiers())
+    })
+    it('when the definition contains a string name, returns a set which includes that name', () => {
+        expect(reservedIdentifiers({
+            name: 'definition name',
+        })).toEqual(Object.assign(
+            defaultIdentifiers(),
+            {
+                'definition name': null,
+            }
+        ))
+    })
+    it('when the definition contains a graph of dependencies, returns a set which includes their names and paths', () => {
+        expect(reservedIdentifiers({
+            dependencies: {
+                'dependency name 1': 'dependency value 1',
+                'dependency name 2': 'dependency value 2',
+            },
+        })).toEqual(Object.assign(
+            defaultIdentifiers(),
+            {
+                'dependency name 1': null,
+                'dependency name 2': null,
+                'dependency value 1': null,
+                'dependency value 2': null,
+            }
+        ))
+    })
+    it('when the definition contains a graph of parameters, returns a set which includes their names', () => {
+        expect(reservedIdentifiers({
+            parameters: {
+                'parameter name 1': 'parameter value 1',
+                'parameter name 2': {
+                    'parameter type name': 'parameter name 1',
+                },
+            },
+        })).toEqual(Object.assign(
+            defaultIdentifiers(),
+            {
+                'parameter name 1': null,
+                'parameter name 2': null,
+            }
+        ))
+    })
+    it('when the definition contains graphs of values and operations, returns a set which includes their names', () => {
+        expect(reservedIdentifiers(instances())).toEqual(Object.assign(
+            defaultIdentifiers(),
+            {
+                'operation name 1': null,
+                'operation target 1': null,
+                'operation target 2': null,
+                'value name 1': null,
+                'value name 2': null,
+            }
+        ))
+    })
+})
 
 describe('isReservedIdentifier', () => {
     it('returns true if and only if the identifier is present as a key in the object', () => {
@@ -15,32 +162,29 @@ describe('isReservedIdentifier', () => {
     })
 })
 
-describe('requireImplementation', () => {
-    it('when the definition has a graph of operations, does not mutate the target', () => {
-        const originalDefinition = {
-            operations: {},
-        }
-        const definition = {
-            operations: {},
-        }
-        const path = 'not relevant'
-        requireImplementation(definition, path)
-        expect(definition).toEqual(originalDefinition)
-    })
-    it('when the definition has no graph of operations, assigns an implementation required from the path', () => {
+describe('resolveCoreDependency', () => {
+    it('when the name is a reserved identifier, does not mutate the definition', () => {
         const definition = {}
-        const path = './definition'
-        requireImplementation(definition, path)
-        expect(definition.implementation).toBe(require('./definition'))
+        const reservedIdentifierSet = {
+            'reserved identifier': null,
+        }
+        const name = 'reserved identifier'
+        resolveCoreDependency(definition, reservedIdentifierSet, name)
+        expect(definition).toEqual({})
     })
-})
-
-describe('reservedIdentifiersFromValues', () => {
-    it('when the set of instances is not a graph, does not mutate the target', () => {
-        const originalTarget = {}
-        const target = {}
-        reservedIdentifiersFromValues(target, undefined)
-        expect(target).toEqual(originalTarget)
+    it('when the name is not a reserved identifier, assigns an absolute path to the definition dependencies', () => {
+        const definition = {}
+        const reservedIdentifierSet = {
+            'reserved identifier': null,
+        }
+        const name = 'not a reserved identifier'
+        resolveCoreDependency(definition, reservedIdentifierSet, name)
+        expect(definition).toEqual({
+            dependencies: {
+                [name]: {
+                    absolute: resolve(__dirname, `./definitions/${name}`),
+                },
+            },
+        })
     })
-    // TODO
 })

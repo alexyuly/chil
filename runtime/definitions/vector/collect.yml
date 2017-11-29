@@ -3,5 +3,5 @@ parameters: { Type: }
 is:
     any/abstract/store:
         State Type: number
-        Input Type: Type
+        Action Type: Type
         Output Type: { vector: Type }

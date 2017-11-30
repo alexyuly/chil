@@ -4,6 +4,8 @@ const {
     parametersOf,
     replaceParameters,
     applyParameters,
+    isOperationType,
+    reduceOperationType,
 } = require('./type')
 
 describe('branch', () => {
@@ -218,6 +220,20 @@ describe('replaceParameters', () => {
 })
 
 describe('applyParameters', () => {
+    const parameters = () => ({
+        'State Type': null,
+        'Action Type': null,
+        'Output Type': null,
+        'Operation Type': {
+            operation: {
+                of: 'Output Type',
+                values: {
+                    state: { of: 'State Type' },
+                    action: { of: 'Action Type' },
+                },
+            },
+        },
+    })
     it('when the type is specific, returns the definition', () => {
         const definition = {}
         expect(applyParameters(definition, 'a specific type')).toBe(definition)
@@ -226,24 +242,9 @@ describe('applyParameters', () => {
         const definition = {}
         expect(() => applyParameters(definition, { 'a generic type': '' })).toThrow()
     })
-    it('when the type is generic and the definition has a graph of parameters, returns the definition with parameters applied', () => {
+    it('when the type is generic and lacks at least one parameters specified by the definition, throws an exception', () => {
         const definition = {
-            name: 'store',
-            parameters: {
-                'State Type': null,
-                'Action Type': null,
-                'Output Type': null,
-            },
-            is: 'pipe',
-            of: 'Output Type',
-            values: {
-                state: {
-                    of: 'State Type',
-                },
-                action: {
-                    of: 'Action Type',
-                },
-            },
+            parameters: parameters(),
         }
         const type = {
             store: {
@@ -252,23 +253,154 @@ describe('applyParameters', () => {
                 'Output Type': 'Output Parameter',
             },
         }
+        expect(() => applyParameters(definition, type)).toThrow()
+    })
+    it('when the type is generic and the definition has a graph of parameters, returns the definition with parameters applied', () => {
+        const definition = {
+            name: 'component',
+            parameters: parameters(),
+            is: 'pipe',
+            of: 'Output Type',
+            values: {
+                state: {
+                    of: 'State Type',
+                    to: { operation: 'state' },
+                },
+                action: {
+                    of: 'Action Type',
+                    to: { operation: 'action' },
+                },
+            },
+            operations: {
+                operation: {
+                    of: 'Operation Type',
+                    to: { component: null },
+                },
+            },
+        }
+        const type = {
+            store: {
+                'State Type': 'State Parameter',
+                'Action Type': 'Action Parameter',
+                'Output Type': 'Output Parameter',
+                'Operation Type': 'Operation Parameter',
+            },
+        }
         expect(applyParameters(definition, type)).toEqual({
-            name: 'store',
+            name: 'component',
             parameters: {
                 'State Type': null,
                 'Action Type': null,
                 'Output Type': null,
+                'Operation Type': {
+                    operation: {
+                        of: 'Output Parameter',
+                        values: {
+                            state: { of: 'State Parameter' },
+                            action: { of: 'Action Parameter' },
+                        },
+                    },
+                },
             },
             is: 'pipe',
             of: 'Output Parameter',
             values: {
                 state: {
                     of: 'State Parameter',
+                    to: { operation: 'state' },
                 },
                 action: {
                     of: 'Action Parameter',
+                    to: { operation: 'action' },
+                },
+            },
+            operations: {
+                operation: {
+                    of: 'Operation Parameter',
+                    to: { component: null },
                 },
             },
         })
+    })
+})
+
+describe('isOperationType', () => {
+    it('returns true if and only if the type is an operation type, and throws an exception if the type is not valid', () => {
+        expect(isOperationType([])).toEqual(false)
+        expect(isOperationType(null)).toEqual(false)
+        expect(isOperationType('number')).toEqual(false)
+        expect(isOperationType('string')).toEqual(false)
+        expect(isOperationType('boolean')).toEqual(false)
+        expect(isOperationType('vector')).toEqual(false)
+        expect(isOperationType('struct')).toEqual(false)
+        expect(isOperationType('an unknown specific type name')).toEqual(true)
+        expect(isOperationType({ 'an unknown generic type name': '' })).toEqual(true)
+        expect(() => isOperationType(0)).toThrow()
+        expect(() => isOperationType(false)).toThrow()
+        expect(() => isOperationType(undefined)).toThrow()
+        expect(() => isOperationType()).toThrow()
+    })
+})
+
+describe('reduceOperationType', () => {
+    const dependencies = () => ({
+        type: {
+            dependencies: {
+                base: {
+                    values: {
+                        'numeric value': { of: 'number' },
+                    },
+                },
+            },
+            parameters: {
+                key: null,
+            },
+            is: 'base',
+            of: 'key',
+            values: {
+                'parameterized value': { of: 'key' },
+            },
+        },
+    })
+    it('when the type name is "operation", returns the type', () => {
+        const type = {
+            operation: {},
+        }
+        expect(reduceOperationType(type)).toBe(type)
+    })
+    it('when a dependency for the type is not provided, throws an exception', () => {
+        expect(() => reduceOperationType({})).toThrow()
+        expect(() => reduceOperationType({}, {})).toThrow()
+    })
+    it('when a dependency for the type is provided, normalizes the type based on its extension hierarchy if no conflicts exist', () => {
+        const type = {
+            type: {
+                key: 'parameter',
+            },
+        }
+        expect(reduceOperationType(type, dependencies())).toEqual({
+            operation: {
+                of: 'parameter',
+                values: {
+                    'parameterized value': { of: 'parameter' },
+                    'numeric value': { of: 'number' },
+                },
+            },
+        })
+    })
+    it('when type extension hierarchy conflicts exist, throws an exception', () => {
+        const type = {
+            type: {
+                key: 'parameter',
+            },
+        }
+        const conflictedHierarchy = dependencies()
+        conflictedHierarchy.type.dependencies.base.is = 'meta'
+        conflictedHierarchy.type.dependencies.base.dependencies = {
+            meta: {
+                of: 'some value type',
+            },
+        }
+        expect(() => reduceOperationType(type, conflictedHierarchy)).toThrow()
     })
 })

@@ -118,18 +118,18 @@ const isOperationType = (type) => {
         case 'struct':
             return false
         default:
-            return true
+            return typeof type === 'string' || isGraph(type)
     }
 }
 
 /**
  * @param {string | object} type - an operation type
  * @param {object} dependencies - a map of names to operation definitions
- * @param {object} [target] - an object which is mutated by this function
- * @returns {object} target after mutations are performed
+ * @param {object} [output] - an object which is mutated by this function
+ * @returns {object} output after mutations are performed
  */
-const reduceOperationType = (type, dependencies, target = {}) => {
-    if (isGraph(type.operation)) {
+const reduceOperationType = (type, dependencies, output = {}) => {
+    if (nameOf(type) === 'operation') {
         return type
     }
     assert(
@@ -146,20 +146,24 @@ const reduceOperationType = (type, dependencies, target = {}) => {
         specific: () => dependency,
         generic: () => applyParameters(dependency, type),
     })
-    const base = {
+    const input = {
         operation: {},
     }
     if (definition.of) {
-        base.operation.of = definition.of
+        input.operation.of = definition.of
     }
     if (definition.values) {
-        base.operation.values = definition.values
+        input.operation.values = definition.values
     }
-    extend(target, base)
-    if (definition.is) {
-        reduceOperationType(definition.is, dependencies, target)
+    extend(output, input)
+    if ('is' in definition) {
+        assert(
+            isOperationType(definition.is),
+            `cannot extend operation definition of ${definition.name} from non-operation type ${JSON.stringify(definition.is)}`
+        )
+        reduceOperationType(definition.is, definition.dependencies, output)
     }
-    return target
+    return output
 }
 
 /**
@@ -179,7 +183,8 @@ const isApplicable = (type, domain, dependencies) => {
         const reducedType = reduceOperationType(type, dependencies)
         const reducedDomain = reduceOperationType(domain, dependencies)
         return isApplicable(reducedType.of, reducedDomain.of, dependencies) &&
-            Object.keys(reducedDomain.values).every((key) => isApplicable(reducedType.values[key], reducedDomain.values[key], dependencies))
+            Object.keys(reducedDomain.values.of).every((key) =>
+                isApplicable(reducedType.values.of[key], reducedDomain.values.of[key], dependencies))
     }
     if (isOperationType(domain)) {
         return false

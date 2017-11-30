@@ -17,8 +17,8 @@ const requireImplementation = (definition, path) => {
     try {
         definition.implementation = require(path)
     } finally {
-        // This definition may be abstract, so the path may not exist. If the path doesn't exist and this definition is
-        // constructed by an Operation, then a definitionNotValid exception will be thrown.
+        // This definition may be abstract, so the path may not exist.
+        // If the path doesn't exist and this definition is constructed by an Operation, an exception will be thrown.
     }
 }
 

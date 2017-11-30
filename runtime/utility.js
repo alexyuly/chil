@@ -1,5 +1,3 @@
-const exception = require('./exception')
-
 /**
  * @param {*} node any value
  * @returns {boolean} true if and only if node is a non-Array, non-null object
@@ -20,7 +18,7 @@ const extend = (output, input) => {
         } else if (outputNode === undefined) {
             output[key] = inputNode
         } else {
-            throw exception.extensionConflict(output, input, key)
+            throw new Error(`cannot extend: key ${key} in ${JSON.stringify(output)} conflicts with key in ${JSON.stringify(input)}`)
         }
     }
 }

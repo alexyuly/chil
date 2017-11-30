@@ -1,4 +1,6 @@
-const exception = require('./exception')
+const error = (event) => {
+    throw new Error(`native JavaScript type ${typeof event} of ${JSON.stringify(event)} is not recognized`)
+}
 
 const compare = (a, b) => {
     const nativeType = typeof a
@@ -23,7 +25,7 @@ const compare = (a, b) => {
             return true
         }
         default:
-            throw exception.eventNotValid(a)
+            return error(a)
     }
 }
 
@@ -57,7 +59,7 @@ const typeOf = (event) => {
             return null
         }
         default:
-            throw exception.eventNotValid(event)
+            return error(event)
     }
 }
 

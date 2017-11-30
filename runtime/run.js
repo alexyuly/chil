@@ -1,9 +1,10 @@
-const exception = require('./exception')
+const assert = require('assert')
 
 const run = (component, args) => {
-    if (!component.values.run) {
-        throw new exception.definitionNotRunnable(component.definition)
-    }
+    assert(
+        component.values.run,
+        `definition of ${component.definition.name} cannot be run: expected a value named 'run'`
+    )
     component.values.run.next(args)
 }
 

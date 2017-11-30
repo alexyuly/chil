@@ -1,4 +1,4 @@
-const exception = require('./exception')
+const assert = require('assert')
 const { extend, isGraph } = require('./utility')
 
 /**
@@ -8,16 +8,13 @@ const { extend, isGraph } = require('./utility')
  * @returns {*} the result of a call to specific or generic
  */
 const branch = ({ type, specific, generic }) => {
-    if (type instanceof Array) {
-        throw exception.unionTypeIllegal(type)
-    }
     if (typeof type === 'string') {
         return specific()
     }
     if (isGraph(type)) {
         return generic()
     }
-    throw exception.typeNotValid(type)
+    throw new Error(`type ${JSON.stringify(type)} is neither specific nor generic`)
 }
 
 /**
@@ -71,7 +68,7 @@ const replaceParameters = (input, parameters = {}, output = parameters) => {
                     break
                 }
             }
-            if (output[key] === undefined) {
+            if (!(key in output)) {
                 output[key] = input[key]
             }
         } else {
@@ -90,10 +87,18 @@ const applyParameters = (definition, type) => branch({
     type,
     specific: () => definition,
     generic: () => {
-        if (!isGraph(definition.parameters)) {
-            throw exception.typeParametersNotApplicable(definition, type)
+        assert(
+            isGraph(definition.parameters),
+            `definition of ${definition.name} expected no parameters in type ${JSON.stringify(type)}`
+        )
+        const parameters = parametersOf(type)
+        for (const key in definition.parameters) {
+            assert(
+                key in parameters,
+                `definition of ${definition.name} expected a parameter named ${key} in type ${JSON.stringify(type)}`
+            )
         }
-        return replaceParameters(definition, parametersOf(type), {})
+        return replaceParameters(definition, parameters, {})
     },
 })
 
@@ -127,13 +132,15 @@ const reduceOperationType = (type, dependencies, target = {}) => {
     if (isGraph(type.operation)) {
         return type
     }
-    if (!isGraph(dependencies)) {
-        throw exception.typeNotResolved(type)
-    }
+    assert(
+        isGraph(dependencies),
+        `cannot resolve type ${JSON.stringify(type)}: expected dependencies but got ${JSON.stringify(dependencies)}`
+    )
     const dependency = dependencies[nameOf(type)]
-    if (!isGraph(dependency)) {
-        throw exception.typeNotResolved(type)
-    }
+    assert(
+        isGraph(dependency),
+        `cannot resolve type ${JSON.stringify(type)}: expected dependency but got ${JSON.stringify(dependency)}`
+    )
     const definition = branch({
         type,
         specific: () => dependency,
@@ -210,21 +217,9 @@ const isApplicable = (type, domain, dependencies) => {
             if (typeName === 'struct') {
                 return Object.keys(domainParameters).every((key) => isApplicable(typeParameters[key], domainParameters[key]))
             }
-            throw exception.typeNotValid(type)
+            throw new Error(`unexpected type ${JSON.stringify(type)}`)
         },
     })
-}
-
-/**
- * Throws an exception if a type is not a subset of another type.
- * @param {string | object} type - a type
- * @param {string | object} domain - a type which is a superset of other types
- * @param {object} [dependencies] - a map of names to operation definitions
- */
-const assertApplicable = (type, domain, dependencies) => {
-    if (!isApplicable(type, domain, dependencies)) {
-        throw exception.typeNotApplicable(type, domain)
-    }
 }
 
 /**
@@ -237,14 +232,16 @@ const construct = (definition, type) => {
     const parameters = parametersOf(type)
     const domains = replaceParameters(definition.parameters)
     for (const key in domains) {
-        assertApplicable(parameters[key], domains[key], definition.dependencies)
+        assert(
+            isApplicable(parameters[key], domains[key], definition.dependencies),
+            `type ${JSON.stringify(parameters[key])} is not applicable to domain ${JSON.stringify(domains[key])}`
+        )
     }
     return applyParameters(definition, type)
 }
 
 module.exports = {
     applyParameters,
-    assertApplicable,
     branch,
     construct,
     isApplicable,

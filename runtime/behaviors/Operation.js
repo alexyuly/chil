@@ -1,5 +1,5 @@
+const assert = require('assert')
 const Value = require('./Value')
-const exception = require('../exception')
 const { construct } = require('../type')
 const { isGraph } = require('../utility')
 
@@ -10,9 +10,10 @@ class Operation extends Value {
     }
 
     constructValues(delegates = {}) {
-        if (!isGraph(this.definition.values)) {
-            throw exception.definitionNotValid(this.definition)
-        }
+        assert(
+            isGraph(this.definition.values),
+            `cannot construct values for operation of ${this.definition.name} from ${JSON.stringify(this.definition.values)}`
+        )
         this.values = {}
         for (const key in this.definition.values) {
             const instance = this.definition.values[key]

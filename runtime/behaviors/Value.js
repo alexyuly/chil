@@ -1,5 +1,6 @@
+const assert = require('assert')
 const Serializable = require('../serialization/Serializable')
-const { assertApplicable } = require('../type')
+const { isApplicable } = require('../type')
 const { typeOf } = require('../event')
 
 class Value extends Serializable {
@@ -10,12 +11,18 @@ class Value extends Serializable {
     }
 
     connect(value) {
-        assertApplicable(this.instance.of, value.instance.of)
+        assert(
+            isApplicable(this.instance.of, value.instance.of),
+            `cannot connect value of ${JSON.stringify(this.instance.of)} to value of ${JSON.stringify(value.instance.of)}`
+        )
         this.listeners.push(value)
     }
 
     next(event) {
-        assertApplicable(typeOf(event), this.instance.of)
+        assert(
+            isApplicable(typeOf(event), this.instance.of),
+            `cannot apply event ${JSON.stringify(event)} to value of ${JSON.stringify(this.instance.of)}`
+        )
         for (const listener of this.listeners) {
             listener.next(event)
         }

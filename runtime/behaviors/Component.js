@@ -1,5 +1,5 @@
+const assert = require('assert')
 const Operation = require('./Operation')
-const exception = require('../exception')
 const { nameOf } = require('../type')
 const { isGraph } = require('../utility')
 
@@ -15,9 +15,10 @@ class Component extends Operation {
     connectValues(values) {
         for (const key in values) {
             const value = values[key]
-            if (!isGraph(value.instance.to)) {
-                throw exception.componentValueNotConnected(this.definition, key)
-            }
+            assert(
+                isGraph(value.instance.to),
+                `cannot connect value ${key} for component of ${this.definition.name}: no connections specified`
+            )
             for (const connectedKey in value.instance.to) {
                 const connection = value.instance.to[connectedKey]
                 const target = connection
@@ -29,9 +30,10 @@ class Component extends Operation {
     }
 
     constructOperations() {
-        if (!isGraph(this.definition.operations)) {
-            throw exception.definitionNotValid(this.definition)
-        }
+        assert(
+            isGraph(this.definition.operations),
+            `cannot construct operations for component of ${this.definition.name} from ${JSON.stringify(this.definition.operations)}`
+        )
         this.operations = { [this.definition.name]: this }
         for (const key in this.definition.operations) {
             const instance = this.definition.operations[key]
@@ -47,7 +49,7 @@ class Component extends Operation {
         if (typeof definition.implementation === 'function') {
             return new definition.implementation(definition, instance)
         }
-        throw exception.definitionNotValid(definition)
+        throw new Error(`cannot construct operation of ${definition.name} for component of ${this.definition.name}`)
     }
 }
 

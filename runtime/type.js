@@ -57,15 +57,16 @@ const parametersOf = (type) => branch({
  * @param {object} [output] - an object to which properties are written
  * @returns {object} output
  */
-const reduceParameters = (input, parameters = {}, output = parameters) => {
+const replaceParameters = (input, parameters = {}, output = parameters) => {
     for (const key in input) {
         const node = input[key]
+        // Parameters are never replaced within "name" and "dependencies" keys.
         if (key === 'name' || key === 'dependencies') {
             output[key] = input[key]
         } else if (node instanceof Array) {
-            output[key] = reduceParameters(node, parameters, [])
+            output[key] = replaceParameters(node, parameters, [])
         } else if (isGraph(node)) {
-            output[key] = reduceParameters(node, parameters, {})
+            output[key] = replaceParameters(node, parameters, {})
         } else if (typeof node === 'string') {
             for (const alias in parameters) {
                 if (node === alias) {
@@ -92,8 +93,8 @@ const applyParameters = (definition, type) => branch({
         if (!isGraph(definition.parameters)) {
             throw exception.typeParametersNotApplicable(definition, type)
         }
-        definition.parameters = reduceParameters(definition.parameters)
-        return reduceParameters(definition, parametersOf(type), {})
+        definition.parameters = replaceParameters(definition.parameters)
+        return replaceParameters(definition, parametersOf(type), {})
     },
 })
 
@@ -252,5 +253,5 @@ module.exports = {
     nameOf,
     parametersOf,
     reduceOperationType,
-    reduceParameters,
+    replaceParameters,
 }

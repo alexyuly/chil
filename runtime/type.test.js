@@ -2,7 +2,7 @@ const {
     branch,
     nameOf,
     parametersOf,
-    reduceParameters,
+    replaceParameters,
 } = require('./type')
 
 describe('branch', () => {
@@ -64,7 +64,7 @@ describe('parametersOf', () => {
     })
 })
 
-describe('reduceParameters', () => {
+describe('replaceParameters', () => {
     const parameters = () => ({
         A: null,
         B: {
@@ -161,10 +161,15 @@ describe('reduceParameters', () => {
                 },
             ],
         }
-        expect(reduceParameters(selfReferencingParameters)).toEqual(parameters())
+        expect(replaceParameters(selfReferencingParameters)).toEqual(parameters())
     })
-    it('when given parameters, deeply replaces values which reference parameter keys with parameters', () => {
+    it('when given parameters, deeply replaces values which reference parameter keys with parameters, except name and dependencies', () => {
         const definition = {
+            name: 'A',
+            dependencies: {
+                B: 'C',
+                C: 'D',
+            },
             parameters: parameters(),
             is: 'C',
             of: 'D',
@@ -193,6 +198,11 @@ describe('reduceParameters', () => {
             H: 'H replacement',
         }
         const replacedDefinition = {
+            name: 'A',
+            dependencies: {
+                B: 'C',
+                C: 'D',
+            },
             parameters: parameters(),
             is: parameterValues.C,
             of: parameterValues.D,
@@ -210,6 +220,6 @@ describe('reduceParameters', () => {
                 },
             },
         }
-        expect(reduceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
+        expect(replaceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
     })
 })

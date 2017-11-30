@@ -19,35 +19,35 @@ const mockDefinition = () => ({
         'dependency name 2': 'dependency value 2',
     },
     parameters: {
-        'parameter name 1': [
+        'parameter type 1': [
             'parameter value 1',
             {
                 'parameter value 2': 'parameter value 3',
             },
         ],
-        'parameter name 2': {
-            'parameter type name': 'parameter name 1',
+        'parameter type 2': {
+            'parameter value 4': 'parameter type 1',
         },
     },
-    of: 'definition value type',
+    of: 'definition output type',
     values: {
-        'value name 1': {
-            of: 'parameter name 1',
+        'value key 1': {
+            of: 'parameter type 1',
             initial: 'event',
             to: {
-                'operation name 1': 'operation target 1',
-                'operation name 2': 'operation target 1',
+                'operation key 1': 'operation target 1',
+                'operation key 2': 'operation target 1',
             },
         },
-        'value name 2': {
-            of: 'parameter name 2',
+        'value key 2': {
+            of: 'parameter type 2',
             to: {
-                'operation name 1': 'operation target 2',
+                'operation key 1': 'operation target 2',
             },
         },
     },
     operations: {
-        'operation name 1': {
+        'operation key 1': {
             of: 'operation type 1',
             initial: {
                 'operation target 1': 'event',
@@ -86,12 +86,12 @@ describe('reservedIdentifiersFromValues', () => {
         reservedIdentifiersFromValues(target, mockDefinition().values)
         reservedIdentifiersFromValues(target, mockDefinition().operations)
         expect(target).toEqual({
-            'operation name 1': null,
-            'operation name 2': null,
+            'operation key 1': null,
+            'operation key 2': null,
             'operation target 1': null,
             'operation target 2': null,
-            'value name 1': null,
-            'value name 2': null,
+            'value key 1': null,
+            'value key 2': null,
         })
     })
 })
@@ -101,7 +101,6 @@ describe('reservedIdentifiers', () => {
         boolean: null,
         dependencies: null,
         implementation: null,
-        initial: null,
         is: null,
         name: null,
         number: null,
@@ -147,8 +146,8 @@ describe('reservedIdentifiers', () => {
         })).toEqual(Object.assign(
             defaultIdentifiers(),
             {
-                'parameter name 1': null,
-                'parameter name 2': null,
+                'parameter type 1': null,
+                'parameter type 2': null,
             }
         ))
     })
@@ -159,12 +158,12 @@ describe('reservedIdentifiers', () => {
         })).toEqual(Object.assign(
             defaultIdentifiers(),
             {
-                'operation name 1': null,
-                'operation name 2': null,
+                'operation key 1': null,
+                'operation key 2': null,
                 'operation target 1': null,
                 'operation target 2': null,
-                'value name 1': null,
-                'value name 2': null,
+                'value key 1': null,
+                'value key 2': null,
             }
         ))
     })
@@ -219,11 +218,11 @@ describe('resolveCoreDependencies', () => {
         const definition = mockDefinition()
         resolveCoreDependencies(definition)
         expect(definition.dependencies).toEqual({
-            'definition value type': coreDependencyPath('definition value type'),
+            'definition output type': coreDependencyPath('definition output type'),
             'dependency name 1': 'dependency value 1',
             'dependency name 2': 'dependency value 2',
             'operation type 1': coreDependencyPath('operation type 1'),
-            'parameter type name': coreDependencyPath('parameter type name'),
+            'parameter value 4': coreDependencyPath('parameter value 4'),
             'parameter value 1': coreDependencyPath('parameter value 1'),
             'parameter value 2': coreDependencyPath('parameter value 2'),
             'parameter value 3': coreDependencyPath('parameter value 3'),

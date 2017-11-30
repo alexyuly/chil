@@ -62,7 +62,6 @@ const reservedIdentifiers = (definition) => {
         boolean: null,
         dependencies: null,
         implementation: null,
-        initial: null,
         is: null,
         name: null,
         number: null,
@@ -145,6 +144,8 @@ const resolveCoreDependency = (definition, reservedIdentifierSet, name) => {
  */
 const resolveCoreDependencies = (definition, reservedIdentifierSet = reservedIdentifiers(definition), set = definition) => {
     for (const key in set) {
+        // The "initial" key is reserved, for an event in case of a value, or a map of value names to events in case of an operation.
+        // Events are "literal values" that do not reference type names, so they are not parsed by the definition parser.
         if (key !== 'initial') {
             const value = set[key]
             resolveCoreDependency(definition, reservedIdentifierSet, key)

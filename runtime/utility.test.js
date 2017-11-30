@@ -8,8 +8,12 @@ describe('extend', () => {
         const output = {
             operation: {
                 values: {
-                    'value name 1': 'value type 1',
-                    'value name 2': 'value type 2',
+                    'value key 1': {
+                        of: 'value type 1',
+                    },
+                    'value key 2': {
+                        of: 'value type 2',
+                    },
                 },
             },
         }
@@ -17,7 +21,9 @@ describe('extend', () => {
             operation: {
                 of: 'operation output type',
                 values: {
-                    'value name 3': 'value type 3',
+                    'value key 3': {
+                        of: 'value type 3',
+                    },
                 },
             },
         }
@@ -26,9 +32,15 @@ describe('extend', () => {
             operation: {
                 of: 'operation output type',
                 values: {
-                    'value name 1': 'value type 1',
-                    'value name 2': 'value type 2',
-                    'value name 3': 'value type 3',
+                    'value key 1': {
+                        of: 'value type 1',
+                    },
+                    'value key 2': {
+                        of: 'value type 2',
+                    },
+                    'value key 3': {
+                        of: 'value type 3',
+                    },
                 },
             },
         })
@@ -38,8 +50,12 @@ describe('extend', () => {
             operation: {
                 of: 'operation output type',
                 values: {
-                    'value name 1': 'value type 1',
-                    'value name 2': 'value type 2',
+                    'value key 1': {
+                        of: 'value type 1',
+                    },
+                    'value key 2': {
+                        of: 'value type 2',
+                    },
                 },
             },
         }
@@ -47,7 +63,9 @@ describe('extend', () => {
             operation: {
                 of: 'operation output type',
                 values: {
-                    'value name 3': 'value type 3',
+                    'value key 3': {
+                        of: 'value type 3',
+                    },
                 },
             },
         }

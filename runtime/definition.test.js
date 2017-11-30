@@ -1,16 +1,38 @@
-const { resolve } = require('path')
+const {
+    parse,
+} = require('path')
+
 const {
     requireImplementation,
     reservedIdentifiers,
     reservedIdentifiersFromValues,
     isReservedIdentifier,
+    coreDependencyPath,
     resolveCoreDependency,
+    resolveCoreDependencies,
 } = require('./definition')
 
-const instances = () => ({
+const mockDefinition = () => ({
+    name: 'definition name',
+    dependencies: {
+        'dependency name 1': 'dependency value 1',
+        'dependency name 2': 'dependency value 2',
+    },
+    parameters: {
+        'parameter name 1': [
+            'parameter value 1',
+            {
+                'parameter value 2': 'parameter value 3',
+            },
+        ],
+        'parameter name 2': {
+            'parameter type name': 'parameter name 1',
+        },
+    },
+    of: 'definition value type',
     values: {
         'value name 1': {
-            of: 'value type 1',
+            of: 'parameter name 1',
             initial: 'event',
             to: {
                 'operation name 1': 'operation target 1',
@@ -18,7 +40,7 @@ const instances = () => ({
             },
         },
         'value name 2': {
-            of: 'value type 2',
+            of: 'parameter name 2',
             to: {
                 'operation name 1': 'operation target 2',
             },
@@ -61,10 +83,11 @@ describe('reservedIdentifiersFromValues', () => {
     })
     it('when the set of values is a graph, mutates the target according to properties of the values', () => {
         const target = {}
-        reservedIdentifiersFromValues(target, instances().values)
-        reservedIdentifiersFromValues(target, instances().operations)
+        reservedIdentifiersFromValues(target, mockDefinition().values)
+        reservedIdentifiersFromValues(target, mockDefinition().operations)
         expect(target).toEqual({
             'operation name 1': null,
+            'operation name 2': null,
             'operation target 1': null,
             'operation target 2': null,
             'value name 1': null,
@@ -97,7 +120,7 @@ describe('reservedIdentifiers', () => {
     })
     it('when the definition contains a string name, returns a set which includes that name', () => {
         expect(reservedIdentifiers({
-            name: 'definition name',
+            name: mockDefinition().name,
         })).toEqual(Object.assign(
             defaultIdentifiers(),
             {
@@ -107,10 +130,7 @@ describe('reservedIdentifiers', () => {
     })
     it('when the definition contains a graph of dependencies, returns a set which includes their names and paths', () => {
         expect(reservedIdentifiers({
-            dependencies: {
-                'dependency name 1': 'dependency value 1',
-                'dependency name 2': 'dependency value 2',
-            },
+            dependencies: mockDefinition().dependencies,
         })).toEqual(Object.assign(
             defaultIdentifiers(),
             {
@@ -123,12 +143,7 @@ describe('reservedIdentifiers', () => {
     })
     it('when the definition contains a graph of parameters, returns a set which includes their names', () => {
         expect(reservedIdentifiers({
-            parameters: {
-                'parameter name 1': 'parameter value 1',
-                'parameter name 2': {
-                    'parameter type name': 'parameter name 1',
-                },
-            },
+            parameters: mockDefinition().parameters,
         })).toEqual(Object.assign(
             defaultIdentifiers(),
             {
@@ -138,10 +153,14 @@ describe('reservedIdentifiers', () => {
         ))
     })
     it('when the definition contains graphs of values and operations, returns a set which includes their names', () => {
-        expect(reservedIdentifiers(instances())).toEqual(Object.assign(
+        expect(reservedIdentifiers({
+            values: mockDefinition().values,
+            operations: mockDefinition().operations,
+        })).toEqual(Object.assign(
             defaultIdentifiers(),
             {
                 'operation name 1': null,
+                'operation name 2': null,
                 'operation target 1': null,
                 'operation target 2': null,
                 'value name 1': null,
@@ -159,6 +178,14 @@ describe('isReservedIdentifier', () => {
         }
         expect(isReservedIdentifier('A', reservedIdentifierSet)).toEqual(true)
         expect(isReservedIdentifier('C', reservedIdentifierSet)).toEqual(false)
+    })
+})
+
+describe('coreDependencyPath', () => {
+    it('returns an object with one property named "absolute" which contains a path with the name', () => {
+        const name = 'test'
+        const path = coreDependencyPath(name)
+        expect(parse(path.absolute).name).toEqual(name)
     })
 })
 
@@ -181,10 +208,25 @@ describe('resolveCoreDependency', () => {
         resolveCoreDependency(definition, reservedIdentifierSet, name)
         expect(definition).toEqual({
             dependencies: {
-                [name]: {
-                    absolute: resolve(__dirname, `./definitions/${name}`),
-                },
+                [name]: coreDependencyPath(name),
             },
+        })
+    })
+})
+
+describe('resolveCoreDependencies', () => {
+    it('assigns core dependencies to the definition', () => {
+        const definition = mockDefinition()
+        resolveCoreDependencies(definition)
+        expect(definition.dependencies).toEqual({
+            'definition value type': coreDependencyPath('definition value type'),
+            'dependency name 1': 'dependency value 1',
+            'dependency name 2': 'dependency value 2',
+            'operation type 1': coreDependencyPath('operation type 1'),
+            'parameter type name': coreDependencyPath('parameter type name'),
+            'parameter value 1': coreDependencyPath('parameter value 1'),
+            'parameter value 2': coreDependencyPath('parameter value 2'),
+            'parameter value 3': coreDependencyPath('parameter value 3'),
         })
     })
 })

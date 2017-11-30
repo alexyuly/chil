@@ -10,8 +10,8 @@ const definitionNotValid = ({ name }) =>
 const eventNotValid = (event) =>
     new Error(`Event ${event}: native type ${typeof event} is not valid`)
 
-const extensionConflict = (out, input) =>
-    new Error(`Extension output${out.name ? ` of '${out.name}'` : ''}: conflicts with input${input.name ? ` of '${input.name}'` : ''}`)
+const extensionConflict = (output, input, key) =>
+    new Error(`Extension output of '${output.name}': conflicts with input of '${input.name}' at key '${key}'`)
 
 const typeNotApplicable = (type, domain) =>
     new Error(`Type ${type}: not applicable to domain ${domain}`)

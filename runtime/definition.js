@@ -43,6 +43,7 @@ const reservedIdentifiersFromValues = (target, instances) => {
         const connections = value.to
         if (isGraph(connections)) {
             for (const key in connections) {
+                target[key] = null
                 target[connections[key]] = null
             }
         }
@@ -113,6 +114,14 @@ const isReservedIdentifier = (identifier, reservedIdentifierSet) => {
 }
 
 /**
+ * @param {string} name - possibly the name of a core dependency
+ * @returns {object} a reference to an absolute path to what may be a core dependency
+ */
+const coreDependencyPath = (name) => ({
+    absolute: resolve(__dirname, `./definitions/${name}`),
+})
+
+/**
  * Assigns the absolute path of a core dependency to an operation definition, if possible.
  * @param {object} definition - an operation definition which gets mutated by this function
  * @param {object} reservedIdentifierSet - a set of reserved identifiers returned by reservedIdentifiers
@@ -125,10 +134,7 @@ const resolveCoreDependency = (definition, reservedIdentifierSet, name) => {
     if (!isGraph(definition.dependencies)) {
         definition.dependencies = {}
     }
-    // The dependency of [name] may exist at an absolute path within the definitions folder.
-    definition.dependencies[name] = {
-        absolute: resolve(__dirname, `./definitions/${name}`),
-    }
+    definition.dependencies[name] = coreDependencyPath(name)
 }
 
 /**
@@ -139,14 +145,16 @@ const resolveCoreDependency = (definition, reservedIdentifierSet, name) => {
  */
 const resolveCoreDependencies = (definition, reservedIdentifierSet = reservedIdentifiers(definition), set = definition) => {
     for (const key in set) {
-        const value = set[key]
-        resolveCoreDependency(definition, reservedIdentifierSet, key)
-        for (const type of value instanceof Array ? value : [ value ]) {
-            branch({
-                type,
-                specific: () => resolveCoreDependency(definition, reservedIdentifierSet, type),
-                generic: () => resolveCoreDependencies(definition, reservedIdentifierSet, type),
-            })
+        if (key !== 'initial') {
+            const value = set[key]
+            resolveCoreDependency(definition, reservedIdentifierSet, key)
+            for (const type of value instanceof Array ? value : [ value ]) {
+                branch({
+                    type,
+                    specific: () => resolveCoreDependency(definition, reservedIdentifierSet, type),
+                    generic: () => resolveCoreDependencies(definition, reservedIdentifierSet, type),
+                })
+            }
         }
     }
 }
@@ -188,6 +196,7 @@ const define = (path) => {
 }
 
 module.exports = {
+    coreDependencyPath,
     define,
     extendBase,
     isReservedIdentifier,

@@ -3,6 +3,7 @@ const {
     nameOf,
     parametersOf,
     replaceParameters,
+    applyParameters,
 } = require('./type')
 
 describe('branch', () => {
@@ -121,6 +122,7 @@ describe('replaceParameters', () => {
                     HC: [
                         null,
                     ],
+                    HD: 'I',
                 },
             },
         ],
@@ -157,19 +159,15 @@ describe('replaceParameters', () => {
                     HA: 'D',
                     HB: {
                         HC: 'E',
+                        HD: 'I',
                     },
                 },
             ],
         }
         expect(replaceParameters(selfReferencingParameters)).toEqual(parameters())
     })
-    it('when given parameters, deeply replaces values which reference parameter keys with parameters, except name and dependencies', () => {
+    it('when given parameters, deeply replaces values which reference parameter keys with parameters', () => {
         const definition = {
-            name: 'A',
-            dependencies: {
-                B: 'C',
-                C: 'D',
-            },
             parameters: parameters(),
             is: 'C',
             of: 'D',
@@ -198,11 +196,6 @@ describe('replaceParameters', () => {
             H: 'H replacement',
         }
         const replacedDefinition = {
-            name: 'A',
-            dependencies: {
-                B: 'C',
-                C: 'D',
-            },
             parameters: parameters(),
             is: parameterValues.C,
             of: parameterValues.D,
@@ -221,5 +214,61 @@ describe('replaceParameters', () => {
             },
         }
         expect(replaceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
+    })
+})
+
+describe('applyParameters', () => {
+    it('when the type is specific, returns the definition', () => {
+        const definition = {}
+        expect(applyParameters(definition, 'a specific type')).toBe(definition)
+    })
+    it('when the type is generic and the definition lacks a graph of parameters, throws an exception', () => {
+        const definition = {}
+        expect(() => applyParameters(definition, { 'a generic type': '' })).toThrow()
+    })
+    it('when the type is generic and the definition has a graph of parameters, returns the definition with parameters applied', () => {
+        const definition = {
+            name: 'store',
+            parameters: {
+                'State Type': null,
+                'Action Type': null,
+                'Output Type': null,
+            },
+            is: 'pipe',
+            of: 'Output Type',
+            values: {
+                state: {
+                    of: 'State Type',
+                },
+                action: {
+                    of: 'Action Type',
+                },
+            },
+        }
+        const type = {
+            store: {
+                'State Type': 'State Parameter',
+                'Action Type': 'Action Parameter',
+                'Output Type': 'Output Parameter',
+            },
+        }
+        expect(applyParameters(definition, type)).toEqual({
+            name: 'store',
+            parameters: {
+                'State Type': null,
+                'Action Type': null,
+                'Output Type': null,
+            },
+            is: 'pipe',
+            of: 'Output Parameter',
+            values: {
+                state: {
+                    of: 'State Parameter',
+                },
+                action: {
+                    of: 'Action Parameter',
+                },
+            },
+        })
     })
 })

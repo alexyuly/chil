@@ -60,10 +60,7 @@ const parametersOf = (type) => branch({
 const replaceParameters = (input, parameters = {}, output = parameters) => {
     for (const key in input) {
         const node = input[key]
-        // Parameters are never replaced within "name" and "dependencies" keys.
-        if (key === 'name' || key === 'dependencies') {
-            output[key] = input[key]
-        } else if (node instanceof Array) {
+        if (node instanceof Array) {
             output[key] = replaceParameters(node, parameters, [])
         } else if (isGraph(node)) {
             output[key] = replaceParameters(node, parameters, {})
@@ -73,6 +70,9 @@ const replaceParameters = (input, parameters = {}, output = parameters) => {
                     output[key] = parameters[alias]
                     break
                 }
+            }
+            if (output[key] === undefined) {
+                output[key] = input[key]
             }
         } else {
             output[key] = null
@@ -93,7 +93,6 @@ const applyParameters = (definition, type) => branch({
         if (!isGraph(definition.parameters)) {
             throw exception.typeParametersNotApplicable(definition, type)
         }
-        definition.parameters = replaceParameters(definition.parameters)
         return replaceParameters(definition, parametersOf(type), {})
     },
 })
@@ -235,12 +234,12 @@ const assertApplicable = (type, domain, dependencies) => {
  * @returns {object} an operation definition updated with parameters from the type
  */
 const construct = (definition, type) => {
-    const result = applyParameters(definition, type)
     const parameters = parametersOf(type)
-    for (const key in result.parameters) {
-        assertApplicable(parameters[key], result.parameters[key], result.dependencies)
+    const domains = replaceParameters(definition.parameters)
+    for (const key in domains) {
+        assertApplicable(parameters[key], domains[key], definition.dependencies)
     }
-    return result
+    return applyParameters(definition, type)
 }
 
 module.exports = {

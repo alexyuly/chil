@@ -81,7 +81,7 @@ const replaceParameters = (input, parameters = {}, output = parameters) => {
 /**
  * @param {object} definition - an operation definition which is mutated by this function
  * @param {string | object} type - an operation type
- * @returns {object} an operation definition updated with parameters from the type
+ * @returns {object} a definition which is an application of the type (and has NOT been checked for type safety)
  */
 const applyParameters = (definition, type) => branch({
     type,
@@ -101,6 +101,27 @@ const applyParameters = (definition, type) => branch({
         return replaceParameters(definition, parameters, {})
     },
 })
+
+/**
+ * @param {string | object} type - a type
+ * @param {object} dependencies - a map of names to operation definitions
+ * @returns {object} a parameterized operation definition for the type, based on dependencies
+ */
+const defineOperationType = (type, dependencies) => {
+    if (nameOf(type) === 'operation') {
+        return type
+    }
+    assert(
+        isGraph(dependencies),
+        `cannot define type ${JSON.stringify(type)}: expected dependencies but got ${JSON.stringify(dependencies)}`
+    )
+    const definition = dependencies[nameOf(type)]
+    assert(
+        isGraph(definition),
+        `cannot define type ${JSON.stringify(type)}: expected a dependency definition but got ${JSON.stringify(definition)}`
+    )
+    return applyParameters(definition, type)
+}
 
 /**
  * @param {string | object} type - a type
@@ -129,34 +150,18 @@ const isOperationType = (type) => {
  * @returns {object} output after mutations are performed
  */
 const reduceOperationType = (type, dependencies, output = {}) => {
-    if (nameOf(type) === 'operation') {
-        return type
-    }
-    assert(
-        isGraph(dependencies),
-        `cannot resolve type ${JSON.stringify(type)}: expected dependencies but got ${JSON.stringify(dependencies)}`
-    )
-    const dependency = dependencies[nameOf(type)]
-    assert(
-        isGraph(dependency),
-        `cannot resolve type ${JSON.stringify(type)}: expected dependency but got ${JSON.stringify(dependency)}`
-    )
-    const definition = branch({
-        type,
-        specific: () => dependency,
-        generic: () => applyParameters(dependency, type),
-    })
-    const input = {
+    const definition = defineOperationType(type, dependencies)
+    const base = {
         operation: {},
     }
     if (definition.of) {
-        input.operation.of = definition.of
+        base.operation.of = definition.of
     }
     if (definition.values) {
-        input.operation.values = definition.values
+        base.operation.values = definition.values
     }
-    extend(output, input)
-    if ('is' in definition) {
+    extend(output, base)
+    if (definition.is) {
         assert(
             isOperationType(definition.is),
             `cannot extend operation definition of ${definition.name} from non-operation type ${JSON.stringify(definition.is)}`
@@ -228,10 +233,10 @@ const isApplicable = (type, domain, dependencies) => {
 }
 
 /**
- * Construct an applied operation definition, and then validate type parameters.
+ * Construct an applied operation definition, and then check type parameters.
  * @param {object} definition - an operation definition which is mutated by this function
  * @param {string | object} type - an operation type
- * @returns {object} an operation definition updated with parameters from the type
+ * @returns {object} a definition which is an application of the type and has been checked for type safety
  */
 const construct = (definition, type) => {
     const parameters = parametersOf(type)
@@ -249,6 +254,7 @@ module.exports = {
     applyParameters,
     branch,
     construct,
+    defineOperationType,
     isApplicable,
     isOperationType,
     nameOf,

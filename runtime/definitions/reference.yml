@@ -8,7 +8,7 @@ name: the locally scoped name of this operation
 dependencies: a map of locally scoped names to relative File System paths which reference definitions required to construct an instance of this operation
 parameters: a map of locally scoped type aliases to domains of type parameters required to construct an instance of this operation
 
-# defines the base definition, which MUST NOT be deeply overridden by this definition or an exception will be thrown
+# defines the base definition, which MUST NOT be deeply overridden by this definition or an error will be thrown
 is: the base definition for this operation, which may optionally include specific type parameters
 
 # defines the type of a Value ("sink"):

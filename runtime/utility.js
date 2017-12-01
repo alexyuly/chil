@@ -5,7 +5,7 @@
 const isGraph = (node) => typeof node === 'object' && !(node instanceof Array) && node !== null
 
 /**
- * Deeply merges properties of input into output, and throws an exception if any properties in input conflict with output.
+ * Deeply merges properties of input into output, and throws an error if any properties in input conflict with output.
  * @param {object} output - an object to which properties are written
  * @param {object} input - an object from which properties are read
  */

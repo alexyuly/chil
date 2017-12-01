@@ -45,7 +45,7 @@ describe('extend', () => {
             },
         })
     })
-    it('throws an exception if a property in output conflicts with input', () => {
+    it('throws an error if a property in output conflicts with input', () => {
         const output = {
             operation: {
                 of: 'operation output type',

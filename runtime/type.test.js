@@ -4,8 +4,10 @@ const {
     parametersOf,
     replaceParameters,
     applyParameters,
+    defineOperationType,
     isOperationType,
     reduceOperationType,
+    isApplicable,
 } = require('./type')
 
 describe('branch', () => {
@@ -29,7 +31,7 @@ describe('branch', () => {
         })
         expect(generic).toHaveBeenCalledTimes(1)
     })
-    it('throws an exception if passed anything else, including an Array or any other value', () => {
+    it('throws an error if passed anything else, including an Array or any other value', () => {
         expect(() => branch({ type: [] })).toThrow()
         expect(() => branch({ type: 0 })).toThrow()
         expect(() => branch({ type: false })).toThrow()
@@ -238,11 +240,11 @@ describe('applyParameters', () => {
         const definition = {}
         expect(applyParameters(definition, 'a specific type')).toBe(definition)
     })
-    it('when the type is generic and the definition lacks a graph of parameters, throws an exception', () => {
+    it('when the type is generic and the definition lacks a graph of parameters, throws an error', () => {
         const definition = {}
         expect(() => applyParameters(definition, { 'a generic type': '' })).toThrow()
     })
-    it('when the type is generic and lacks at least one parameters specified by the definition, throws an exception', () => {
+    it('when the type is generic and lacks at least one parameters specified by the definition, throws an error', () => {
         const definition = {
             parameters: parameters(),
         }
@@ -324,8 +326,21 @@ describe('applyParameters', () => {
     })
 })
 
+describe('defineOperationType', () => {
+    it('when the type name is "operation", returns the referentially same type', () => {
+        const type = {
+            operation: {},
+        }
+        expect(defineOperationType(type)).toBe(type)
+    })
+    it('when a dependency for the type is not provided, throws an error', () => {
+        expect(() => defineOperationType({})).toThrow()
+        expect(() => defineOperationType({}, {})).toThrow()
+    })
+})
+
 describe('isOperationType', () => {
-    it('returns true if and only if the type is an operation type, and throws an exception if the type is not valid', () => {
+    it('returns true if and only if the type is an operation type, and throws an error if the type is not valid', () => {
         expect(isOperationType([])).toEqual(false)
         expect(isOperationType(null)).toEqual(false)
         expect(isOperationType('number')).toEqual(false)
@@ -362,15 +377,11 @@ describe('reduceOperationType', () => {
             },
         },
     })
-    it('when the type name is "operation", returns the type', () => {
+    it('when the type name is "operation", returns an equivalent type', () => {
         const type = {
             operation: {},
         }
-        expect(reduceOperationType(type)).toBe(type)
-    })
-    it('when a dependency for the type is not provided, throws an exception', () => {
-        expect(() => reduceOperationType({})).toThrow()
-        expect(() => reduceOperationType({}, {})).toThrow()
+        expect(reduceOperationType(type)).toEqual(type)
     })
     it('when a dependency for the type is provided, normalizes the type based on its extension hierarchy if no conflicts exist', () => {
         const type = {
@@ -388,7 +399,7 @@ describe('reduceOperationType', () => {
             },
         })
     })
-    it('when type extension hierarchy conflicts exist, throws an exception', () => {
+    it('when type extension hierarchy conflicts exist, throws an error', () => {
         const type = {
             type: {
                 key: 'parameter',
@@ -402,5 +413,25 @@ describe('reduceOperationType', () => {
             },
         }
         expect(() => reduceOperationType(type, conflictedHierarchy)).toThrow()
+    })
+})
+
+describe('isApplicable', () => {
+    it('returns false when type or domain are undefined', () => {
+        expect(isApplicable()).toEqual(false)
+        expect(isApplicable({})).toEqual(false)
+        expect(isApplicable(undefined, {})).toEqual(false)
+    })
+    it('returns false when for type and domain, one is a value while the other is an operation', () => {
+        expect(isApplicable('number', { operation: null })).toEqual(false)
+        expect(isApplicable('store', { vector: 'string' })).toEqual(false)
+    })
+    it('returns false when type and domain are values, and type is null while domain is not null', () => {
+        expect(isApplicable(null, 'string')).toEqual(false)
+    })
+    it('returns true when type and domain are values, and domain is null regardless of type', () => {
+        expect(isApplicable('boolean', null)).toEqual(true)
+        expect(isApplicable({ struct: 'number' }, null)).toEqual(true)
+        expect(isApplicable(null, null)).toEqual(true)
     })
 })

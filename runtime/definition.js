@@ -147,8 +147,8 @@ const resolveCoreDependencies = (definition, reservedIdentifierSet = reservedIde
         // The "initial" key is reserved, for an event in case of a value, or a map of value names to events in case of an operation.
         // Events are "literal values" that do not reference type names, so they are not parsed by the definition parser.
         if (key !== 'initial') {
-            const value = set[key]
             resolveCoreDependency(definition, reservedIdentifierSet, key)
+            const value = set[key]
             for (const type of value instanceof Array ? value : [ value ]) {
                 branch({
                     type,

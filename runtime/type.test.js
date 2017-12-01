@@ -7,6 +7,7 @@ const {
     defineOperationType,
     isOperationType,
     reduceOperationType,
+    isApplicableValue,
     isApplicable,
 } = require('./type')
 
@@ -416,6 +417,243 @@ describe('reduceOperationType', () => {
     })
 })
 
+describe('isApplicableValue', () => {
+    it('returns false when type or domain are undefined', () => {
+        expect(isApplicableValue()).toEqual(false)
+        expect(isApplicableValue({})).toEqual(false)
+        expect(isApplicableValue(undefined, {})).toEqual(false)
+    })
+    it('returns true when domain is null regardless of type', () => {
+        expect(isApplicableValue('boolean', null)).toEqual(true)
+        expect(isApplicableValue({ struct: 'number' }, null)).toEqual(true)
+        expect(isApplicableValue(null, null)).toEqual(true)
+    })
+    it('returns false when type is null while domain is not null', () => {
+        expect(isApplicableValue(null, 'string')).toEqual(false)
+    })
+    it('returns false when type is a union while domain is not a union', () => {
+        expect(isApplicableValue(
+            [
+                'number',
+                'string',
+            ],
+            'string'
+        )).toEqual(false)
+    })
+    it('when type is not a union while domain is a union, returns true if type is applicable to some member of domain', () => {
+        expect(isApplicableValue(
+            'number',
+            [
+                'boolean',
+                'number',
+                'string',
+            ]
+        )).toEqual(true)
+        expect(isApplicableValue(
+            'number',
+            [
+                'boolean',
+                'string',
+            ]
+        )).toEqual(false)
+    })
+    it('when type and domain and both unions, returns true if every type member is applicable to some domain member', () => {
+        expect(isApplicableValue(
+            [
+                'boolean',
+                'number',
+                'string',
+            ],
+            [
+                'boolean',
+                'number',
+                'string',
+            ]
+        )).toEqual(true)
+        expect(isApplicableValue(
+            [
+                'boolean',
+                'number',
+                'string',
+            ],
+            [
+                'boolean',
+                'string',
+            ]
+        )).toEqual(false)
+    })
+    it('when type is specific, returns true if and only if type is valid and equivalent to domain', () => {
+        expect(isApplicableValue('number', 'number')).toEqual(true)
+        expect(isApplicableValue('number', 'string')).toEqual(false)
+        expect(isApplicableValue('number', { vector: null })).toEqual(false)
+    })
+    it('when type is specific, throws an error if type is not valid', () => {
+        expect(() => isApplicableValue('an invalid value type', 'domain')).toThrow()
+    })
+    it('when type is generic, returns false if type and domain have different names, or domain is not generic', () => {
+        expect(isApplicableValue({ vector: null }, { struct: null })).toEqual(false)
+        expect(isApplicableValue({ vector: null }, 'vector')).toEqual(false)
+    })
+    it('when type is a vector, return true if and only if the type parameter is applicable to the domain parameter', () => {
+        expect(isApplicableValue(
+            {
+                vector: 'number',
+            },
+            {
+                vector: 'number',
+            }
+        )).toEqual(true)
+        expect(isApplicableValue(
+            {
+                vector: {
+                    vector: 'number',
+                },
+            },
+            {
+                vector: {
+                    vector: 'number',
+                },
+            }
+        )).toEqual(true)
+        expect(isApplicableValue(
+            {
+                vector: 'number',
+            },
+            {
+                vector: [
+                    'number',
+                    'string',
+                ],
+            }
+        )).toEqual(true)
+        expect(isApplicableValue(
+            {
+                vector: 'number',
+            },
+            {
+                vector: 'string',
+            }
+        )).toEqual(false)
+        expect(isApplicableValue(
+            {
+                vector: {
+                    vector: 'number',
+                },
+            },
+            {
+                vector: 'number',
+            }
+        )).toEqual(false)
+        expect(isApplicableValue(
+            {
+                vector: [
+                    'number',
+                    'string',
+                ],
+            },
+            {
+                vector: 'number',
+            }
+        )).toEqual(false)
+    })
+    it('when type is a struct, returns true if and only if every domain parameter has a corresponding applicable type parameter', () => {
+        expect(isApplicableValue(
+            {
+                struct: {
+                    a: 'boolean',
+                    b: 'number',
+                    c: 'string',
+                    d: 'could be any type',
+                },
+            },
+            {
+                struct: {
+                    a: 'boolean',
+                    b: 'number',
+                    c: 'string',
+                },
+            }
+        )).toEqual(true)
+        expect(isApplicableValue(
+            {
+                struct: {
+                    prop1: {
+                        vector: null,
+                    },
+                    prop2: {
+                        struct: {
+                            a: { vector: 'number' },
+                            b: { vector: 'string' },
+                            c: 'extraneous type',
+                        },
+                    },
+                    prop3: null,
+                },
+            },
+            {
+                struct: {
+                    prop1: {
+                        vector: null,
+                    },
+                    prop2: {
+                        struct: {
+                            a: { vector: 'number' },
+                            b: { vector: 'string' },
+                        },
+                    },
+                },
+            }
+        )).toEqual(true)
+        expect(isApplicableValue(
+            {
+                struct: {
+                    a: 'boolean',
+                    b: 'number',
+                    c: 'string',
+                },
+            },
+            {
+                struct: {
+                    a: 'boolean',
+                    b: 'number',
+                    c: 'string',
+                    d: 'could be any type',
+                },
+            }
+        )).toEqual(false)
+        expect(isApplicableValue(
+            {
+                struct: {
+                    prop1: {
+                        vector: null,
+                    },
+                    prop2: {
+                        struct: {
+                            a: { vector: 'number' },
+                            b: { vector: 'string' },
+                        },
+                    },
+                },
+            },
+            {
+                struct: {
+                    prop1: {
+                        vector: null,
+                    },
+                    prop2: {
+                        struct: {
+                            a: { vector: 'number' },
+                            b: { vector: 'string' },
+                            c: 'extraneous type',
+                        },
+                    },
+                    prop3: null,
+                },
+            }
+        )).toEqual(false)
+    })
+})
+
 describe('isApplicable', () => {
     it('returns false when type or domain are undefined', () => {
         expect(isApplicable()).toEqual(false)
@@ -425,13 +663,5 @@ describe('isApplicable', () => {
     it('returns false when for type and domain, one is a value while the other is an operation', () => {
         expect(isApplicable('number', { operation: null })).toEqual(false)
         expect(isApplicable('store', { vector: 'string' })).toEqual(false)
-    })
-    it('returns false when type and domain are values, and type is null while domain is not null', () => {
-        expect(isApplicable(null, 'string')).toEqual(false)
-    })
-    it('returns true when type and domain are values, and domain is null regardless of type', () => {
-        expect(isApplicable('boolean', null)).toEqual(true)
-        expect(isApplicable({ struct: 'number' }, null)).toEqual(true)
-        expect(isApplicable(null, null)).toEqual(true)
     })
 })

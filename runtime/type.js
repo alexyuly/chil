@@ -172,26 +172,12 @@ const reduceOperationType = (type, dependencies, output = {}) => {
 }
 
 /**
- * @param {string | object} type - a type
- * @param {string | object} domain - a type which is a superset of other types
- * @param {object} [dependencies] - a map of names to operation definitions
+ * @param {string | object} type - a value type
+ * @param {string | object} domain - a value type which is a superset of other types
  * @returns {boolean} true if and only if the type is a subset of the domain
  */
-const isApplicable = (type, domain, dependencies) => {
+const isApplicableValue = (type, domain) => {
     if (type === undefined || domain === undefined) {
-        return false
-    }
-    if (isOperationType(type)) {
-        if (!isOperationType(domain)) {
-            return false
-        }
-        const reducedType = reduceOperationType(type, dependencies)
-        const reducedDomain = reduceOperationType(domain, dependencies)
-        return isApplicable(reducedType.of, reducedDomain.of, dependencies) &&
-            Object.keys(reducedDomain.values.of).every((key) =>
-                isApplicable(reducedType.values.of[key], reducedDomain.values.of[key], dependencies))
-    }
-    if (isOperationType(domain)) {
         return false
     }
     if (domain === null) {
@@ -206,14 +192,22 @@ const isApplicable = (type, domain, dependencies) => {
         return false
     }
     if (!typeUnion && domainUnion) {
-        return domain.some((domainChild) => isApplicable(type, domainChild))
+        return domain.some((domainMember) =>
+            isApplicableValue(type, domainMember))
     }
     if (typeUnion && domainUnion) {
-        return type.every((typeChild) => domain.some((domainChild) => isApplicable(typeChild, domainChild)))
+        return type.every((typeMember) =>
+            domain.some((domainMember) =>
+                isApplicableValue(typeMember, domainMember)))
     }
     return branch({
         type,
-        specific: () => type === domain,
+        specific: () => {
+            if (type === 'number' || type === 'string' || type === 'boolean') {
+                return type === domain
+            }
+            throw new Error(`invalid value type ${JSON.stringify(type)}`)
+        },
         generic: () => {
             const typeName = nameOf(type)
             if (typeName !== nameOf(domain) || !isGraph(domain)) {
@@ -222,14 +216,38 @@ const isApplicable = (type, domain, dependencies) => {
             const typeParameters = parametersOf(type)
             const domainParameters = parametersOf(domain)
             if (typeName === 'vector') {
-                return isApplicable(typeParameters, domainParameters)
+                return isApplicableValue(typeParameters, domainParameters)
             }
             if (typeName === 'struct') {
-                return Object.keys(domainParameters).every((key) => isApplicable(typeParameters[key], domainParameters[key]))
+                return Object.keys(domainParameters).every((key) =>
+                    isApplicableValue(typeParameters[key], domainParameters[key]))
             }
-            throw new Error(`unexpected type ${JSON.stringify(type)}`)
+            throw new Error(`invalid value type ${JSON.stringify(type)}`)
         },
     })
+}
+
+/**
+ * @param {string | object} type - any type
+ * @param {string | object} domain - a type which is a superset of other types
+ * @param {object} [dependencies] - a map of names to operation definitions
+ * @returns {boolean} true if and only if the type is a subset of the domain
+ */
+const isApplicable = (type, domain, dependencies) => {
+    if (type === undefined || domain === undefined) {
+        return false
+    }
+    if (!isOperationType(type)) {
+        return !isOperationType(domain) && isApplicableValue(type, domain)
+    }
+    if (!isOperationType(domain)) {
+        return false
+    }
+    const reducedType = reduceOperationType(type, dependencies)
+    const reducedDomain = reduceOperationType(domain, dependencies)
+    return isApplicable(reducedType.of, reducedDomain.of, dependencies) &&
+        Object.keys(reducedDomain.values.of).every((key) =>
+            isApplicable(reducedType.values.of[key], reducedDomain.values.of[key], dependencies))
 }
 
 /**
@@ -256,6 +274,7 @@ module.exports = {
     construct,
     defineOperationType,
     isApplicable,
+    isApplicableValue,
     isOperationType,
     nameOf,
     parametersOf,

@@ -1,36 +1,36 @@
 const assert = require('assert')
-const Value = require('./Value')
+const Stream = require('./Stream')
 const { construct } = require('../type')
 const { isGraph } = require('../utility')
 
-class Operation extends Value {
+class Operation extends Stream {
     constructor(definition, instance = { of: definition.name }, serialization) {
         super(instance, serialization)
         this.definition = construct(definition, instance.of)
     }
 
-    constructValues(delegates = {}) {
+    constructStreams(delegates = {}) {
         assert(
-            isGraph(this.definition.values),
-            `cannot construct values for operation of ${this.definition.name} from ${JSON.stringify(this.definition.values)}`
+            isGraph(this.definition.streams),
+            `cannot construct streams for operation of ${this.definition.name} from ${JSON.stringify(this.definition.streams)}`
         )
-        this.values = {}
-        for (const key in this.definition.values) {
-            const instance = this.definition.values[key]
-            this.values[key] = this.value(instance, delegates[key])
+        this.streams = {}
+        for (const key in this.definition.streams) {
+            const instance = this.definition.streams[key]
+            this.streams[key] = this.stream(instance, delegates[key])
         }
     }
 
-    value(instance, delegate) {
+    stream(instance, delegate) {
         if (!delegate) {
-            return new Value(instance)
+            return new Stream(instance)
         }
-        const ValueClass = class extends Value {
+        const StreamClass = class extends Stream {
             next(event) {
                 delegate(event)
             }
         }
-        return new ValueClass(instance)
+        return new StreamClass(instance)
     }
 }
 

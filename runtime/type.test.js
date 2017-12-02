@@ -7,7 +7,7 @@ const {
     defineOperationType,
     isOperationType,
     reduceOperationType,
-    isApplicableValue,
+    isApplicableStream,
     isApplicable,
 } = require('./type')
 
@@ -32,7 +32,7 @@ describe('branch', () => {
         })
         expect(generic).toHaveBeenCalledTimes(1)
     })
-    it('throws an error if passed anything else, including an Array or any other value', () => {
+    it('throws an error if passed anything else, including an Array or any other stream', () => {
         expect(() => branch({ type: [] })).toThrow()
         expect(() => branch({ type: 0 })).toThrow()
         expect(() => branch({ type: false })).toThrow()
@@ -59,7 +59,7 @@ describe('parametersOf', () => {
     it('returns undefined if the type is specific', () => {
         expect(parametersOf('a specific type')).toEqual(undefined)
     })
-    it('returns the first value of a type if the type is generic', () => {
+    it('returns the first stream of a type if the type is generic', () => {
         expect(parametersOf({
             'a generic type': {
                 'a parameter key': 'a parameter type',
@@ -132,7 +132,7 @@ describe('replaceParameters', () => {
             },
         ],
     })
-    it('when given no parameters, deeply replaces values which reference previous keys within the input object', () => {
+    it('when given no parameters, deeply replaces streams which reference previous keys within the input object', () => {
         const selfReferencingParameters = {
             A: null,
             B: {
@@ -171,12 +171,12 @@ describe('replaceParameters', () => {
         }
         expect(replaceParameters(selfReferencingParameters)).toEqual(parameters())
     })
-    it('when given parameters, deeply replaces values which reference parameter keys with parameters', () => {
+    it('when given parameters, deeply replaces streams which reference parameter keys with parameters', () => {
         const definition = {
             parameters: parameters(),
             is: 'C',
             of: 'D',
-            values: {
+            streams: {
                 x: {
                     of: 'F',
                 },
@@ -190,7 +190,7 @@ describe('replaceParameters', () => {
                 },
             },
         }
-        const parameterValues = {
+        const parameterStreams = {
             A: 'A replacement',
             B: 'B replacement',
             C: 'C replacement',
@@ -202,23 +202,23 @@ describe('replaceParameters', () => {
         }
         const replacedDefinition = {
             parameters: parameters(),
-            is: parameterValues.C,
-            of: parameterValues.D,
-            values: {
+            is: parameterStreams.C,
+            of: parameterStreams.D,
+            streams: {
                 x: {
-                    of: parameterValues.F,
+                    of: parameterStreams.F,
                 },
             },
             operations: {
                 x: {
-                    of: parameterValues.G,
+                    of: parameterStreams.G,
                 },
                 y: {
-                    of: parameterValues.H,
+                    of: parameterStreams.H,
                 },
             },
         }
-        expect(replaceParameters(definition, parameterValues, {})).toEqual(replacedDefinition)
+        expect(replaceParameters(definition, parameterStreams, {})).toEqual(replacedDefinition)
     })
 })
 
@@ -230,7 +230,7 @@ describe('applyParameters', () => {
         'Operation Type': {
             operation: {
                 of: 'Output Type',
-                values: {
+                streams: {
                     state: { of: 'State Type' },
                     action: { of: 'Action Type' },
                 },
@@ -264,7 +264,7 @@ describe('applyParameters', () => {
             parameters: parameters(),
             is: 'pipe',
             of: 'Output Type',
-            values: {
+            streams: {
                 state: {
                     of: 'State Type',
                     to: { operation: 'state' },
@@ -298,7 +298,7 @@ describe('applyParameters', () => {
                 'Operation Type': {
                     operation: {
                         of: 'Output Parameter',
-                        values: {
+                        streams: {
                             state: { of: 'State Parameter' },
                             action: { of: 'Action Parameter' },
                         },
@@ -307,7 +307,7 @@ describe('applyParameters', () => {
             },
             is: 'pipe',
             of: 'Output Parameter',
-            values: {
+            streams: {
                 state: {
                     of: 'State Parameter',
                     to: { operation: 'state' },
@@ -363,8 +363,8 @@ describe('reduceOperationType', () => {
         type: {
             dependencies: {
                 base: {
-                    values: {
-                        'numeric value': { of: 'number' },
+                    streams: {
+                        'numeric stream': { of: 'number' },
                     },
                 },
             },
@@ -373,8 +373,8 @@ describe('reduceOperationType', () => {
             },
             is: 'base',
             of: 'key',
-            values: {
-                'parameterized value': { of: 'key' },
+            streams: {
+                'parameterized stream': { of: 'key' },
             },
         },
     })
@@ -393,9 +393,9 @@ describe('reduceOperationType', () => {
         expect(reduceOperationType(type, dependencies())).toEqual({
             operation: {
                 of: 'parameter',
-                values: {
-                    'parameterized value': { of: 'parameter' },
-                    'numeric value': { of: 'number' },
+                streams: {
+                    'parameterized stream': { of: 'parameter' },
+                    'numeric stream': { of: 'number' },
                 },
             },
         })
@@ -410,29 +410,29 @@ describe('reduceOperationType', () => {
         conflictedHierarchy.type.dependencies.base.is = 'meta'
         conflictedHierarchy.type.dependencies.base.dependencies = {
             meta: {
-                of: 'some value type',
+                of: 'some stream type',
             },
         }
         expect(() => reduceOperationType(type, conflictedHierarchy)).toThrow()
     })
 })
 
-describe('isApplicableValue', () => {
+describe('isApplicableStream', () => {
     it('returns false when type or domain are undefined', () => {
-        expect(isApplicableValue()).toEqual(false)
-        expect(isApplicableValue({})).toEqual(false)
-        expect(isApplicableValue(undefined, {})).toEqual(false)
+        expect(isApplicableStream()).toEqual(false)
+        expect(isApplicableStream({})).toEqual(false)
+        expect(isApplicableStream(undefined, {})).toEqual(false)
     })
     it('returns true when domain is null regardless of type', () => {
-        expect(isApplicableValue('boolean', null)).toEqual(true)
-        expect(isApplicableValue({ struct: 'number' }, null)).toEqual(true)
-        expect(isApplicableValue(null, null)).toEqual(true)
+        expect(isApplicableStream('boolean', null)).toEqual(true)
+        expect(isApplicableStream({ struct: 'number' }, null)).toEqual(true)
+        expect(isApplicableStream(null, null)).toEqual(true)
     })
     it('returns false when type is null while domain is not null', () => {
-        expect(isApplicableValue(null, 'string')).toEqual(false)
+        expect(isApplicableStream(null, 'string')).toEqual(false)
     })
     it('returns false when type is a union while domain is not a union', () => {
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             [
                 'number',
                 'string',
@@ -441,7 +441,7 @@ describe('isApplicableValue', () => {
         )).toEqual(false)
     })
     it('when type is not a union while domain is a union, returns true if type is applicable to some member of domain', () => {
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             'number',
             [
                 'boolean',
@@ -449,7 +449,7 @@ describe('isApplicableValue', () => {
                 'string',
             ]
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             'number',
             [
                 'boolean',
@@ -458,7 +458,7 @@ describe('isApplicableValue', () => {
         )).toEqual(false)
     })
     it('when type and domain and both unions, returns true if every type member is applicable to some domain member', () => {
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             [
                 'boolean',
                 'number',
@@ -470,7 +470,7 @@ describe('isApplicableValue', () => {
                 'string',
             ]
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             [
                 'boolean',
                 'number',
@@ -483,19 +483,19 @@ describe('isApplicableValue', () => {
         )).toEqual(false)
     })
     it('when type is specific, returns true if and only if type is valid and equivalent to domain', () => {
-        expect(isApplicableValue('number', 'number')).toEqual(true)
-        expect(isApplicableValue('number', 'string')).toEqual(false)
-        expect(isApplicableValue('number', { vector: null })).toEqual(false)
+        expect(isApplicableStream('number', 'number')).toEqual(true)
+        expect(isApplicableStream('number', 'string')).toEqual(false)
+        expect(isApplicableStream('number', { vector: null })).toEqual(false)
     })
     it('when type is specific, throws an error if type is not valid', () => {
-        expect(() => isApplicableValue('an invalid value type', 'domain')).toThrow()
+        expect(() => isApplicableStream('an invalid stream type', 'domain')).toThrow()
     })
     it('when type is generic, returns false if type and domain have different names, or domain is not generic', () => {
-        expect(isApplicableValue({ vector: null }, { struct: null })).toEqual(false)
-        expect(isApplicableValue({ vector: null }, 'vector')).toEqual(false)
+        expect(isApplicableStream({ vector: null }, { struct: null })).toEqual(false)
+        expect(isApplicableStream({ vector: null }, 'vector')).toEqual(false)
     })
     it('when type is a vector, return true if and only if the type parameter is applicable to the domain parameter', () => {
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 vector: 'number',
             },
@@ -503,7 +503,7 @@ describe('isApplicableValue', () => {
                 vector: 'number',
             }
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 vector: {
                     vector: 'number',
@@ -515,7 +515,7 @@ describe('isApplicableValue', () => {
                 },
             }
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 vector: 'number',
             },
@@ -526,7 +526,7 @@ describe('isApplicableValue', () => {
                 ],
             }
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 vector: 'number',
             },
@@ -534,7 +534,7 @@ describe('isApplicableValue', () => {
                 vector: 'string',
             }
         )).toEqual(false)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 vector: {
                     vector: 'number',
@@ -544,7 +544,7 @@ describe('isApplicableValue', () => {
                 vector: 'number',
             }
         )).toEqual(false)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 vector: [
                     'number',
@@ -557,7 +557,7 @@ describe('isApplicableValue', () => {
         )).toEqual(false)
     })
     it('when type is a struct, returns true if and only if every domain parameter has a corresponding applicable type parameter', () => {
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 struct: {
                     a: 'boolean',
@@ -574,7 +574,7 @@ describe('isApplicableValue', () => {
                 },
             }
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 struct: {
                     prop1: {
@@ -604,7 +604,7 @@ describe('isApplicableValue', () => {
                 },
             }
         )).toEqual(true)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 struct: {
                     a: 'boolean',
@@ -621,7 +621,7 @@ describe('isApplicableValue', () => {
                 },
             }
         )).toEqual(false)
-        expect(isApplicableValue(
+        expect(isApplicableStream(
             {
                 struct: {
                     prop1: {
@@ -660,7 +660,7 @@ describe('isApplicable', () => {
         expect(isApplicable({})).toEqual(false)
         expect(isApplicable(undefined, {})).toEqual(false)
     })
-    it('returns false when for type and domain, one is a value while the other is an operation', () => {
+    it('returns false when for type and domain, one is a stream while the other is an operation', () => {
         expect(isApplicable('number', { operation: null })).toEqual(false)
         expect(isApplicable('store', { vector: 'string' })).toEqual(false)
     })

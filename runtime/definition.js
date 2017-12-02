@@ -23,24 +23,24 @@ const requireImplementation = (definition, path) => {
 }
 
 /**
- * Assigns reserved identifiers implied by a set of value instances, to a target object.
+ * Assigns reserved identifiers implied by a set of stream instances, to a target object.
  * @param {object} target - an object which gets mutated by this function
- * @param {object} instances - an object which maps names to value instances
+ * @param {object} instances - an object which maps names to stream instances
  */
-const reservedIdentifiersFromValues = (target, instances) => {
+const reservedIdentifiersFromStreams = (target, instances) => {
     if (!isGraph(instances)) {
         return
     }
     for (const name in instances) {
         target[name] = null
-        const value = instances[name]
-        const initials = value.initial
+        const stream = instances[name]
+        const initials = stream.initial
         if (isGraph(initials)) {
             for (const key in initials) {
                 target[key] = null
             }
         }
-        const connections = value.to
+        const connections = stream.to
         if (isGraph(connections)) {
             for (const key in connections) {
                 target[key] = null
@@ -72,7 +72,7 @@ const reservedIdentifiers = (definition) => {
         string: null,
         struct: null,
         to: null,
-        values: null,
+        streams: null,
         vector: null,
     }
     // The name of the type definition is reserved.
@@ -93,8 +93,8 @@ const reservedIdentifiers = (definition) => {
         }
     }
     // Names of type instances are reserved.
-    reservedIdentifiersFromValues(set, definition.values)
-    reservedIdentifiersFromValues(set, definition.operations)
+    reservedIdentifiersFromStreams(set, definition.streams)
+    reservedIdentifiersFromStreams(set, definition.operations)
     return set
 }
 
@@ -144,12 +144,12 @@ const resolveCoreDependency = (definition, reservedIdentifierSet, name) => {
  */
 const resolveCoreDependencies = (definition, reservedIdentifierSet = reservedIdentifiers(definition), set = definition) => {
     for (const key in set) {
-        // The "initial" key is reserved, for an event in case of a value, or a map of value names to events in case of an operation.
-        // Events are "literal values" that do not reference type names, so they are not parsed by the definition parser.
+        // The "initial" key is reserved, for an event in case of a stream, or a map of stream names to events in case of an operation.
+        // Events are "literal streams" that do not reference type names, so they are not parsed by the definition parser.
         if (key !== 'initial') {
             resolveCoreDependency(definition, reservedIdentifierSet, key)
-            const value = set[key]
-            for (const type of value instanceof Array ? value : [ value ]) {
+            const stream = set[key]
+            for (const type of stream instanceof Array ? stream : [ stream ]) {
                 branch({
                     type,
                     specific: () => resolveCoreDependency(definition, reservedIdentifierSet, type),
@@ -203,7 +203,7 @@ module.exports = {
     isReservedIdentifier,
     requireImplementation,
     reservedIdentifiers,
-    reservedIdentifiersFromValues,
+    reservedIdentifiersFromStreams,
     resolveCoreDependency,
     resolveCoreDependencies,
 }

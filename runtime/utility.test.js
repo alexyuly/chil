@@ -7,12 +7,12 @@ describe('extend', () => {
     it('deeply merges properties of input into output, if no properties in output conflict with input', () => {
         const output = {
             operation: {
-                values: {
-                    'value key 1': {
-                        of: 'value type 1',
+                streams: {
+                    'stream key 1': {
+                        of: 'stream type 1',
                     },
-                    'value key 2': {
-                        of: 'value type 2',
+                    'stream key 2': {
+                        of: 'stream type 2',
                     },
                 },
             },
@@ -20,9 +20,9 @@ describe('extend', () => {
         const input = {
             operation: {
                 of: 'operation output type',
-                values: {
-                    'value key 3': {
-                        of: 'value type 3',
+                streams: {
+                    'stream key 3': {
+                        of: 'stream type 3',
                     },
                 },
             },
@@ -31,15 +31,15 @@ describe('extend', () => {
         expect(output).toEqual({
             operation: {
                 of: 'operation output type',
-                values: {
-                    'value key 1': {
-                        of: 'value type 1',
+                streams: {
+                    'stream key 1': {
+                        of: 'stream type 1',
                     },
-                    'value key 2': {
-                        of: 'value type 2',
+                    'stream key 2': {
+                        of: 'stream type 2',
                     },
-                    'value key 3': {
-                        of: 'value type 3',
+                    'stream key 3': {
+                        of: 'stream type 3',
                     },
                 },
             },
@@ -49,12 +49,12 @@ describe('extend', () => {
         const output = {
             operation: {
                 of: 'operation output type',
-                values: {
-                    'value key 1': {
-                        of: 'value type 1',
+                streams: {
+                    'stream key 1': {
+                        of: 'stream type 1',
                     },
-                    'value key 2': {
-                        of: 'value type 2',
+                    'stream key 2': {
+                        of: 'stream type 2',
                     },
                 },
             },
@@ -62,9 +62,9 @@ describe('extend', () => {
         const input = {
             operation: {
                 of: 'operation output type',
-                values: {
-                    'value key 3': {
-                        of: 'value type 3',
+                streams: {
+                    'stream key 3': {
+                        of: 'stream type 3',
                     },
                 },
             },

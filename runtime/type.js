@@ -157,8 +157,8 @@ const reduceOperationType = (type, dependencies, output = {}) => {
     if (definition.of) {
         base.operation.of = definition.of
     }
-    if (definition.values) {
-        base.operation.values = definition.values
+    if (definition.streams) {
+        base.operation.streams = definition.streams
     }
     extend(output, base)
     if (definition.is) {
@@ -172,11 +172,11 @@ const reduceOperationType = (type, dependencies, output = {}) => {
 }
 
 /**
- * @param {string | object} type - a value type
- * @param {string | object} domain - a value type which is a superset of other types
+ * @param {string | object} type - a stream type
+ * @param {string | object} domain - a stream type which is a superset of other types
  * @returns {boolean} true if and only if the type is a subset of the domain
  */
-const isApplicableValue = (type, domain) => {
+const isApplicableStream = (type, domain) => {
     if (type === undefined || domain === undefined) {
         return false
     }
@@ -193,12 +193,12 @@ const isApplicableValue = (type, domain) => {
     }
     if (!typeUnion && domainUnion) {
         return domain.some((domainMember) =>
-            isApplicableValue(type, domainMember))
+            isApplicableStream(type, domainMember))
     }
     if (typeUnion && domainUnion) {
         return type.every((typeMember) =>
             domain.some((domainMember) =>
-                isApplicableValue(typeMember, domainMember)))
+                isApplicableStream(typeMember, domainMember)))
     }
     return branch({
         type,
@@ -206,7 +206,7 @@ const isApplicableValue = (type, domain) => {
             if (type === 'number' || type === 'string' || type === 'boolean') {
                 return type === domain
             }
-            throw new Error(`invalid value type ${JSON.stringify(type)}`)
+            throw new Error(`invalid stream type ${JSON.stringify(type)}`)
         },
         generic: () => {
             const typeName = nameOf(type)
@@ -216,13 +216,13 @@ const isApplicableValue = (type, domain) => {
             const typeParameters = parametersOf(type)
             const domainParameters = parametersOf(domain)
             if (typeName === 'vector') {
-                return isApplicableValue(typeParameters, domainParameters)
+                return isApplicableStream(typeParameters, domainParameters)
             }
             if (typeName === 'struct') {
                 return Object.keys(domainParameters).every((key) =>
-                    isApplicableValue(typeParameters[key], domainParameters[key]))
+                    isApplicableStream(typeParameters[key], domainParameters[key]))
             }
-            throw new Error(`invalid value type ${JSON.stringify(type)}`)
+            throw new Error(`invalid stream type ${JSON.stringify(type)}`)
         },
     })
 }
@@ -238,7 +238,7 @@ const isApplicable = (type, domain, dependencies) => {
         return false
     }
     if (!isOperationType(type)) {
-        return !isOperationType(domain) && isApplicableValue(type, domain)
+        return !isOperationType(domain) && isApplicableStream(type, domain)
     }
     if (!isOperationType(domain)) {
         return false
@@ -246,8 +246,8 @@ const isApplicable = (type, domain, dependencies) => {
     const reducedType = reduceOperationType(type, dependencies)
     const reducedDomain = reduceOperationType(domain, dependencies)
     return isApplicable(reducedType.of, reducedDomain.of, dependencies) &&
-        Object.keys(reducedDomain.values.of).every((key) =>
-            isApplicable(reducedType.values.of[key], reducedDomain.values.of[key], dependencies))
+        Object.keys(reducedDomain.streams.of).every((key) =>
+            isApplicable(reducedType.streams.of[key], reducedDomain.streams.of[key], dependencies))
 }
 
 /**
@@ -274,7 +274,7 @@ module.exports = {
     construct,
     defineOperationType,
     isApplicable,
-    isApplicableValue,
+    isApplicableStream,
     isOperationType,
     nameOf,
     parametersOf,

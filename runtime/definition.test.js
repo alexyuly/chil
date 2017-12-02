@@ -5,7 +5,7 @@ const {
 const {
     requireImplementation,
     reservedIdentifiers,
-    reservedIdentifiersFromValues,
+    reservedIdentifiersFromStreams,
     isReservedIdentifier,
     coreDependencyPath,
     resolveCoreDependency,
@@ -15,23 +15,23 @@ const {
 const mockDefinition = () => ({
     name: 'definition name',
     dependencies: {
-        'dependency name 1': 'dependency value 1',
-        'dependency name 2': 'dependency value 2',
+        'dependency name 1': 'dependency stream 1',
+        'dependency name 2': 'dependency stream 2',
     },
     parameters: {
         'parameter type 1': [
-            'parameter value 1',
+            'parameter stream 1',
             {
-                'parameter value 2': 'parameter value 3',
+                'parameter stream 2': 'parameter stream 3',
             },
         ],
         'parameter type 2': {
-            'parameter value 4': 'parameter type 1',
+            'parameter stream 4': 'parameter type 1',
         },
     },
     of: 'definition output type',
-    values: {
-        'value key 1': {
+    streams: {
+        'stream key 1': {
             of: 'parameter type 1',
             initial: 'event',
             to: {
@@ -39,7 +39,7 @@ const mockDefinition = () => ({
                 'operation key 2': 'operation target 1',
             },
         },
-        'value key 2': {
+        'stream key 2': {
             of: 'parameter type 2',
             to: {
                 'operation key 1': 'operation target 2',
@@ -75,23 +75,23 @@ describe('requireImplementation', () => {
     })
 })
 
-describe('reservedIdentifiersFromValues', () => {
-    it('when the set of values is not a graph, does not mutate the target', () => {
+describe('reservedIdentifiersFromStreams', () => {
+    it('when the set of streams is not a graph, does not mutate the target', () => {
         const target = {}
-        reservedIdentifiersFromValues(target, undefined)
+        reservedIdentifiersFromStreams(target, undefined)
         expect(target).toEqual({})
     })
-    it('when the set of values is a graph, mutates the target according to properties of the values', () => {
+    it('when the set of streams is a graph, mutates the target according to properties of the streams', () => {
         const target = {}
-        reservedIdentifiersFromValues(target, mockDefinition().values)
-        reservedIdentifiersFromValues(target, mockDefinition().operations)
+        reservedIdentifiersFromStreams(target, mockDefinition().streams)
+        reservedIdentifiersFromStreams(target, mockDefinition().operations)
         expect(target).toEqual({
             'operation key 1': null,
             'operation key 2': null,
             'operation target 1': null,
             'operation target 2': null,
-            'value key 1': null,
-            'value key 2': null,
+            'stream key 1': null,
+            'stream key 2': null,
         })
     })
 })
@@ -111,7 +111,7 @@ describe('reservedIdentifiers', () => {
         string: null,
         struct: null,
         to: null,
-        values: null,
+        streams: null,
         vector: null,
     })
     it('when the definition is empty, returns the set of default identifiers', () => {
@@ -135,8 +135,8 @@ describe('reservedIdentifiers', () => {
             {
                 'dependency name 1': null,
                 'dependency name 2': null,
-                'dependency value 1': null,
-                'dependency value 2': null,
+                'dependency stream 1': null,
+                'dependency stream 2': null,
             }
         ))
     })
@@ -151,9 +151,9 @@ describe('reservedIdentifiers', () => {
             }
         ))
     })
-    it('when the definition contains graphs of values and operations, returns a set which includes their names', () => {
+    it('when the definition contains graphs of streams and operations, returns a set which includes their names', () => {
         expect(reservedIdentifiers({
-            values: mockDefinition().values,
+            streams: mockDefinition().streams,
             operations: mockDefinition().operations,
         })).toEqual(Object.assign(
             defaultIdentifiers(),
@@ -162,8 +162,8 @@ describe('reservedIdentifiers', () => {
                 'operation key 2': null,
                 'operation target 1': null,
                 'operation target 2': null,
-                'value key 1': null,
-                'value key 2': null,
+                'stream key 1': null,
+                'stream key 2': null,
             }
         ))
     })
@@ -219,13 +219,13 @@ describe('resolveCoreDependencies', () => {
         resolveCoreDependencies(definition)
         expect(definition.dependencies).toEqual({
             'definition output type': coreDependencyPath('definition output type'),
-            'dependency name 1': 'dependency value 1',
-            'dependency name 2': 'dependency value 2',
+            'dependency name 1': 'dependency stream 1',
+            'dependency name 2': 'dependency stream 2',
             'operation type 1': coreDependencyPath('operation type 1'),
-            'parameter value 4': coreDependencyPath('parameter value 4'),
-            'parameter value 1': coreDependencyPath('parameter value 1'),
-            'parameter value 2': coreDependencyPath('parameter value 2'),
-            'parameter value 3': coreDependencyPath('parameter value 3'),
+            'parameter stream 4': coreDependencyPath('parameter stream 4'),
+            'parameter stream 1': coreDependencyPath('parameter stream 1'),
+            'parameter stream 2': coreDependencyPath('parameter stream 2'),
+            'parameter stream 3': coreDependencyPath('parameter stream 3'),
         })
     })
 })

@@ -6,25 +6,25 @@ const { isGraph } = require('../utility')
 class Component extends Operation {
     constructor(definition, instance, serialization) {
         super(definition, instance, serialization)
-        this.constructValues()
+        this.constructStreams()
         this.constructOperations()
-        this.connectValues(this.values)
-        this.connectValues(this.operations)
+        this.connectStreams(this.streams)
+        this.connectStreams(this.operations)
     }
 
-    connectValues(values) {
-        for (const key in values) {
-            const value = values[key]
+    connectStreams(streams) {
+        for (const key in streams) {
+            const stream = streams[key]
             assert(
-                isGraph(value.instance.to),
-                `cannot connect value ${key} for component of ${this.definition.name}: no connections specified`
+                isGraph(stream.instance.to),
+                `cannot connect stream ${key} for component of ${this.definition.name}: no connections specified`
             )
-            for (const connectedKey in value.instance.to) {
-                const connection = value.instance.to[connectedKey]
+            for (const connectedKey in stream.instance.to) {
+                const connection = stream.instance.to[connectedKey]
                 const target = connection
-                    ? this.operations[connectedKey].values[connection]
+                    ? this.operations[connectedKey].streams[connection]
                     : this.operations[connectedKey]
-                value.connect(target)
+                stream.connect(target)
             }
         }
     }

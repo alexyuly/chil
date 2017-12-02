@@ -2,10 +2,10 @@ const assert = require('assert')
 
 const run = (component, args) => {
     assert(
-        component.values.run,
-        `definition of ${component.definition.name} cannot be run: expected a value named 'run'`
+        component.streams.run,
+        `definition of ${component.definition.name} cannot be run: expected a stream named 'run'`
     )
-    component.values.run.next(args)
+    component.streams.run.next(args)
 }
 
 module.exports = run

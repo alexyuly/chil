@@ -1,5 +1,5 @@
 /**
- * @param {*} node any value
+ * @param {*} node any stream
  * @returns {boolean} true if and only if node is a non-Array, non-null object
  */
 const isGraph = (node) => typeof node === 'object' && !(node instanceof Array) && node !== null

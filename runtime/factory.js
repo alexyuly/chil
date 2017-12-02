@@ -4,7 +4,7 @@ const batch = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
         this.queue = []
-        this.constructValues({
+        this.constructStreams({
             state: (rate) => {
                 clearInterval(this.interval)
                 this.interval = setInterval(() => delegate(this), rate)
@@ -19,7 +19,7 @@ const batch = (delegate) => class extends Operation {
 const pipe = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
-        this.constructValues({
+        this.constructStreams({
             action: (action) => {
                 delegate(this, action)
             },
@@ -31,7 +31,7 @@ const store = (delegate) => class extends Operation {
     constructor(definition, instance) {
         super(definition, instance)
         this.queue = []
-        this.constructValues({
+        this.constructStreams({
             state: (state) => {
                 this.state = state
                 while (this.queue.length > 0) {

@@ -15,7 +15,7 @@
     - Code is consumed by computers. Language is consumed by humans.
     - Make code as [semantic](https://dictionary.cambridge.org/us/dictionary/english/semantic) as possible. In other words, make code as meaningful as possible, *to humans*.
     - Eliminate extraneous symbols wherever possible. Quotes (`"'`), braces (`{}[]`), and parentheses (`()`) which serve as compiler indications should be avoided wherever possible.
-- Reduce the distance between synchronous vs. asynchrous control flow and functions vs. generators *A.K.A.* streams.
+- Reduce the distance between synchronous vs. asynchronous control flow and functions vs. generators *A.K.A.* streams.
     - Developers and users both are concerned with the flow of time ("why").
     - Make the flow of time an abstract convention, rather than a concrete syntax.
     - At all but the lowest level of code, synchronous vs. asynchronous control flow and functions vs. streams should be syntactically indistinct, but semantically implied.
@@ -41,3 +41,16 @@ No. Object-orientation and composition are independent concepts. Objects can be 
 #### "I Thought, Object-Orientation Is An Anti-Pattern?"
 
 Object-orientation is a good thing if it promotes encapsulation of logic. However, class inheritance has been extremely overused in application development. 
+
+## STARCH High-Level Design
+
+- Each unit of execution is an object.
+- Each **object** is an **instance of** a type.
+- Each **type** is a stream.
+- A **stream** is a sequence of one type of event over time.
+- An **operation** is a composition of *n* input streams and 1 output stream, which has an implementation.
+- An **implementation** is a Node.js module (*could support other engines in future*) which contains *n* generators which listen to events from an operation's *n* input streams and pipe events to the output stream.
+- A **component** is a composition of *n* input streams, *m* operations, and 1 output stream. A component itself has no implementation.
+- An **application** is a component which has a run stream.
+- A **run stream** listens to events from the operating system, such as an execution signal event which contains an array of command line arguments.
+

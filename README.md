@@ -22,7 +22,7 @@
     - Therefore, all data types must be streams, so that control flow synchronicity is abstracted within data types.
     - Therefore, all objects of an application must be instances of data types, to achieve pure encapsulation.
     
-## Abstract Design Ramblings
+## Design Ramblings
 
 ### Object-Oriented Programming, A Fork In The Road
 
@@ -34,13 +34,11 @@ I must clarify: Class-based inheritance is a useful pattern, which serves a usef
 
 Encapsulated class inheritance is a well-intentioned contradiction, because developers' dual instincts towards *encapsulating* logic and *extending* it are both valid and useful. However, if both encapsulation and inheritance are needed to implement a design pattern, then compositional typing is a superior choice in lieu of class types.
 
-#### "I Thought, Object-Orientation And Composition Are Opposites?"
+Object-orientation and composition are independent concepts. Objects can be composed, just like functions. Composition allows for *extending* types without violating *encapsulation*, because the extension is indirect: a child type *contains the data of its parent*, but it *does not inherit control over the parent's logic*. Object-orientation is a good thing if it promotes encapsulation of logic. However, class inheritance has been extremely overused in application development.
 
-No. Object-orientation and composition are independent concepts. Objects can be composed, just like functions. Composition allows for *extending* types without violating *encapsulation*, because the extension is indirect: a child type *contains the data of its parent*, but it *does not inherit control over the parent's logic*. 
+### Complete Runtime Reflection
 
-#### "I Thought, Object-Orientation Is An Anti-Pattern?"
-
-Object-orientation is a good thing if it promotes encapsulation of logic. However, class inheritance has been extremely overused in application development. 
+One major design goal of STARCH is to achieve "complete runtime reflection", so that any instance of a type is identical to the definition of that type, meaning that the structure of an application's state at runtime is identical to the structure of its state at compile time, since an application is an instance of a type. One implication is that an application could be manipulated at runtime with no interruption in service beyond the local area of the manipulation, in almost surgical fashion.
 
 # STARCH High-Level Design
 
@@ -213,6 +211,8 @@ operations:
             ...
     ...
 ```
+
+A component type defines connections from input streams to operations, between operations, and from streams and operations to the component output. (A component instance is an object graph which, remember, is a directed cyclic graph of objects.)
 
 #### Simple Operation Type
 

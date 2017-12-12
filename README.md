@@ -42,87 +42,104 @@ No. Object-orientation and composition are independent concepts. Objects can be 
 
 Object-orientation is a good thing if it promotes encapsulation of logic. However, class inheritance has been extremely overused in application development. 
 
-## STARCH High-Level Design
+# STARCH High-Level Design
 
-### Basic Terminology
+## Objects and Object Graphs
 
-- STARCH execution is a directed graph of objects.
-- Each **object** is an **instance of** a type.
-- Each **type** is a stream.
-- A **stream** is a sequence of one kind of event over time.
-- An **operation** is a composition of *n* input streams and 1 output stream, which has an implementation.
-- An **implementation** is a Node.js module (*could support other engines in future*) which contains *n* generators which listen to events from an operation's *n* input streams and pipe events to the output stream, synchronously or not.
-- A **component** is a composition of *n* input streams, *m* operations, and 1 output stream. A component itself has no implementation.
-- An **application** is a component which has a run input stream.
-- A **run input stream** responds to events from the operating system, such as an execution signal event which contains an array of command line arguments.
+An object is an encaspulation of data and (optionally) logic. An object graph is a directed cyclic graph of objects, which is an object itself.
 
-### Native Types
+## Types
 
-Some types are **native types** which means they are global. They are inherent to the framework.
+A type specifies a kind of object or object graph which may be instantiated, as a function of one or more other types which are instantiated as objects and possibly connected to form an object graph.
 
-#### number
+### Stream Types
+
+A **stream type** indicates a kind of object which represents an abstact stream of data, with no specific logic.
+
+#### Simple Stream Types
+
+A **simple stream type** indicates a fundamental kind of streaming data, which may be referenced globally.
+
+##### number
 a stream of JavaScript number values
 ```yaml
 number
 ```
 
-#### string
+##### string
 a stream of JavaScript string values
 ```yaml
 string
 ```
 
-#### flag
+##### flag
 a stream of JavaScript boolean values: `true` or `false`
 ```yaml
 flag
 ```
 
-#### list
-a stream of JavaScript Arrays which each have elements all of one type parameter, e.g. `list: number`
+##### list
+a stream of JavaScript Arrays which all have elements all of one stream type parameter:
 ```yaml
-list: type parameter
+list: stream type parameter
 ```
 
-#### props
-a stream of JavaScript Objects which each have the same set of keyed type parameters, e.g.: `props: { id: number, name: string }`
+for example:
+```yaml
+list: number
+```
+
+##### props
+a stream of JavaScript Objects which all have an identical set of keyed stream type parameters:
 ```yaml
 props:
-    key: type parameter
+    key: stream type parameter
     ...
 ```
 
-#### operation
-an abstract operation on *n* input streams and 1 output stream
+for example:
 ```yaml
-operation:
-    output: output stream type parameter
-    inputs:
-        input stream name:
-            of: input stream type parameter
-        ...
+props:
+    id: number
+    name: string
+    numbers:
+        list: number
 ```
 
-### Defined Types
+#### Complex Stream Types
 
-A **defined type** is a simple Abstract Syntax Tree written in YAML syntax which describes the behavior of a non-native type.
-
-A stream type has the following syntax:
+A **complex stream type** composes other stream types.
 
 ```yaml
-name: output stream name
 compose:
-    composed type name: composed type relative file system path
+    composed stream type name: [optional composed stream type relative file system path]
     ...
 parameters:
-    parameter type name: parameter type domain
+    parameter stream type name: parameter stream type domain
     ...
-parent: parent type
+parent: parent stream type
 ```
 
-An operation type extends a stream type with the following syntax:
+Each complex stream type can be **reduced** to a simple stream type, which is used for **type-checking** against other stream types.
+
+##### Union Stream Types
+
+A **union stream type** is a union of other stream types, expressed as a list of stream types.
+
+The union of all stream types, called **any stream**, is expressed as an empty value, which is equivalent to JavaScript `null`.
+
+### Operation Types
+
+An **operation type** is a composition of *n* named input stream instances and 1 output stream instance.
 
 ```yaml
+compose:
+    composed stream type name: [optional composed stream type relative file system path]
+    ...
+parameters:
+    parameter stream type name: parameter stream type domain
+    ...
+parent: parent abstract operation type
 output: output stream type
 inputs:
     input stream name:
@@ -131,13 +148,57 @@ inputs:
     ...
 ```
 
-A component type extends an operation type with the following syntax:
+#### Concrete Operation Types
+
+A **concrete operation type** is an operation type which has a **delegate**, which is a Node.js module which exports a function like so:
+
+```js
+const delegate = require('@starch/runtime/lib/delegate')
+
+module.exports = delegate((operation) => ({
+    push: (anything) => {
+        (operation.queue || (operation.queue = [])).push(anything)
+    },
+    restart: (rate) => {
+        clearInterval(operation.interval)
+        operation.interval = setInterval(
+            () => operation.output(operation.queue.shift()),
+            rate
+        )
+    },
+}))
+```
+
+`delegate` is a utility function, which accepts a closure of a new operation instance which returns an object mapping the name of each operation input stream to a **method** called with each event received by the associated input stream. Each method may manipulate the reference to `operation` in response an event, by reading and writing state (in this example, `operation.interval` and `operation.queue`), and calling `operation.output(...)` in order to synchronously or asynchronously output an event *n* times.
+
+#### Abstract Operation Types
+
+An **abstract operation type** is an operation type with no delegate. Such a type may be the **parent** of another operation type, whereas concrete types may only be children.
+
+##### Compositional Inheritance
+
+Operation type parent-child relationships are defined through compositional inheritance, which means that *Type Child* is a child of *Type Parent* if and only if *Type Child* is a subset of *Type Parent*. Therefore, a type which inherits a parent type, may NOT override any members of the parent type. For example, if *Type Parent* defines an `output` member, then *Type Child* must not define an output member, to be instantiated without throwing an error. In other words, a child may *augment* a parent's members but never *override* them, because a type is the set of all types which contain its members, so an instance of *Type Child* must contain all the members of *Type Parent* in order to be considered an instance of *Type Parent*.
+
+#### Component Types (AKA Complex Operation Types)
+
+A **component type** is an operation type which is a composition of *n* name input stream instances, *m* operation instances, and 1 output stream instance.
 
 ```yaml
+compose:
+    composed type name: [optional composed type relative file system path]
+    ...
+parameters:
+    parameter type name: parameter type domain
+    ...
+parent: parent component or abstract operation type
+output: output stream type
 inputs:
     input stream name:
+        of: input stream type
+        first: event of input stream type
         connect:
             operation name: operation input stream name
+            output:
             ...
     ...
 operations:
@@ -148,7 +209,22 @@ operations:
             ...
         connect:
             operation name: operation input stream name
-            output stream name:
+            output:
             ...
     ...
+```
+
+#### Simple Operation Type
+
+The **simple operation type** is an abstract type which represents the set of all possible operations which match a given set of output and input streams.
+
+The simple operation type may not be instantiated as an operation in a component. It may only be instantiated as the domain of an operation type parameter.
+
+```yaml
+operation:
+    output: output stream type parameter
+    inputs:
+        input stream name:
+            of: input stream type parameter
+        ...
 ```

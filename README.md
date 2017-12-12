@@ -5,7 +5,11 @@
 
 # *Please note!* This project is an active work in progress, not ready for use. Check back for continuing updates.
 
-## Design Goals
+## Design Goals & Ramblings
+
+(Scroll down further for a more well-defined overview of the STARCH high-level design.)
+
+### Overall Goals
 
 - Reduce the distance between developer and user experience.
     - Developers are primarily concerned with logic ("how"). Users are primarily concerned with data ("what").
@@ -21,12 +25,8 @@
     - At all but the lowest level of code, synchronous vs. asynchronous control flow and functions vs. streams should be syntactically indistinct, but semantically implied.
     - Therefore, all data types must be streams, so that control flow synchronicity is abstracted within data types.
     - Therefore, all objects of an application must be instances of data types, to achieve pure encapsulation.
-    
-## Design Ramblings
 
-### Object-Oriented Programming, A Fork In The Road
-
-#### Classes Versus Composition
+### Object-Oriented Programming: Classes Versus Composition
 
 "Traditional" class-based object-oriented programming languages proclaim "inheritance" and "encapsulation" both as prime virtues, but class-based simultaneous "inheritance and encapsulation" is a logical contradiction. A class which inherits *methods* of a superclass inherits control over the *logic* of that superclass, which violates superclass' encapsulation of its own behavior. Override methods are a particularly egregious encapsulation violation.
 
@@ -36,9 +36,9 @@ Encapsulated class inheritance is a well-intentioned contradiction, because deve
 
 Object-orientation and composition are independent concepts. Objects can be composed, just like functions. Composition allows for *extending* types without violating *encapsulation*, because the extension is indirect: a child type *contains the data of its parent*, but it *does not inherit control over the parent's logic*. Object-orientation is a good thing if it promotes encapsulation of logic. However, class inheritance has been extremely overused in application development.
 
-### Complete Runtime Reflection
+### "Complete Runtime Reflection": Type/Instance Mirroring
 
-One major design goal of STARCH is to achieve "complete runtime reflection", so that any instance of a type is identical to the definition of that type, meaning that the structure of an application's state at runtime is identical to the structure of its state at compile time, since an application is an instance of a type. One implication is that an application could be manipulated at runtime with no interruption in service beyond the local area of the manipulation, in almost surgical fashion.
+One major design goal of STARCH is to achieve "complete runtime reflection", so that any instance of a type in memory has identical structure to the definition of that type in code, meaning that the structure of an application's state at runtime is identical to the structure of its state at compile time, since an application is an instance of a type. One implication is that an application could be manipulated at runtime with no interruption in service beyond the local area of the manipulation, in almost surgical fashion.
 
 # STARCH High-Level Design
 
@@ -118,7 +118,7 @@ parameters:
 parent: parent stream type
 ```
 
-Each complex stream type can be **reduced** to a simple stream type, which is used for **type-checking** against other stream types.
+Each complex stream type can be **reduced** to a simple stream type, which is used for type-checking against other stream types.
 
 ##### Union Stream Types
 
@@ -179,7 +179,7 @@ Operation type parent-child relationships are defined through compositional inhe
 
 #### Component Types (AKA Complex Operation Types)
 
-A **component type** is an operation type which is a composition of *n* name input stream instances, *m* operation instances, and 1 output stream instance.
+A **component type** is an operation type which is a composition of *n* named input stream instances, *m* operation instances, and 1 output stream instance.
 
 ```yaml
 compose:
@@ -212,13 +212,13 @@ operations:
     ...
 ```
 
-A component type defines connections from input streams to operations, between operations, and from streams and operations to the component output. (A component instance is an object graph which, remember, is a directed cyclic graph of objects.)
+A component type defines connections from component input streams to operation instance input streams, between operation instances, and from component streams and operations to the component output. (A component instance is an object graph which, remember, is a directed cyclic graph of objects.)
+
+Connections between streams are **type-checked**, which means that the type of the source stream must be a subset of the type of the target stream, known as the **domain**.
 
 #### Simple Operation Type
 
 The **simple operation type** is an abstract type which represents the set of all possible operations which match a given set of output and input streams.
-
-The simple operation type may not be instantiated as an operation in a component. It may only be instantiated as the domain of an operation type parameter.
 
 ```yaml
 operation:
@@ -228,3 +228,5 @@ operation:
             of: input stream type parameter
         ...
 ```
+
+The simple operation type may not be instantiated as an operation in a component. It may only be instantiated as the domain of an operation type parameter. Each non-simple operation type can be **reduced** to a simple operation type, which is used for type-checking against other operation types. (This principle works here just as it does with stream types.)

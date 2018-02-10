@@ -1,5 +1,0 @@
-name: timing
-is:
-    any/abstract/gate:
-        State Type: number
-        Action Type:

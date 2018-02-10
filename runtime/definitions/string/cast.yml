@@ -1,5 +1,0 @@
-name: cast
-is:
-    any/abstract/pipe:
-        Action Type:
-        Output Type: string

@@ -1,6 +1,0 @@
-name: concatenation
-parameters: { Type: }
-is:
-    any/abstract/gate:
-        State Type: Type
-        Action Type: { vector: Type }

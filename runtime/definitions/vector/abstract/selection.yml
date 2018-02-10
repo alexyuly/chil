@@ -1,6 +1,0 @@
-name: selection
-parameters: { Type: }
-is:
-    any/abstract/pipe:
-        Action Type: { vector: Type }
-        Output Type: Type

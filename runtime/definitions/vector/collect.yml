@@ -1,7 +1,0 @@
-name: collect
-parameters: { Type: }
-is:
-    any/abstract/store:
-        State Type: number
-        Action Type: Type
-        Output Type: { vector: Type }

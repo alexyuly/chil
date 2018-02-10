@@ -1,2 +1,0 @@
-name: invert
-is: { any/abstract/mapping: { Type: boolean } }

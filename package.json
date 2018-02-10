@@ -1,18 +1,19 @@
 {
-    "name": "streaming-architecture",
-    "version": "0.0.0",
-    "author": "Alex Yuly",
-    "description": "Streaming Architecture for Node.js and Chrome",
-    "license": "MIT",
-    "main": "main.js",
-    "dependencies": {
-        "js-yaml": "^3.10.0"
-    },
-    "devDependencies": {
-        "eslint": "^4.11.0",
-        "jest": "^21.2.1"
-    },
-    "scripts": {
-        "test": "eslint '**/*.js' && jest"
-    }
+  "name": "@glu/cli",
+  "version": "0.0.0-alpha.0",
+  "author": "Alex Yuly",
+  "description": "Graph Link Utility",
+  "license": "MIT",
+  "bin": {
+    "glu": "src/index.js"
+  },
+  "scripts": {
+    "test": "eslint src"
+  },
+  "dependencies": {
+    "js-yaml": "3.10.0"
+  },
+  "devDependencies": {
+    "eslint": "4.17.0"
+  }
 }

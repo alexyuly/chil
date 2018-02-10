@@ -1,3 +1,0 @@
-name: prepend
-parameters: { Type: }
-is: vector/abstract/concatenation

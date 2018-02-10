@@ -1,4 +1,0 @@
-name: store
-parameters: { State Type: }
-is: any/abstract/pipe
-streams: { state: { of: State Type } }

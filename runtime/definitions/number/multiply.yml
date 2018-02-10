@@ -1,2 +1,0 @@
-name: multiply
-is: { any/abstract/arithmetic: { Type: number } }

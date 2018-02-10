@@ -1,2 +1,0 @@
-name: both
-is: { any/abstract/arithmetic: { Type: boolean } }

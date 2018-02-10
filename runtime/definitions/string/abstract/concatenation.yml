@@ -1,2 +1,0 @@
-name: concatenation
-is: { any/abstract/arithmetic: { Type: string } }

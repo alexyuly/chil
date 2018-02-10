@@ -1,2 +1,0 @@
-name: dissect
-is: { any/abstract/mapping: { Type: string } }

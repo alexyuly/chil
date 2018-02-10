@@ -1,5 +1,0 @@
-name: count
-is:
-    any/abstract/pipe:
-        Action Type: { vector: }
-        Output Type: number

@@ -1,9 +1,0 @@
-name: reducer
-parameters:
-    State Type:
-    Action Type:
-is:
-    any/abstract/store:
-        State Type: State Type
-        Action Type: Action Type
-        Output Type: State Type

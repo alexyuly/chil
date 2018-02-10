@@ -1,3 +1,0 @@
-name: sink
-parameters: { Action Type: }
-streams: { action: { of: Action Type } }

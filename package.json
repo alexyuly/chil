@@ -1,7 +1,8 @@
 {
   "name": "@glu/cli",
-  "version": "0.0.0-alpha.0",
+  "version": "0.0.0-alpha.1",
   "author": "Alex Yuly",
+  "description": "Graph Language Utility",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,6 +15,7 @@
     "test": "eslint examples src"
   },
   "dependencies": {
+    "chalk": "2.3.1",
     "js-yaml": "3.10.0"
   },
   "devDependencies": {

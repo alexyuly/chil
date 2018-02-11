@@ -1,14 +1,16 @@
-# glu
+# GLU
 
-Graph Language Utility
+**Graph Language Utility**
 
-## Install glu CLI (command line utility)
+Copyright 2017-2018 Alex Yuly, under the MIT license
 
-`npm i -g @glu/cli`
+## Warning: This project is an active work in progress.
+
+See LICENSE file for disclaimer.
 
 ## Run example applications
 
-1) `git clone https://github.com/alexyuly/glu && cd glu`
+1) `git clone https://github.com/alexyuly/glu && cd glu && yarn link`
 2) Run an example application:
-    - `glu examples/echo.yml --action 'Hello, world!'`
-    - `glu examples/EchoIncrement.yml --action 1`
+    - `glu examples/echo --action 'Hello, world!'`
+    - `glu 'examples/Echo Increment' --action 1`

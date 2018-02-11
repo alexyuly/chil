@@ -2,28 +2,31 @@ const assert = require('assert')
 const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
-const createStream = require('./createStream')
+const connectedStream = require('./connectedStream')
 
-const createComponent = (pathToSource) => {
-  const file = fs.readFileSync(pathToSource, 'utf8')
+const compiledComponent = (sourcePath) => {
+  const file = fs.readFileSync(`${sourcePath}.yml`, 'utf8')
   const source = yaml.safeLoad(file)
   assert(
     source.type.component,
     'Cannot create a component from a source with a non-component type'
   )
   source.inputs = {}
-  source.output = createStream(source.type.component.output)
-  const sourceInfo = path.parse(pathToSource)
+  source.output = connectedStream(source.type.component.output)
+  const sourceInfo = path.parse(sourcePath)
   if (source.operation) {
     for (const inputName in source.type.component.inputs) {
       const inputType = source.type.component.inputs[inputName]
-      source.inputs[inputName] = createStream(inputType)
+      source.inputs[inputName] = connectedStream(inputType)
     }
     source.children = {}
     for (const childName in source.operation.children) {
-      const childTypeName = source.operation.children[childName]
-      const childPathToSource = path.resolve(sourceInfo.dir, source.imports[childTypeName])
-      source.children[childName] = createComponent(childPathToSource)
+      const childTypeName = source.operation.children[childName] || childName
+      const childPathToSource = path.resolve(
+        sourceInfo.dir,
+        (source.imports && source.imports[childTypeName]) || childTypeName
+      )
+      source.children[childName] = compiledComponent(childPathToSource)
     }
     for (const connection of source.operation.connections) {
       const origin = source.inputs[connection.origin] || source.children[connection.origin].output
@@ -49,4 +52,4 @@ const createComponent = (pathToSource) => {
   return source
 }
 
-module.exports = createComponent
+module.exports = compiledComponent

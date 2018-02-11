@@ -1,10 +1,17 @@
 #!/usr/bin/env node
 
-const applyComponent = require('./applyComponent')
-const createComponent = require('./createComponent')
+const callComponent = require('./callComponent')
+const compiledComponent = require('./compiledComponent')
+const runWithTime = require('./runWithTime')
 
-const pathToSource = process.argv[2]
-const component = createComponent(pathToSource)
+let component
 
-const args = process.argv.slice(3)
-applyComponent(component, args)
+runWithTime('compiled component', () => {
+  const sourcePath = process.argv[2]
+  component = compiledComponent(sourcePath)
+})
+
+runWithTime('called component', () => {
+  const args = process.argv.slice(3)
+  callComponent(component, args)
+})

@@ -10,9 +10,7 @@ module.exports = (component, args) => {
       if (nextArg === undefined || argIsInputName(nextArg)) {
         input.next()
       } else {
-        input.next(input.type === 'number'
-          ? Number(nextArg)
-          : nextArg)
+        input.next(nextArg)
       }
     }
   }

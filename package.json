@@ -2,13 +2,16 @@
   "name": "@glu/cli",
   "version": "0.0.0-alpha.0",
   "author": "Alex Yuly",
-  "description": "Graph Link Utility",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexyuly/glu.git"
+  },
   "bin": {
     "glu": "src/index.js"
   },
   "scripts": {
-    "test": "eslint src"
+    "test": "eslint examples src"
   },
   "dependencies": {
     "js-yaml": "3.10.0"

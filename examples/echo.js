@@ -1,5 +1,5 @@
 module.exports = () => ({
-  print: (event) => {
+  action: (event) => {
     console.log(event)
   },
 })

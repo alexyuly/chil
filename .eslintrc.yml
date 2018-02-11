@@ -9,6 +9,13 @@ rules:
   linebreak-style:
     - error
     - unix
+  max-len:
+    - error
+    - 120
+  no-console:
+    - warn
+  no-shadow:
+    - error
   quotes:
     - error
     - single

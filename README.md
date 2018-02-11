@@ -1,6 +1,6 @@
 # glu
 
-Graph Link Utility
+Graph Language Utility
 
 ## Install glu CLI (command line utility)
 
@@ -8,5 +8,7 @@ Graph Link Utility
 
 ## Run example applications
 
-- `glu examples/HelloWorld.yml --start`
-- `glu examples/PrintSomething.yml --print 'Welcome to glu!'`
+1) `git clone https://github.com/alexyuly/glu && cd glu`
+2) Run an example application:
+    - `glu examples/echo.yml --action 'Hello, world!'`
+    - `glu examples/EchoIncrement.yml --action 1`

@@ -1,0 +1,24 @@
+imports:
+  echo: echo.yml
+  increment: increment.yml
+
+type:
+  component:
+    inputs:
+      action: number
+
+operation:
+  children:
+    echo: echo
+    increment: increment
+  connections:
+    -
+      origin: action
+      target:
+        child: increment
+        input: action
+    -
+      origin: increment
+      target:
+        child: echo
+        input: action

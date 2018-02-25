@@ -39,7 +39,8 @@ const createComponent = ({
   } else {
     assignComponentModule({
       component,
-      modulePath: path.resolve(sourceDir, `${sourceName}.js`),
+      sourceDir,
+      sourceName,
     })
   }
   return component

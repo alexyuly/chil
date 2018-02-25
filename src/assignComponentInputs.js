@@ -1,5 +1,4 @@
 const createStream = require('./createStream')
-const reduceType = require('./reduceType')
 const reduceTypeDictionary = require('./reduceTypeDictionary')
 
 const assignComponentInputs = ({
@@ -13,12 +12,10 @@ const assignComponentInputs = ({
   })
   for (const key in inputs) {
     component.inputs[key] = createStream({
-      reducedType: reduceType({
-        type: inputs[key],
-        variables: component.variables,
-        imports: component.imports,
-        sourceDir,
-      }),
+      type: inputs[key],
+      variables: component.variables,
+      imports: component.imports,
+      sourceDir,
     })
   }
 }

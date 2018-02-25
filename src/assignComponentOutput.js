@@ -1,5 +1,4 @@
 const createStream = require('./createStream')
-const reduceType = require('./reduceType')
 
 const assignComponentOutput = ({
   component,
@@ -9,12 +8,10 @@ const assignComponentOutput = ({
     return
   }
   component.output = createStream({
-    reducedType: reduceType({
-      type: component.type.component.output,
-      variables: component.variables,
-      imports: component.imports,
-      sourceDir,
-    }),
+    type: component.type.component.output,
+    variables: component.variables,
+    imports: component.imports,
+    sourceDir,
   })
 }
 

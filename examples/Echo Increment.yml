@@ -1,26 +1,17 @@
 type:
   component:
     inputs:
-      action: number
+      action: string
 
 operation:
   children:
-    cast number:
-    echo:
-    increment:
+    cast number: cast number
+    echo: echo
+    increment: increment
   connections:
-    -
-      origin: action
-      target:
-        child: cast number
-        input: action
-    -
-      origin: cast number
-      target:
-        child: increment
-        input: action
-    -
-      origin: increment
-      target:
-        child: echo
-        input: action
+    action:
+      cast number: action
+    cast number:
+      increment: action
+    increment:
+      echo: action

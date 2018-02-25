@@ -2,7 +2,34 @@ env:
   es6: true
   node: true
 extends: 'eslint:recommended'
+parserOptions:
+  sourceType: module
 rules:
+  array-bracket-newline:
+    - error
+    - { minItems: 2 }
+  array-bracket-spacing:
+    - error
+    - always
+  array-element-newline:
+    - error
+  arrow-parens:
+    - error
+  brace-style:
+    - error
+  comma-dangle:
+    - error
+    - always-multiline
+  consistent-return:
+    - error
+  curly:
+    - error
+  eol-last:
+    - error
+  eqeqeq:
+    - error
+  func-style:
+    - error
   indent:
     - error
     - 2
@@ -11,14 +38,48 @@ rules:
     - unix
   max-len:
     - error
-    - 120
+    - 100
+  max-params:
+    - error
+    - 1
+  multiline-ternary:
+    - error
   no-console:
     - warn
+  no-extra-parens:
+    - error
+  no-implicit-coercion:
+    - error
+  no-multiple-empty-lines:
+    - error
+    - { max: 1 }
   no-shadow:
     - error
+  no-var:
+    - error
+  object-curly-newline:
+    - error
+  object-curly-spacing:
+    - error
+    - always
+  object-property-newline:
+    - error
+  object-shorthand:
+    - error
+  padded-blocks:
+    - error
+    - never
+  padding-line-between-statements:
+    - error
+    - { blankLine: never, prev: '*', next: '*' }
+    - { blankLine: always, prev: cjs-import, next: '*' }
+    - { blankLine: never, prev: cjs-import, next: cjs-import }
+    - { blankLine: always, prev: '*', next: cjs-export }
+    - { blankLine: always, prev: cjs-export, next: '*' }
   quotes:
     - error
     - single
   semi:
     - error
     - never
+    - { beforeStatementContinuationChars: always }

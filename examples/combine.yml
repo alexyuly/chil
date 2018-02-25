@@ -1,0 +1,5 @@
+type:
+  component:
+    inputs: variables
+    output:
+      complex: variables

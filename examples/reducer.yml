@@ -1,0 +1,10 @@
+variables:
+  action:
+  state:
+
+type:
+  component:
+    inputs:
+      action: action
+      state: state
+    output: state

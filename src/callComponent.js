@@ -1,6 +1,8 @@
 const argIsInputName = (arg) => arg.substring(0, 2) === '--'
-
-module.exports = (component, args) => {
+const callComponent = ({
+  component,
+  args,
+}) => {
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i]
     if (argIsInputName(arg)) {
@@ -15,3 +17,5 @@ module.exports = (component, args) => {
     }
   }
 }
+
+module.exports = callComponent

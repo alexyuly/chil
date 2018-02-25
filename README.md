@@ -14,3 +14,4 @@ See LICENSE file for disclaimer.
 2) Run an example application:
     - `glu examples/echo --action 'Hello, world!'`
     - `glu 'examples/Echo Increment' --action 1`
+    - `glu 'examples/Reduce Strings' --action 'could be anything' --state 'should echo this'`

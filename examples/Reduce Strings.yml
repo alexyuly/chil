@@ -1,0 +1,20 @@
+type:
+  component:
+    inputs:
+      action: string
+      state: string
+
+operation:
+  children:
+    reducer:
+      reducer:
+        action: string
+        state: string
+    echo: echo
+  connections:
+    action:
+      reducer: action
+    state:
+      reducer: state
+    reducer:
+      echo: action

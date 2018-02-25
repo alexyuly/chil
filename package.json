@@ -1,22 +1,18 @@
 {
-  "name": "@glu/cli",
-  "version": "0.0.0-alpha.1",
-  "author": "Alex Yuly",
+  "private": true,
+  "name": "glu",
   "description": "Graph Language Utility",
+  "author": "Alex Yuly",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/alexyuly/glu.git"
   },
-  "bin": {
-    "glu": "src/index.js"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "test": "eslint examples src"
-  },
-  "dependencies": {
-    "chalk": "2.3.1",
-    "js-yaml": "3.10.0"
+    "test": "eslint packages/glu-cli/src packages/glu-lib/src"
   },
   "devDependencies": {
     "eslint": "4.17.0"

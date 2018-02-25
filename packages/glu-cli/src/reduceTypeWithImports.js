@@ -1,39 +1,8 @@
-const path = require('path')
 const getNameOfObjectType = require('./getNameOfObjectType')
-const getSourcePath = require('./getSourcePath')
-const loadSource = require('./loadSource')
+const loadImportedType = require('./loadImportedType')
 const reducedTypeNames = require('./reducedTypeNames')
 const reduceTypeDictionary = require('./reduceTypeDictionary')
 
-const reducer = ({
-  imports,
-  sourceDir,
-  reduceTypeWithImports,
-}) => (type) => reduceTypeWithImports({
-  type,
-  imports,
-  sourceDir,
-})
-const loadAndReduceType = ({
-  name,
-  variables,
-  imports,
-  sourceDir,
-  reduceTypeWithImports,
-}) => {
-  const sourcePath = getSourcePath({
-    name,
-    imports,
-    sourceDir,
-  })
-  const source = loadSource(sourcePath)
-  return reduceTypeWithImports({
-    type: source.type,
-    variables,
-    imports: source.imports,
-    sourceDir: path.parse(sourcePath).dir,
-  })
-}
 const reduceTypeWithImports = ({
   type,
   imports,
@@ -43,11 +12,10 @@ const reduceTypeWithImports = ({
     return type
   }
   if (typeof type !== 'object') {
-    return loadAndReduceType({
+    return loadImportedType({
       name: type,
       imports,
       sourceDir,
-      reduceTypeWithImports,
     })
   }
   if (type instanceof Array) {
@@ -70,15 +38,27 @@ const reduceTypeWithImports = ({
       }),
     }
   }
+  if ('complex' in type) {
+    return {
+      complex: reduceTypeDictionary({
+        dictionary: type.complex,
+        reduceType: (x) => reduceTypeWithImports({
+          type: x,
+          imports,
+          sourceDir,
+        }),
+      }),
+    }
+  }
   if (type.component) {
     return {
       component: {
         inputs: reduceTypeDictionary({
           dictionary: type.component.inputs,
-          reduceType: reducer({
+          reduceType: (x) => reduceTypeWithImports({
+            type: x,
             imports,
             sourceDir,
-            reduceTypeWithImports,
           }),
         }),
         output: reduceTypeWithImports({
@@ -89,32 +69,19 @@ const reduceTypeWithImports = ({
       },
     }
   }
-  if ('complex' in type) {
-    return {
-      complex: reduceTypeDictionary({
-        dictionary: type.complex,
-        reduceType: reducer({
-          imports,
-          sourceDir,
-          reduceTypeWithImports,
-        }),
-      }),
-    }
-  }
   const name = getNameOfObjectType(type)
-  return loadAndReduceType({
+  return loadImportedType({
     name,
     variables: reduceTypeDictionary({
       dictionary: type[name],
-      reduceType: reducer({
+      reduceType: (x) => reduceTypeWithImports({
+        type: x,
         imports,
         sourceDir,
-        reduceTypeWithImports,
       }),
     }),
     imports,
     sourceDir,
-    reduceTypeWithImports,
   })
 }
 

@@ -8,7 +8,7 @@ const createStream = ({
   imports,
   sourceDir,
 }) => {
-  const streams = []
+  const connections = []
   const reducedType = reduceType({
     type,
     variables,
@@ -21,14 +21,14 @@ const createStream = ({
         reducedType,
         reducedDomain: stream.reducedType,
       })
-      streams.push(stream)
+      connections.push(stream)
     }),
     next: (event) => {
       if (next) {
         next(event)
       } else {
-        for (const value of streams) {
-          value.next(event)
+        for (const stream of connections) {
+          stream.next(event)
         }
       }
       // TODO - Write the current application state to disk.

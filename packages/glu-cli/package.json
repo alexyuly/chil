@@ -1,0 +1,14 @@
+{
+  "name": "@glu/cli",
+  "version": "0.0.0-alpha.1",
+  "description": "Graph Language Utility: Command Line Interface",
+  "author": "Alex Yuly",
+  "license": "MIT",
+  "bin": {
+    "glu": "src/index.js"
+  },
+  "dependencies": {
+    "chalk": "2.3.1",
+    "js-yaml": "3.10.0"
+  }
+}

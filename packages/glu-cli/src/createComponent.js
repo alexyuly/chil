@@ -33,7 +33,6 @@ const createComponent = ({
     assignComponentChildren({
       component,
       sourceDir,
-      createComponent,
     })
     assignComponentConnections({ component })
   } else {

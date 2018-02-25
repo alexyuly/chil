@@ -14,17 +14,15 @@ const assignComponentVariables = ({
     component.variables = {}
   }
   for (const key in variables) {
-    if (key in component.variables) {
-      validateReducedType({
-        reducedType: variables[key],
-        reducedDomain: reduceType({
-          type: component.variables[key],
-          variables: component.variables,
-          imports: component.imports,
-          sourceDir,
-        }),
-      })
-    }
+    validateReducedType({
+      reducedType: variables[key],
+      reducedDomain: reduceType({
+        type: component.variables[key],
+        variables: component.variables,
+        imports: component.imports,
+        sourceDir,
+      }),
+    })
     component.variables[key] = variables[key]
   }
 }

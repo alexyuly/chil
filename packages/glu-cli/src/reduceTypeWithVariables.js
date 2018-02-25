@@ -1,13 +1,6 @@
 const getNameOfObjectType = require('./getNameOfObjectType')
 const reduceTypeDictionary = require('./reduceTypeDictionary')
 
-const reducer = ({
-  variables,
-  reduceTypeWithVariables,
-}) => (type) => reduceTypeWithVariables({
-  type,
-  variables,
-})
 const reduceTypeWithVariables = ({
   type,
   variables,
@@ -47,9 +40,9 @@ const reduceTypeWithVariables = ({
         inputs: reduceTypeDictionary({
           dictionary: type.component.inputs,
           variables,
-          reduceType: reducer({
+          reduceType: (x) => reduceTypeWithVariables({
+            type: x,
             variables,
-            reduceTypeWithVariables,
           }),
         }),
         output: reduceTypeWithVariables({
@@ -64,9 +57,9 @@ const reduceTypeWithVariables = ({
     [name]: reduceTypeDictionary({
       dictionary: type[name],
       variables,
-      reduceType: reducer({
+      reduceType: (x) => reduceTypeWithVariables({
+        type: x,
         variables,
-        reduceTypeWithVariables,
       }),
     }),
   }

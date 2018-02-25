@@ -1,5 +1,0 @@
-type:
-  component:
-    inputs:
-      action: number
-    output: number

@@ -1,3 +1,4 @@
+const createComponent = require('./createComponent')
 const getNameOfObjectType = require('./getNameOfObjectType')
 const getSourcePath = require('./getSourcePath')
 const reduceType = require('./reduceType')
@@ -6,7 +7,6 @@ const reduceTypeDictionary = require('./reduceTypeDictionary')
 const assignComponentChildren = ({
   component,
   sourceDir,
-  createComponent,
 }) => {
   component.children = {}
   for (const key in component.operation.children) {

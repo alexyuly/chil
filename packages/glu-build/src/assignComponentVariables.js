@@ -1,6 +1,6 @@
+const checkReducedType = require('./checkReducedType')
+const getReducedType = require('./getReducedType')
 const isNonNullObject = require('./isNonNullObject')
-const reduceType = require('./reduceType')
-const validateReducedType = require('./validateReducedType')
 
 const assignComponentVariables = ({
   component,
@@ -14,9 +14,9 @@ const assignComponentVariables = ({
     component.variables = {}
   }
   for (const key in variables) {
-    validateReducedType({
+    checkReducedType({
       reducedType: variables[key],
-      reducedDomain: reduceType({
+      reducedDomain: getReducedType({
         type: component.variables[key],
         variables: component.variables,
         imports: component.imports,

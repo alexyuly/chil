@@ -1,7 +1,7 @@
 const getNameOfObjectType = require('./getNameOfObjectType')
-const reduceTypeDictionary = require('./reduceTypeDictionary')
+const getReducedTypeDictionary = require('./getReducedTypeDictionary')
 
-const reduceTypeWithVariables = ({
+const getTypeWithVariables = ({
   type,
   variables,
 }) => {
@@ -10,7 +10,7 @@ const reduceTypeWithVariables = ({
   }
   if (typeof type !== 'object') {
     return type in variables
-      ? reduceTypeWithVariables({
+      ? getTypeWithVariables({
         type: variables[type],
         variables,
       })
@@ -19,7 +19,7 @@ const reduceTypeWithVariables = ({
   if (type instanceof Array) {
     const result = []
     for (const value of type) {
-      result.push(reduceTypeWithVariables({
+      result.push(getTypeWithVariables({
         type: value,
         variables,
       }))
@@ -28,7 +28,7 @@ const reduceTypeWithVariables = ({
   }
   if ('list' in type) {
     return {
-      list: reduceTypeWithVariables({
+      list: getTypeWithVariables({
         type: type.list,
         variables,
       }),
@@ -37,15 +37,15 @@ const reduceTypeWithVariables = ({
   if (type.component) {
     return {
       component: {
-        inputs: reduceTypeDictionary({
+        inputs: getReducedTypeDictionary({
           dictionary: type.component.inputs,
           variables,
-          reduceType: (x) => reduceTypeWithVariables({
-            type: x,
+          map: (each) => getTypeWithVariables({
+            type: each,
             variables,
           }),
         }),
-        output: reduceTypeWithVariables({
+        output: getTypeWithVariables({
           type: type.component.output,
           variables,
         }),
@@ -54,15 +54,15 @@ const reduceTypeWithVariables = ({
   }
   const name = getNameOfObjectType({ type })
   return {
-    [name]: reduceTypeDictionary({
+    [name]: getReducedTypeDictionary({
       dictionary: type[name],
       variables,
-      reduceType: (x) => reduceTypeWithVariables({
-        type: x,
+      map: (each) => getTypeWithVariables({
+        type: each,
         variables,
       }),
     }),
   }
 }
 
-module.exports = reduceTypeWithVariables
+module.exports = getTypeWithVariables

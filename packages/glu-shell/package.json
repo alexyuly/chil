@@ -1,0 +1,14 @@
+{
+  "name": "@glu/shell",
+  "version": "0.0.0",
+  "description": "Graph Language Utility: Shell (Command Line Interface)",
+  "author": "Alex Yuly",
+  "license": "MIT",
+  "bin": {
+    "glu": "src/index.js"
+  },
+  "dependencies": {
+    "@glu/build": "0.0.0",
+    "@glu/run": "0.0.0"
+  }
+}

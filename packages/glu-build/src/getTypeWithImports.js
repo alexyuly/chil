@@ -1,9 +1,9 @@
 const getNameOfObjectType = require('./getNameOfObjectType')
-const loadImportedType = require('./loadImportedType')
+const getReducedTypeDictionary = require('./getReducedTypeDictionary')
+const getReducedTypeImport = require('./getReducedTypeImport')
 const reducedTypeNames = require('./reducedTypeNames')
-const reduceTypeDictionary = require('./reduceTypeDictionary')
 
-const reduceTypeWithImports = ({
+const getTypeWithImports = ({
   type,
   imports,
   sourceDir,
@@ -12,7 +12,7 @@ const reduceTypeWithImports = ({
     return type
   }
   if (typeof type !== 'object') {
-    return loadImportedType({
+    return getReducedTypeImport({
       name: type,
       imports,
       sourceDir,
@@ -21,7 +21,7 @@ const reduceTypeWithImports = ({
   if (type instanceof Array) {
     const result = []
     for (const value of type) {
-      result.push(reduceTypeWithImports({
+      result.push(getTypeWithImports({
         type: value,
         imports,
         sourceDir,
@@ -31,7 +31,7 @@ const reduceTypeWithImports = ({
   }
   if ('list' in type) {
     return {
-      list: reduceTypeWithImports({
+      list: getTypeWithImports({
         type: type.list,
         imports,
         sourceDir,
@@ -40,10 +40,10 @@ const reduceTypeWithImports = ({
   }
   if ('complex' in type) {
     return {
-      complex: reduceTypeDictionary({
+      complex: getReducedTypeDictionary({
         dictionary: type.complex,
-        reduceType: (x) => reduceTypeWithImports({
-          type: x,
+        map: (each) => getTypeWithImports({
+          type: each,
           imports,
           sourceDir,
         }),
@@ -53,15 +53,15 @@ const reduceTypeWithImports = ({
   if (type.component) {
     return {
       component: {
-        inputs: reduceTypeDictionary({
+        inputs: getReducedTypeDictionary({
           dictionary: type.component.inputs,
-          reduceType: (x) => reduceTypeWithImports({
-            type: x,
+          map: (each) => getTypeWithImports({
+            type: each,
             imports,
             sourceDir,
           }),
         }),
-        output: reduceTypeWithImports({
+        output: getTypeWithImports({
           type: type.component.output,
           imports,
           sourceDir,
@@ -70,12 +70,12 @@ const reduceTypeWithImports = ({
     }
   }
   const name = getNameOfObjectType(type)
-  return loadImportedType({
+  return getReducedTypeImport({
     name,
-    variables: reduceTypeDictionary({
+    variables: getReducedTypeDictionary({
       dictionary: type[name],
-      reduceType: (x) => reduceTypeWithImports({
-        type: x,
+      map: (each) => getTypeWithImports({
+        type: each,
         imports,
         sourceDir,
       }),
@@ -85,4 +85,4 @@ const reduceTypeWithImports = ({
   })
 }
 
-module.exports = reduceTypeWithImports
+module.exports = getTypeWithImports

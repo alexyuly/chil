@@ -1,13 +1,12 @@
 const path = require('path')
 const assignComponentChildren = require('./assignComponentChildren')
-const assignComponentConnections = require('./assignComponentConnections')
 const assignComponentInputs = require('./assignComponentInputs')
-const assignComponentModule = require('./assignComponentModule')
 const assignComponentOutput = require('./assignComponentOutput')
 const assignComponentVariables = require('./assignComponentVariables')
-const loadSource = require('./loadSource')
+const checkComponentConnections = require('./checkComponentConnections')
+const getSource = require('./getSource')
 
-const createComponent = ({
+const buildComponent = ({
   sourcePath,
   variables,
 }) => {
@@ -15,7 +14,7 @@ const createComponent = ({
     dir: sourceDir,
     name: sourceName,
   } = path.parse(sourcePath)
-  const component = loadSource({ sourcePath })
+  const component = getSource({ sourcePath })
   assignComponentVariables({
     component,
     variables,
@@ -25,24 +24,21 @@ const createComponent = ({
     component,
     sourceDir,
   })
+  assignComponentInputs({
+    component,
+    sourceDir,
+  })
   if (component.operation) {
-    assignComponentInputs({
-      component,
-      sourceDir,
-    })
     assignComponentChildren({
       component,
       sourceDir,
+      buildComponent,
     })
-    assignComponentConnections({ component })
+    checkComponentConnections({ component })
   } else {
-    assignComponentModule({
-      component,
-      sourceDir,
-      sourceName,
-    })
+    component.modulePath = path.resolve(sourceDir, `${sourceName}.js`)
   }
   return component
 }
 
-module.exports = createComponent
+module.exports = buildComponent

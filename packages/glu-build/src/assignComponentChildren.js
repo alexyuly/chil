@@ -1,12 +1,12 @@
-const createComponent = require('./createComponent')
 const getNameOfObjectType = require('./getNameOfObjectType')
+const getReducedType = require('./getReducedType')
+const getReducedTypeDictionary = require('./getReducedTypeDictionary')
 const getSourcePath = require('./getSourcePath')
-const reduceType = require('./reduceType')
-const reduceTypeDictionary = require('./reduceTypeDictionary')
 
 const assignComponentChildren = ({
   component,
   sourceDir,
+  buildComponent,
 }) => {
   component.children = {}
   for (const key in component.operation.children) {
@@ -15,18 +15,18 @@ const assignComponentChildren = ({
     const name = isObjectType
       ? getNameOfObjectType({ type })
       : type
-    component.children[key] = createComponent({
+    component.children[key] = buildComponent({
       sourcePath: getSourcePath({
         name,
         imports: component.imports,
         sourceDir,
       }),
       variables: isObjectType
-        ? reduceTypeDictionary({
+        ? getReducedTypeDictionary({
           dictionary: type[name],
           variables: component.variables,
-          reduceType: (x) => reduceType({
-            type: x,
+          map: (each) => getReducedType({
+            type: each,
             variables: component.variables,
             imports: component.imports,
             sourceDir,

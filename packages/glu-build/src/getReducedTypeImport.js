@@ -1,9 +1,9 @@
 const path = require('path')
+const getReducedType = require('./getReducedType')
+const getSource = require('./getSource')
 const getSourcePath = require('./getSourcePath')
-const loadSource = require('./loadSource')
-const reduceType = require('./reduceType')
 
-const loadImportedType = ({
+const getReducedTypeImport = ({
   name,
   variables,
   imports,
@@ -14,8 +14,8 @@ const loadImportedType = ({
     imports,
     sourceDir,
   })
-  const source = loadSource(sourcePath)
-  return reduceType({
+  const source = getSource(sourcePath)
+  return getReducedType({
     type: source.type,
     variables,
     imports: source.imports,
@@ -23,4 +23,4 @@ const loadImportedType = ({
   })
 }
 
-module.exports = loadImportedType
+module.exports = getReducedTypeImport

@@ -12,7 +12,7 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "eslint packages/glu-cli/src packages/glu-lib/src"
+    "test": "eslint packages/glu-build/src packages/glu-run/src packages/glu-shell/src packages/glu-webpack/src"
   },
   "devDependencies": {
     "eslint": "4.17.0"

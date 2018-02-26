@@ -1,0 +1,8 @@
+{
+  "name": "@glu/run",
+  "version": "0.0.0",
+  "description": "Graph Language Utility: Runtime",
+  "author": "Alex Yuly",
+  "license": "MIT",
+  "main": "src/index.js"
+}

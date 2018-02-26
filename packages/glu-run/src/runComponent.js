@@ -35,7 +35,7 @@ const runComponent = ({
           componentLogger.send({
             begin,
             end: Date.now(),
-            path: componentPath,
+            path: componentPath.concat(key),
             state: component.state,
             event,
           })

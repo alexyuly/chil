@@ -12,7 +12,7 @@ const assignComponentInputs = ({
   })
   for (const key in inputs) {
     component.inputs[key] = {
-      reducedType: getReducedType({
+      type: getReducedType({
         type: inputs[key],
         variables: component.variables,
         imports: component.imports,

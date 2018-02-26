@@ -9,8 +9,8 @@ const checkComponentConnections = ({ component }) => {
         ? component.output
         : component.children[connectionKey].inputs[connections[connectionKey]]
       checkReducedType({
-        reducedType: origin.reducedType,
-        reducedDomain: connection.reducedType,
+        reducedType: origin.type,
+        reducedDomain: connection.type,
       })
     }
   }

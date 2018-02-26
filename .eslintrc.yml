@@ -40,9 +40,6 @@ rules:
   max-len:
     - error
     - 100
-  max-params:
-    - error
-    - 1
   multiline-ternary:
     - error
   no-console:

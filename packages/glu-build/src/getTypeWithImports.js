@@ -1,21 +1,23 @@
+const getImportedType = require('./getImportedType')
 const getNameOfObjectType = require('./getNameOfObjectType')
 const getReducedTypeDictionary = require('./getReducedTypeDictionary')
-const getReducedTypeImport = require('./getReducedTypeImport')
 const reducedTypeNames = require('./reducedTypeNames')
 
 const getTypeWithImports = ({
   type,
   imports,
   sourceDir,
+  getReducedType,
 }) => {
   if (!type || reducedTypeNames.includes(type)) {
     return type
   }
   if (typeof type !== 'object') {
-    return getReducedTypeImport({
+    return getImportedType({
       name: type,
       imports,
       sourceDir,
+      getReducedType,
     })
   }
   if (type instanceof Array) {
@@ -25,6 +27,7 @@ const getTypeWithImports = ({
         type: value,
         imports,
         sourceDir,
+        getReducedType,
       }))
     }
     return result
@@ -35,6 +38,7 @@ const getTypeWithImports = ({
         type: type.list,
         imports,
         sourceDir,
+        getReducedType,
       }),
     }
   }
@@ -46,6 +50,7 @@ const getTypeWithImports = ({
           type: each,
           imports,
           sourceDir,
+          getReducedType,
         }),
       }),
     }
@@ -59,18 +64,20 @@ const getTypeWithImports = ({
             type: each,
             imports,
             sourceDir,
+            getReducedType,
           }),
         }),
         output: getTypeWithImports({
           type: type.component.output,
           imports,
           sourceDir,
+          getReducedType,
         }),
       },
     }
   }
-  const name = getNameOfObjectType(type)
-  return getReducedTypeImport({
+  const name = getNameOfObjectType({ type })
+  return getImportedType({
     name,
     variables: getReducedTypeDictionary({
       dictionary: type[name],
@@ -78,10 +85,12 @@ const getTypeWithImports = ({
         type: each,
         imports,
         sourceDir,
+        getReducedType,
       }),
     }),
     imports,
     sourceDir,
+    getReducedType,
   })
 }
 

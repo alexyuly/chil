@@ -8,7 +8,7 @@ const assignComponentOutput = ({
     return
   }
   component.output = {
-    reducedType: getReducedType({
+    type: getReducedType({
       type: component.type.component.output,
       variables: component.variables,
       imports: component.imports,

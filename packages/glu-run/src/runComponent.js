@@ -1,4 +1,4 @@
-const buildModuleDictionary = require('./buildModuleDictionary')
+const { buildModuleDictionary } = require('@glu/build')
 const runComponentConnections = require('./runComponentConnections')
 const runComponentEvents = require('./runComponentEvents')
 const stream = require('./stream')

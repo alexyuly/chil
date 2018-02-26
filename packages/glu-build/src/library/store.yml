@@ -1,0 +1,14 @@
+variables:
+  output:
+  action:
+  state:
+
+type:
+  component:
+    inputs:
+      state: state
+
+extends:
+  pipe:
+    output: output
+    action: action

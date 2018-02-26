@@ -1,3 +1,7 @@
 const buildComponent = require('./buildComponent')
+const buildModuleDictionary = require('./buildModuleDictionary')
 
-module.exports = { buildComponent }
+module.exports = {
+  buildComponent,
+  buildModuleDictionary,
+}

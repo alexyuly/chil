@@ -1,0 +1,11 @@
+variables:
+  output:
+  action:
+
+type:
+  component:
+    output: output
+
+extends:
+  sink:
+    action: action

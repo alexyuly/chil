@@ -15,6 +15,7 @@ const getReducedType = ({
     : type,
   imports,
   sourceDir,
+  getReducedType,
 })
 
 module.exports = getReducedType

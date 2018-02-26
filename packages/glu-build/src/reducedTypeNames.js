@@ -1,9 +1,9 @@
 const reducedTypeNames = [
   'claim',
+  'complex',
+  'list',
   'number',
   'string',
-  'list',
-  'complex',
 ]
 
 module.exports = reducedTypeNames

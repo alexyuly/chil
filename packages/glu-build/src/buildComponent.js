@@ -2,9 +2,9 @@ const path = require('path')
 const assignComponentChildren = require('./assignComponentChildren')
 const assignComponentInputs = require('./assignComponentInputs')
 const assignComponentOutput = require('./assignComponentOutput')
-const assignComponentVariables = require('./assignComponentVariables')
+const buildSource = require('./buildSource')
 const checkComponentConnections = require('./checkComponentConnections')
-const getSource = require('./getSource')
+const getReducedType = require('./getReducedType')
 
 const buildComponent = ({
   sourcePath,
@@ -14,11 +14,10 @@ const buildComponent = ({
     dir: sourceDir,
     name: sourceName,
   } = path.parse(sourcePath)
-  const component = getSource({ sourcePath })
-  assignComponentVariables({
-    component,
+  const component = buildSource({
+    sourcePath,
     variables,
-    sourceDir,
+    getReducedType,
   })
   assignComponentOutput({
     component,

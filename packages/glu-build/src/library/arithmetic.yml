@@ -1,0 +1,7 @@
+variables:
+  type:
+
+type:
+  reducer:
+    action: type
+    state: type

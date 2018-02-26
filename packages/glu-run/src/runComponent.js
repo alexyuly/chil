@@ -1,5 +1,6 @@
 const buildModuleDictionary = require('./buildModuleDictionary')
 const runComponentConnections = require('./runComponentConnections')
+const runComponentEvents = require('./runComponentEvents')
 const stream = require('./stream')
 
 const runComponent = ({
@@ -43,6 +44,9 @@ const runComponent = ({
         : method
       Object.assign(component.inputs[key], stream(delegate))
     }
+  }
+  if (component.events) {
+    runComponentEvents({ component })
   }
 }
 

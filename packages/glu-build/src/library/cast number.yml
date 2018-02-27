@@ -1,5 +1,3 @@
 type:
-  component:
+  pipe:
     output: number
-    inputs:
-      action:

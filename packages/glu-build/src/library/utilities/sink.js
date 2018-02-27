@@ -1,5 +1,1 @@
-module.exports = (fn) => () => ({
-  action: (event) => {
-    fn(event)
-  },
-})
+module.exports = (fn) => () => ({ action: fn })

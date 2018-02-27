@@ -1,4 +1,1 @@
-type:
-  component:
-    inputs:
-      action:
+type: sink

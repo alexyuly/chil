@@ -8,32 +8,15 @@ Distributed under the MIT license.
 
 ## Welcome to GLU
 
-GLU, short for "Graph Language Utility", is a new language and software development kit for building applications with directed graphs of components.
+GLU, short for "Graph Language Utility", is a language and runtime engine used to build and run software applications using directed graphs of components. The runtime engine is built on Node.js. Please download and install the latest version of Node.js before continuing.
 
-## glu-shell
+### Use At Your Own Risk
 
-The primary tool for GLU application development is glu-shell, which builds and runs GLU application within Node.js.
+This project is being modified constantly. The API you see today may change tomorrow. It may not work as expected today or tomorrow. Use GLU at your own risk. Please see the LICENSE for a full disclaimer of liability.
 
-### Installation
+### Big Plans
 
-```
-git clone https://github.com/alexyuly/glu
-cd glu/packages/glu-shell
-yarn link
-```
-
-### Usage
-
-`glu run [path to file]`
-
-If `[path to file]` has a `.json` extension, then runs that file as a GLU application without building, or else:
-
-1) First, builds the GLU source file found at `[path to file]`. The file must be in YAML format, with a `.yml` extension. Outputs one build artifact, which is a GLU application file with the same path and name as the source file, except it has a `.json` extension. Any existing file with that path and name is overwritten.
-2) Then, runs the resulting build artifact.
-
-`glu build [path to file]`
-
-Builds the GLU source file found at `[path to file]`, without running it. See documentation for `glu run`.
+One day, there will be a GUI for editing component graphs. Today, there is a CLI tool which builds and runs YAML documents.
 
 ### "Hello, World!"
 
@@ -42,7 +25,7 @@ Open up a text editor, and paste the following YAML document into a new file nam
 ```yaml
 type: sink
   
-operation:
+composition:
   children:
     echo: echo
   connections:
@@ -56,13 +39,13 @@ events:
   
 ```
 
-This document defines a GLU component, which has three basic sections, named `type`, `operation`, and `events`.
+This document defines a GLU component with three sections, named `type`, `composition`, and `events`.
 
 #### `type`
 
-Every component has a type, which defines the types of data which can be streamed through the component's inputs and output. Every component has at least one input, and at most one output.
+Every component has a section named `type`, which defines the types of values which can be streamed through the component's inputs and output. Every component has at least one input, and at most one output. A component is like a function, except its arguments (inputs) and return value (output) are streams of values over time, instead of a single value at one point in time. 
 
-Notice that `Hello World.yml` has `type: sink`. Let's look at `sink.yml`, which is part of the GLU standard library, and is accessible from any GLU source file:
+Notice that `Hello World.yml` has `type: sink`. Let's look at `sink.yml`, which is part of the GLU standard library, and therefore can be referenced from any GLU source file:
 
 ```yaml
 variables:
@@ -77,12 +60,41 @@ type:
 
 #### `variables`
 
-`sink.yml` has a new section named `variables`. Variables define a dictionary of types, whose keys can be referenced anywhere in the source file. This dictionary has just one key named `action`.
+`sink.yml` has a new section named `variables`. Variables are a dictionary of types, whose keys can be referenced anywhere in the source file. This dictionary has just one key named `action`.
 
 In this case, `Hello World.yml` imports `sink.yml` when it declares `type: sink`. (Note, the import happens implicitly: Since there is no `sink.yml` in your local directory, the reference to `sink` resolves to the GLU standard library.)
 
-The values of the dictionary are passed to the component when its type is referenced in another source file which imports it. However, in this case no variables are passed to `sink`, so `action` gets the value declared by `sink.yml`, which in this case is empty. (Note that `action:` is a YAML key with an empty value.) An empty value for a type indicates that any type is allowed.
+The values of variables are passed to the component when its type is referenced in another source file which imports it. However, in this case no variables are passed to `sink`, so `action` gets the value declared by `sink.yml`, which is empty. (Note that `action:` is a YAML key with an empty value.) An empty value for a type indicates that any type is allowed.
 
-#### TODO
+Passing values to variables is always optional when declaring a type. If a variable is not specified, it gets the value declared by the variables dictionary of the type's source. If a variable is specified, then its type must be a subset of the type of variable declared by the source. So, the source variable is known as the "variable domain", while the variable passed in by another source is known as the "variable type".
 
-Much more to come... This README is a work in progress...
+We could have passed a value to the `action` variable, by declaring a type of `sink` with some variables, for example a sink of numbers:
+
+```yaml
+type:
+  sink:
+    action: number
+```
+
+#### `composition`
+
+Some components, like `Hello World.yml`, have a section named `composition`, which defines child components and connections within the component.
+
+##### `children`
+
+Children are a dictionary of types, whose keys can be referenced anywhere in the source file. The value for each child key declares the type of a child component whose name is that key.
+
+Let's look back at the `composition` section of `Hello World.yml`, which defines just one child component named `echo`, which has type `echo`:
+
+```yaml
+composition:
+  children:
+    echo: echo
+  connections:
+    action:
+      echo: action
+```
+
+##### `connections`
+
+TODO - Much more README is coming soon...

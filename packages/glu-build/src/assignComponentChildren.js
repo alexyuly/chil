@@ -9,8 +9,8 @@ const assignComponentChildren = ({
   buildComponent,
 }) => {
   component.children = {}
-  for (const key in component.operation.children) {
-    const type = component.operation.children[key]
+  for (const key in component.composition.children) {
+    const type = component.composition.children[key]
     const isObjectType = typeof type === 'object'
     const name = isObjectType
       ? getNameOfObjectType({ type })

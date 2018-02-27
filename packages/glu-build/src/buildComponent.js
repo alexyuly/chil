@@ -27,7 +27,7 @@ const buildComponent = ({
     component,
     sourceDir,
   })
-  if (component.operation) {
+  if (component.composition) {
     assignComponentChildren({
       component,
       sourceDir,

@@ -1,7 +1,7 @@
 const runComponentConnections = ({ component }) => {
-  for (const key in component.operation.connections) {
+  for (const key in component.composition.connections) {
     const origin = component.inputs[key] || component.children[key].output
-    const connections = component.operation.connections[key]
+    const connections = component.composition.connections[key]
     for (const connectionKey in connections) {
       const connection = connectionKey === 'output'
         ? component.output

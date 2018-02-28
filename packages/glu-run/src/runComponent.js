@@ -12,7 +12,7 @@ const runComponent = ({
   if (component.output) {
     Object.assign(component.output, stream())
   }
-  if (component.composition) {
+  if (component.children) {
     for (const key in component.inputs) {
       Object.assign(component.inputs[key], stream())
     }

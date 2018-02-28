@@ -8,9 +8,8 @@ const assignComponentChildren = ({
   sourceDir,
   buildComponent,
 }) => {
-  component.children = {}
-  for (const key in component.composition.children) {
-    const type = component.composition.children[key]
+  for (const key in component.children) {
+    const type = component.children[key]
     const isObjectType = typeof type === 'object'
     const name = isObjectType
       ? getNameOfObjectType({ type })

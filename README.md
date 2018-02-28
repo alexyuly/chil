@@ -25,12 +25,12 @@ Open up a text editor, and paste the following YAML document into a new file nam
 ```yaml
 type: sink
   
-composition:
-  children:
-    echo: echo
-  connections:
-    action:
-      echo: action
+children:
+  echo: echo
+  
+connections:
+  action:
+    echo: action
   
 events:
   - component: self
@@ -39,13 +39,13 @@ events:
   
 ```
 
-This document defines a GLU component with three sections, named `type`, `composition`, and `events`.
+This document defines a GLU component with four sections, named `type`, `children`, `connections`, and `events`.
 
 #### `type`
 
 Every component has a section named `type`, which defines the types of values which can be streamed through the component's inputs and output. Every component has at least one input, and at most one output. A component is like a function, except its arguments (inputs) and return value (output) are streams of values over time, instead of a single value at one point in time. 
 
-Notice that `Hello World.yml` has `type: sink`. Let's look at `sink.yml`, which is part of the GLU standard library, and therefore can be referenced from any GLU source file:
+Notice that `Hello World.yml` has `type: sink`. Let's look at the source of `sink.yml`, which is part of the GLU standard library:
 
 ```yaml
 variables:
@@ -60,9 +60,9 @@ type:
 
 #### `variables`
 
-`sink.yml` has a new section named `variables`. Variables are a dictionary of types, whose keys can be referenced anywhere in the source file. This dictionary has just one key named `action`.
+`sink.yml` has a section named `variables`. Variables are a dictionary of types, whose keys can be referenced anywhere in the source file. This dictionary has just one key named `action`.
 
-In this case, `Hello World.yml` imports `sink.yml` when it declares `type: sink`. (Note, the import happens implicitly: Since there is no `sink.yml` in your local directory, the reference to `sink` resolves to the GLU standard library.)
+In this case, `Hello World.yml` imports `sink.yml` when it declares `type: sink`. (Note, the import happens implicitly: Since there is no `sink.yml` in your local directory, the reference to `sink` resolves a file within the GLU standard library.)
 
 The values of variables are passed to the component when its type is referenced in another source file which imports it. However, in this case no variables are passed to `sink`, so `action` gets the value declared by `sink.yml`, which is empty. (Note that `action:` is a YAML key with an empty value.) An empty value for a type indicates that any type is allowed.
 
@@ -76,25 +76,19 @@ type:
     action: number
 ```
 
-#### `composition`
+#### `children`
 
-Some components, like `Hello World.yml`, have a section named `composition`, which defines child components and connections within the component.
+Some components, like `Hello World.yml`, have a section named `children`, which defines child components.
 
-##### `children`
+Children are a dictionary which maps names to types of child components.
 
-Children are a dictionary of types, whose keys can be referenced anywhere in the source file. The value for each child key declares the type of a child component whose name is that key.
-
-Let's look back at the `composition` section of `Hello World.yml`, which defines just one child component named `echo`, which has type `echo`:
+The `children` section of `Hello World.yml` defines just one child component named `echo`, which has type `echo`:
 
 ```yaml
-composition:
-  children:
-    echo: echo
-  connections:
-    action:
-      echo: action
+children:
+  echo: echo
 ```
 
-##### `connections`
+#### `connections`
 
 TODO - Much more README is coming soon...

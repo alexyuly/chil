@@ -4,8 +4,5 @@
   "description": "Graph Language Utility: Runtime",
   "author": "Alex Yuly",
   "license": "MIT",
-  "main": "src/index.js",
-  "dependencies": {
-    "@glu/build": "0.0.0"
-  }
+  "main": "src/index.js"
 }

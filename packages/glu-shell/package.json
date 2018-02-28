@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@glu/build": "0.0.0",
-    "@glu/run": "0.0.0"
+    "@glu/run": "0.0.0",
+    "webpack": "4.0.0"
   }
 }

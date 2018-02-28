@@ -2,16 +2,12 @@ const child_process = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const { runComponent } = require('@glu/run')
-const build = require('./build')
 
 const run = ({
-  sourcePath,
+  buildPath,
   args,
 }) => {
-  const buildPath = path.parse(sourcePath).ext === '.json'
-    ? sourcePath
-    : build({ sourcePath })
-  const message = `GLU run '${sourcePath}'`
+  const message = `GLU run '${buildPath}'`
   console.time(message)
   const {
     dir: sourceDir,

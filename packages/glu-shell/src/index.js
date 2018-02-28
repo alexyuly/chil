@@ -9,18 +9,18 @@ const command = process.argv[2]
 const sourcePath = process.argv[3]
 if (command === 'build') {
   build({ sourcePath })
-} else if (command === 'run' || command === 'webpack') {
+} else {
   const buildPath = path.parse(sourcePath).ext === '.json'
     ? sourcePath
     : build({ sourcePath })
-  if (command === 'run') {
+  if (command === 'webpack') {
+    webpack({ buildPath })
+  } else if (command === 'run') {
     run({
       buildPath,
       args: process.argv.slice(4),
     })
   } else {
-    webpack({ buildPath })
+    throw new Error(`GLU does not recognize command '${command}'.`)
   }
-} else {
-  throw new Error(`GLU received an unknown command: '${command}'.`)
 }

@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const child_process = require('child_process')
 const fs = require('fs')
 const path = require('path')
@@ -7,7 +8,7 @@ const run = ({
   buildPath,
   args,
 }) => {
-  const message = `GLU run '${buildPath}'`
+  const message = chalk.green(`GLU run '${buildPath}'`)
   console.time(message)
   const {
     dir: sourceDir,

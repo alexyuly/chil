@@ -8,7 +8,7 @@ const buildWebpackEntry = ({ buildPath }) => {
     .from(modulePathSet)
     .reduce((result, modulePath) => `${result}'${modulePath}':require('${modulePath}'),`, '')
   return `
-    const { runComponent } = require('${require.resolve('@glu/run')}')
+    const runComponent = require('${require.resolve('@glu/run')}')
     runComponent({
       component: require('${buildPath}'),
       moduleDictionary: {${moduleDictionaryTemplate}},

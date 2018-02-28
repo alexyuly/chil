@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { buildComponent } = require('@glu/build')
+const buildComponent = require('@glu/build')
 
 const build = ({ sourcePath }) => {
   const message = `GLU build '${sourcePath}'`

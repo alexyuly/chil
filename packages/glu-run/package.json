@@ -4,5 +4,5 @@
   "description": "Graph Language Utility: Runtime Engine",
   "author": "Alex Yuly",
   "license": "MIT",
-  "main": "src/index.js"
+  "main": "src/runComponent.js"
 }

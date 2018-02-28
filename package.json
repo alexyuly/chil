@@ -1,9 +1,9 @@
 {
-  "private": true,
   "name": "glu",
   "description": "Graph Language Utility",
   "author": "Alex Yuly",
   "license": "MIT",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/alexyuly/glu.git"

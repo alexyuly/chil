@@ -2,6 +2,7 @@ const getNameOfObjectType = require('./getNameOfObjectType')
 const getReducedType = require('./getReducedType')
 const getReducedTypeDictionary = require('./getReducedTypeDictionary')
 const getSourcePath = require('./getSourcePath')
+const isNonNullObject = require('./isNonNullObject')
 
 const assignComponentChildren = ({
   component,
@@ -10,7 +11,7 @@ const assignComponentChildren = ({
 }) => {
   for (const key in component.children) {
     const type = component.children[key]
-    const isObjectType = typeof type === 'object'
+    const isObjectType = isNonNullObject(type)
     const name = isObjectType
       ? getNameOfObjectType({ type })
       : type

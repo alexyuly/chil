@@ -1,7 +1,7 @@
 const fs = require('fs')
 const buildModulePathSet = require('./buildModulePathSet')
 
-const buildEntryPath = ({ buildPath }) => {
+const buildWebpackEntry = ({ buildPath }) => {
   const component = JSON.parse(fs.readFileSync(buildPath, 'utf8'))
   const modulePathSet = buildModulePathSet({ component })
   const moduleDictionaryTemplate = Array
@@ -9,13 +9,11 @@ const buildEntryPath = ({ buildPath }) => {
     .reduce((result, modulePath) => `${result}'${modulePath}':require('${modulePath}'),`, '')
   return `
     const { runComponent } = require('${require.resolve('@glu/run')}')
-    const component = require('${buildPath}')
-    
     runComponent({
-      component,
+      component: require('${buildPath}'),
       moduleDictionary: {${moduleDictionaryTemplate}},
     })
   `
 }
 
-module.exports = buildEntryPath
+module.exports = buildWebpackEntry

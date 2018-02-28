@@ -1,7 +1,7 @@
 {
   "name": "@glu/build",
   "version": "0.0.0",
-  "description": "Graph Language Utility: Build Tool (Command Line Interface)",
+  "description": "Graph Language Utility: Build Tool",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/index.js",

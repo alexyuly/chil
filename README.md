@@ -14,10 +14,6 @@ GLU, short for "Graph Language Utility", is a language and runtime engine used t
 
 This project is being modified constantly. The API you see today may change tomorrow. It may not work as expected today or tomorrow. Use GLU at your own risk. Please see the LICENSE for a full disclaimer of liability.
 
-### Big Plans
-
-One day, there will be a GUI for editing component graphs. Today, there is a CLI tool which builds and runs YAML documents.
-
 ### "Hello, World!"
 
 Open up a text editor, and paste the following YAML document into a new file named `Hello World.yml`:

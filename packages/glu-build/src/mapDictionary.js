@@ -1,6 +1,6 @@
-const isNonNullObject = require('./isNonNullObject')
+const isDictionary = require('./isDictionary')
 
-const getReducedTypeDictionary = ({
+const mapDictionary = ({
   dictionary,
   variables,
   map = (type) => type,
@@ -9,7 +9,7 @@ const getReducedTypeDictionary = ({
     ? variables
     : dictionary
   const result = {}
-  if (isNonNullObject(target)) {
+  if (isDictionary(target)) {
     for (const key in target) {
       result[key] = map(target[key])
     }
@@ -17,4 +17,4 @@ const getReducedTypeDictionary = ({
   return result
 }
 
-module.exports = getReducedTypeDictionary
+module.exports = mapDictionary

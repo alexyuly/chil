@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
 const checkReducedType = require('./checkReducedType')
-const isNonNullObject = require('./isNonNullObject')
 const getExtendedType = require('./getExtendedType')
+const isDictionary = require('./isDictionary')
 
 const buildSource = ({
   variables,
@@ -12,8 +12,8 @@ const buildSource = ({
 }) => {
   const source = yaml.safeLoad(fs.readFileSync(sourcePath, 'utf8'))
   const { dir: sourceDir } = path.parse(sourcePath)
-  if (isNonNullObject(variables)) {
-    if (!isNonNullObject(source.variables)) {
+  if (isDictionary(variables)) {
+    if (!isDictionary(source.variables)) {
       source.variables = {}
     }
     for (const key in variables) {

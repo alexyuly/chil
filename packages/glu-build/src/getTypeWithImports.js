@@ -1,6 +1,6 @@
 const getImportedType = require('./getImportedType')
 const getNameOfObjectType = require('./getNameOfObjectType')
-const getReducedTypeDictionary = require('./getReducedTypeDictionary')
+const mapDictionary = require('./mapDictionary')
 const reducedTypeNames = require('./reducedTypeNames')
 
 const getTypeWithImports = ({
@@ -9,7 +9,10 @@ const getTypeWithImports = ({
   sourceDir,
   getReducedType,
 }) => {
-  if (!type || reducedTypeNames.includes(type)) {
+  if (!type) {
+    return null
+  }
+  if (reducedTypeNames.includes(type)) {
     return type
   }
   if (typeof type !== 'object') {
@@ -44,7 +47,7 @@ const getTypeWithImports = ({
   }
   if ('complex' in type) {
     return {
-      complex: getReducedTypeDictionary({
+      complex: mapDictionary({
         dictionary: type.complex,
         map: (each) => getTypeWithImports({
           type: each,
@@ -58,7 +61,7 @@ const getTypeWithImports = ({
   if (type.component) {
     return {
       component: {
-        inputs: getReducedTypeDictionary({
+        inputs: mapDictionary({
           dictionary: type.component.inputs,
           map: (each) => getTypeWithImports({
             type: each,
@@ -79,7 +82,7 @@ const getTypeWithImports = ({
   const name = getNameOfObjectType({ type })
   return getImportedType({
     name,
-    variables: getReducedTypeDictionary({
+    variables: mapDictionary({
       dictionary: type[name],
       map: (each) => getTypeWithImports({
         type: each,

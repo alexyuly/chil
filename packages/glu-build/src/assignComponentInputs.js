@@ -1,12 +1,12 @@
 const getReducedType = require('./getReducedType')
-const getReducedTypeDictionary = require('./getReducedTypeDictionary')
+const mapDictionary = require('./mapDictionary')
 
 const assignComponentInputs = ({
   component,
   sourceDir,
 }) => {
   component.inputs = {}
-  const inputs = getReducedTypeDictionary({
+  const inputs = mapDictionary({
     dictionary: component.type.component.inputs,
     variables: component.variables,
   })

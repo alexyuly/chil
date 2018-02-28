@@ -1,12 +1,12 @@
 const getNameOfObjectType = require('./getNameOfObjectType')
-const getReducedTypeDictionary = require('./getReducedTypeDictionary')
+const mapDictionary = require('./mapDictionary')
 
 const getTypeWithVariables = ({
   type,
   variables,
 }) => {
   if (!type) {
-    return type
+    return null
   }
   if (typeof type !== 'object') {
     return type in variables
@@ -37,7 +37,7 @@ const getTypeWithVariables = ({
   if (type.component) {
     return {
       component: {
-        inputs: getReducedTypeDictionary({
+        inputs: mapDictionary({
           dictionary: type.component.inputs,
           variables,
           map: (each) => getTypeWithVariables({
@@ -54,7 +54,7 @@ const getTypeWithVariables = ({
   }
   const name = getNameOfObjectType({ type })
   return {
-    [name]: getReducedTypeDictionary({
+    [name]: mapDictionary({
       dictionary: type[name],
       variables,
       map: (each) => getTypeWithVariables({

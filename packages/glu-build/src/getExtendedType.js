@@ -1,7 +1,8 @@
 const assert = require('assert')
 const baseTypeNames = require('./baseTypeNames')
+const checkReducedType = require('./checkReducedType')
 const getNameOfObjectType = require('./getNameOfObjectType')
-const isNonNullObject = require('./isNonNullObject')
+const isDictionary = require('./isDictionary')
 
 const getExtendedType = ({
   reducedBase,
@@ -11,8 +12,8 @@ const getExtendedType = ({
     return reducedType
   }
   assert(
-    isNonNullObject(reducedBase),
-    'Expected base type to be an object type.'
+    isDictionary(reducedBase),
+    'Expected base type to be a dictionary.'
   )
   const baseName = getNameOfObjectType({ type: reducedBase })
   assert(
@@ -21,44 +22,38 @@ const getExtendedType = ({
   )
   if (baseName === 'complex') {
     assert(
-      isNonNullObject(reducedType) && getNameOfObjectType({ type: reducedType }) === 'complex',
+      isDictionary(reducedType) && getNameOfObjectType({ type: reducedType }) === 'complex',
       'Expected type to match the base type.'
     )
-    const result = { complex: {} }
-    for (const key in reducedBase.complex) {
-      result.complex[key] = reducedBase.complex[key]
-    }
     for (const key in reducedType.complex) {
-      assert(
-        !(key in result),
-        'Expected type to not override any properties of the base type.'
-      )
-      result.complex[key] = reducedType.complex[key]
+      checkReducedType({
+        reducedType: reducedType.complex[key],
+        reducedDomain: reducedBase.complex[key],
+      })
+      reducedBase.complex[key] = reducedType.complex[key]
     }
-    return result
+    return reducedBase
   }
   // baseName === 'component'
   assert(
-    isNonNullObject(reducedType) && getNameOfObjectType({ type: reducedType }) === 'component',
+    isDictionary(reducedType) && getNameOfObjectType({ type: reducedType }) === 'component',
     'Expected type to match the base type.'
   )
-  const result = {
-    component: {
-      inputs: {},
-      output: reducedBase.component.output,
-    },
-  }
-  for (const key in reducedBase.component.inputs) {
-    result.component.inputs[key] = reducedBase.component.inputs[key]
+  if (reducedType.component.output) {
+    checkReducedType({
+      reducedType: reducedType.component.output,
+      reducedDomain: reducedBase.component.output,
+    })
+    reducedBase.component.output = reducedType.component.output
   }
   for (const key in reducedType.component.inputs) {
-    assert(
-      !(key in result),
-      'Expected type to not override any properties of the base type.'
-    )
-    result.component.inputs[key] = reducedType.component.inputs[key]
+    checkReducedType({
+      reducedType: reducedType.component.inputs[key],
+      reducedDomain: reducedBase.component.inputs[key],
+    })
+    reducedBase.component.inputs[key] = reducedType.component.inputs[key]
   }
-  return result
+  return reducedBase
 }
 
 module.exports = getExtendedType

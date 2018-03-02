@@ -1,4 +1,4 @@
-const checkReducedType = require('./checkReducedType')
+const checkTypeInDomain = require('./checkTypeInDomain')
 
 const checkComponentConnections = ({ component }) => {
   for (const key in component.connections) {
@@ -8,9 +8,9 @@ const checkComponentConnections = ({ component }) => {
       const connection = connectionKey === 'output'
         ? component.output
         : component.children[connectionKey].inputs[connections[connectionKey]]
-      checkReducedType({
-        reducedType: origin.type,
-        reducedDomain: connection.type,
+      checkTypeInDomain({
+        type: origin.type,
+        domain: connection.type,
       })
     }
   }

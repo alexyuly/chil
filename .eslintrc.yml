@@ -44,6 +44,9 @@ rules:
     - error
   no-console:
     - warn
+  no-else-return:
+    - error
+    - { allowElseIf: false }
   no-extra-parens:
     - error
   no-implicit-coercion:

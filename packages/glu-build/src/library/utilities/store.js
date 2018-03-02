@@ -5,25 +5,17 @@ module.exports = (fn) => (component) => {
   }
   return {
     action: (action) => {
-      const {
-        state,
-        actions,
-      } = component.state
-      if (state === undefined) {
-        actions.push(action)
+      if (component.state.state === undefined) {
+        component.state.actions.push(action)
       } else {
-        component.output.next(fn(state, action))
+        component.output.next(fn(component.state.state, action))
       }
     },
     state: (nextState) => {
       component.state.state = nextState
-      const {
-        state,
-        actions,
-      } = component.state
-      while (actions.length > 0) {
-        const action = actions.shift()
-        component.output.next(fn(state, action))
+      while (component.state.actions.length > 0) {
+        const action = component.state.actions.shift()
+        component.output.next(fn(component.state.state, action))
       }
     },
   }

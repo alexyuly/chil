@@ -35,22 +35,23 @@ const getTypeWithVariables = ({
     }
   }
   if (type.component) {
-    return {
-      component: {
-        inputs: mapDictionary({
-          dictionary: type.component.inputs,
-          variables,
-          map: (each) => getTypeWithVariables({
-            type: each,
-            variables,
-          }),
-        }),
-        output: getTypeWithVariables({
-          type: type.component.output,
+    const component = {
+      inputs: mapDictionary({
+        dictionary: type.component.inputs,
+        variables,
+        map: (each) => getTypeWithVariables({
+          type: each,
           variables,
         }),
-      },
+      }),
     }
+    if ('output' in type.component) {
+      component.output = getTypeWithVariables({
+        type: type.component.output,
+        variables,
+      })
+    }
+    return { component }
   }
   const name = getNameOfObjectType({ type })
   return {

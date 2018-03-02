@@ -1,59 +1,61 @@
-const assert = require('assert')
 const baseTypeNames = require('./baseTypeNames')
-const checkReducedType = require('./checkReducedType')
+const checkTypeInDomain = require('./checkTypeInDomain')
 const getNameOfObjectType = require('./getNameOfObjectType')
 const isDictionary = require('./isDictionary')
+const throwError = require('./throwError')
 
 const getExtendedType = ({
-  reducedBase,
-  reducedType,
+  type,
+  base,
 }) => {
-  if (!reducedBase) {
-    return reducedType
+  if (!base) {
+    return type
   }
-  assert(
-    isDictionary(reducedBase),
-    'Expected base type to be a dictionary.'
-  )
-  const baseName = getNameOfObjectType({ type: reducedBase })
-  assert(
-    baseTypeNames.includes(baseName),
-    'Expected base type to be a complex or component type.'
-  )
+  if (!isDictionary(base)) {
+    throwError.typeCanExtend(type, base)
+  }
+  const baseName = getNameOfObjectType({ type: base })
+  if (!baseTypeNames.includes(baseName)) {
+    throwError.typeCanExtend(type, base)
+  }
   if (baseName === 'complex') {
-    assert(
-      isDictionary(reducedType) && getNameOfObjectType({ type: reducedType }) === 'complex',
-      'Expected type to match the base type.'
-    )
-    for (const key in reducedType.complex) {
-      checkReducedType({
-        reducedType: reducedType.complex[key],
-        reducedDomain: reducedBase.complex[key],
-      })
-      reducedBase.complex[key] = reducedType.complex[key]
+    if (!(isDictionary(type) && getNameOfObjectType({ type }) === 'complex')) {
+      throwError.typeCanExtend(type, base)
     }
-    return reducedBase
+    for (const key in type.complex) {
+      checkTypeInDomain({
+        type: type.complex[key],
+        domain: base.complex[key],
+      })
+      base.complex[key] = type.complex[key]
+    }
+    return base
   }
   // baseName === 'component'
-  assert(
-    isDictionary(reducedType) && getNameOfObjectType({ type: reducedType }) === 'component',
-    'Expected type to match the base type.'
-  )
-  if (reducedType.component.output) {
-    checkReducedType({
-      reducedType: reducedType.component.output,
-      reducedDomain: reducedBase.component.output,
-    })
-    reducedBase.component.output = reducedType.component.output
+  if (!(isDictionary(type) && getNameOfObjectType({ type }) === 'component')) {
+    throwError.typeCanExtend(type, base)
   }
-  for (const key in reducedType.component.inputs) {
-    checkReducedType({
-      reducedType: reducedType.component.inputs[key],
-      reducedDomain: reducedBase.component.inputs[key],
-    })
-    reducedBase.component.inputs[key] = reducedType.component.inputs[key]
+  if (!isDictionary(type.component.inputs)) {
+    throwError.typeValid(type)
   }
-  return reducedBase
+  if (!isDictionary(base.component.inputs)) {
+    throwError.typeValid(base)
+  }
+  if ('output' in type.component) {
+    checkTypeInDomain({
+      type: type.component.output,
+      domain: base.component.output,
+    })
+    base.component.output = type.component.output
+  }
+  for (const key in type.component.inputs) {
+    checkTypeInDomain({
+      type: type.component.inputs[key],
+      domain: base.component.inputs[key],
+    })
+    base.component.inputs[key] = type.component.inputs[key]
+  }
+  return base
 }
 
 module.exports = getExtendedType

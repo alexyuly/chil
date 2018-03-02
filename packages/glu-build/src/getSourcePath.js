@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const libraryDirs = require('./libraryDirs')
+const throwError = require('./throwError')
 
 const getSourcePath = ({
   name,
@@ -17,7 +18,7 @@ const getSourcePath = ({
       return sourcePath
     }
   }
-  throw new Error(`Name does not exist in source dir or any library dir: ${sourceName}`)
+  return throwError.typeNameFound(sourceName)
 }
 
 module.exports = getSourcePath

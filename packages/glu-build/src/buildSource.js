@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
-const checkReducedType = require('./checkReducedType')
+const checkTypeInDomain = require('./checkTypeInDomain')
 const getExtendedType = require('./getExtendedType')
 const isDictionary = require('./isDictionary')
 
@@ -17,9 +17,9 @@ const buildSource = ({
       source.variables = {}
     }
     for (const key in variables) {
-      checkReducedType({
-        reducedType: variables[key],
-        reducedDomain: getReducedType({
+      checkTypeInDomain({
+        type: variables[key],
+        domain: getReducedType({
           type: source.variables[key],
           variables: source.variables,
           imports: source.imports,
@@ -30,14 +30,14 @@ const buildSource = ({
     }
   }
   source.type = getExtendedType({
-    reducedBase: getReducedType({
-      type: source.extends,
+    type: getReducedType({
+      type: source.type,
       variables: source.variables,
       imports: source.imports,
       sourceDir,
     }),
-    reducedType: getReducedType({
-      type: source.type,
+    base: getReducedType({
+      type: source.extends,
       variables: source.variables,
       imports: source.imports,
       sourceDir,

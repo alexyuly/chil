@@ -59,25 +59,26 @@ const getTypeWithImports = ({
     }
   }
   if (type.component) {
-    return {
-      component: {
-        inputs: mapDictionary({
-          dictionary: type.component.inputs,
-          map: (each) => getTypeWithImports({
-            type: each,
-            imports,
-            sourceDir,
-            getReducedType,
-          }),
-        }),
-        output: getTypeWithImports({
-          type: type.component.output,
+    const component = {
+      inputs: mapDictionary({
+        dictionary: type.component.inputs,
+        map: (each) => getTypeWithImports({
+          type: each,
           imports,
           sourceDir,
           getReducedType,
         }),
-      },
+      }),
     }
+    if ('output' in type.component) {
+      component.output = getTypeWithImports({
+        type: type.component.output,
+        imports,
+        sourceDir,
+        getReducedType,
+      })
+    }
+    return { component }
   }
   const name = getNameOfObjectType({ type })
   return getImportedType({

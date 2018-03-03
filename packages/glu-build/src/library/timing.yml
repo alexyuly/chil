@@ -4,4 +4,4 @@ variables:
 type:
   gate:
     state: number
-    action:
+    action: action

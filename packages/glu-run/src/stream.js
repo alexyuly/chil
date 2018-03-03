@@ -1,15 +1,21 @@
 const assert = require('assert')
 
-const stream = (delegate) => {
+const stream = ({
+  delegateNext,
+  willReceiveNext,
+} = {}) => {
   const connections = []
   return {
     connect: (connection) => {
-      assert(!delegate, 'This stream cannot be connected, because its events are delegated.')
+      assert(!delegateNext, 'This stream cannot be connected, because its events are delegated.')
       connections.push(connection)
     },
     next: (event) => {
-      if (delegate) {
-        delegate(event)
+      if (willReceiveNext) {
+        willReceiveNext(event)
+      }
+      if (delegateNext) {
+        delegateNext(event)
       } else {
         for (const connection of connections) {
           connection.next(event)

@@ -3,6 +3,7 @@ const child_process = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const runComponent = require('@glu/run')
+const runShellArgs = require('./runShellArgs')
 
 const run = ({
   buildPath,
@@ -14,21 +15,24 @@ const run = ({
     dir: sourceDir,
     name: sourceName,
   } = path.parse(buildPath)
+  const rootComponent = JSON.parse(fs.readFileSync(buildPath, 'utf8'))
   const logPath = path.resolve(sourceDir, `${sourceName}.log`)
-  const component = JSON.parse(fs.readFileSync(buildPath, 'utf8'))
+  const logger = child_process.fork(path.resolve(__dirname, '../logger'), [ logPath ])
   runComponent({
-    component,
-    componentLogger: child_process.fork(path.resolve(__dirname, 'logger'), [ logPath ]),
+    component: rootComponent,
+    willReceiveNext: (component, keys) => (event) => {
+      logger.send({
+        event,
+        keys,
+        state: component.state,
+        time: Date.now(),
+      })
+    },
   })
-  let argInput
-  for (let i = 0; i < args.length; i += 1) {
-    const arg = args[i]
-    if (arg.substring(0, 2) === '--') {
-      argInput = component.inputs[arg.substring(2)]
-    } else if (argInput) {
-      argInput.next(arg)
-    }
-  }
+  runShellArgs({
+    component: rootComponent,
+    args,
+  })
   console.timeEnd(message)
 }
 

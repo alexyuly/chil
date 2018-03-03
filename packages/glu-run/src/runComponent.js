@@ -5,12 +5,12 @@ const stream = require('./stream')
 
 const runComponent = ({
   component,
-  componentLogger,
-  componentPath = [],
+  keys = [],
   moduleDictionary = buildModuleDictionary({ component }),
+  willReceiveNext,
 }) => {
   if (component.output) {
-    Object.assign(component.output, stream())
+    Object.assign(component.output, stream({ willReceiveNext: willReceiveNext(component, keys) }))
   }
   if (component.children) {
     for (const key in component.inputs) {
@@ -19,30 +19,16 @@ const runComponent = ({
     for (const key in component.children) {
       runComponent({
         component: component.children[key],
-        componentLogger,
-        componentPath: componentPath.concat(key),
+        keys: keys.concat(key),
         moduleDictionary,
+        willReceiveNext,
       })
     }
     runComponentConnections({ component })
   } else {
     const moduleMethods = moduleDictionary[component.modulePath](component)
     for (const key in component.inputs) {
-      const method = moduleMethods[key]
-      const delegate = componentLogger
-        ? (event) => {
-          const begin = Date.now()
-          method(event)
-          componentLogger.send({
-            begin,
-            end: Date.now(),
-            path: componentPath.concat(key),
-            state: component.state,
-            event,
-          })
-        }
-        : method
-      Object.assign(component.inputs[key], stream(delegate))
+      Object.assign(component.inputs[key], stream({ delegateNext: moduleMethods[key] }))
     }
   }
   if (component.events) {

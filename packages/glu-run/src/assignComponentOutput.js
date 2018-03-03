@@ -8,7 +8,7 @@ const assignComponentOutput = ({
   if (component.output) {
     Object.assign(
       component.output,
-      stream({ willReceiveNext: willReceiveNext(component, keys) })
+      stream({ willReceiveNext: willReceiveNext && willReceiveNext(component, keys) })
     )
   }
 }

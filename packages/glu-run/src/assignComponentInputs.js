@@ -9,7 +9,7 @@ const assignComponentInputs = ({
   for (const key in component.inputs) {
     Object.assign(component.inputs[key], stream({
       delegateNext: delegateMethods && delegateMethods[key],
-      willReceiveNext: keys.length === 0
+      willReceiveNext: willReceiveNext && keys.length === 0
         ? willReceiveNext(component, [ key ])
         : undefined,
     }))

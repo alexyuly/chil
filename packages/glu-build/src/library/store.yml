@@ -1,7 +1,7 @@
 variables:
-  output:
-  action:
   state:
+  action:
+  output:
 
 type:
   component:
@@ -10,5 +10,5 @@ type:
 
 extends:
   pipe:
-    output: output
     action: action
+    output: output

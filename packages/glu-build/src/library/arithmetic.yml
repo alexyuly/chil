@@ -1,7 +1,8 @@
 variables:
-  action:
+  type:
 
 type:
-  reducer:
-    action: action
-    state: action
+  store:
+    state: type
+    action: type
+    output: type

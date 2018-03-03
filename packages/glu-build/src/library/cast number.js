@@ -1,3 +1,3 @@
 const pipe = require('./utilities/pipe')
 
-module.exports = pipe(Number)
+module.exports = pipe((action, next) => next(Number(action)))

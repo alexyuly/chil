@@ -1,0 +1,6 @@
+variables:
+  action:
+
+type:
+  timing:
+    action: action

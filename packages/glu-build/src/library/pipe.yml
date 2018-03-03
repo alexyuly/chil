@@ -1,6 +1,6 @@
 variables:
-  output:
   action:
+  output:
 
 type:
   component:

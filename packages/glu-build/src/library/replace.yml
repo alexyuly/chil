@@ -1,9 +1,9 @@
 variables:
-  action:
   state:
+  action:
 
 type:
   store:
-    output: state
-    action: action
     state: state
+    action: action
+    output: state

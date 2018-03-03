@@ -1,0 +1,8 @@
+{
+  "name": "@glu/core",
+  "version": "0.0.0",
+  "description": "Graph Language Utility: Core Utilities",
+  "author": "Alex Yuly",
+  "license": "MIT",
+  "main": "src/index.js"
+}

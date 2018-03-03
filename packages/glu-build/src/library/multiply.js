@@ -1,3 +1,3 @@
 const store = require('./utilities/store')
 
-module.exports = store((state, action) => state * action)
+module.exports = store((state, action, next) => next(state * action))

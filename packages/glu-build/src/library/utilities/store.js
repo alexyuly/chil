@@ -8,14 +8,14 @@ module.exports = (fn) => (component) => {
       if (component.state.state === undefined) {
         component.state.actions.push(action)
       } else {
-        component.output.next(fn(component.state.state, action))
+        fn(component.state.state, action, component.output.next)
       }
     },
     state: (nextState) => {
       component.state.state = nextState
       while (component.state.actions.length > 0) {
         const action = component.state.actions.shift()
-        component.output.next(fn(component.state.state, action))
+        fn(component.state.state, action, component.output.next)
       }
     },
   }

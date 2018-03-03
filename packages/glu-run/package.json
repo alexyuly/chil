@@ -4,5 +4,8 @@
   "description": "Graph Language Utility: Runtime Engine",
   "author": "Alex Yuly",
   "license": "MIT",
-  "main": "src/runComponent.js"
+  "main": "src/runComponent.js",
+  "dependencies": {
+    "@glu/core": "0.0.0"
+  }
 }

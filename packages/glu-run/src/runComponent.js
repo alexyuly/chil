@@ -1,7 +1,8 @@
+const assignComponentInputs = require('./assignComponentInputs')
+const assignComponentOutput = require('./assignComponentOutput')
 const buildModuleDictionary = require('./buildModuleDictionary')
-const runComponentConnections = require('./runComponentConnections')
-const runComponentEvents = require('./runComponentEvents')
-const stream = require('./stream')
+const callComponentConnections = require('./callComponentConnections')
+const callComponentEvents = require('./callComponentEvents')
 
 const runComponent = ({
   component,
@@ -9,13 +10,17 @@ const runComponent = ({
   moduleDictionary = buildModuleDictionary({ component }),
   willReceiveNext,
 }) => {
-  if (component.output) {
-    Object.assign(component.output, stream({ willReceiveNext: willReceiveNext(component, keys) }))
-  }
+  assignComponentOutput({
+    component,
+    keys,
+    willReceiveNext,
+  })
   if (component.children) {
-    for (const key in component.inputs) {
-      Object.assign(component.inputs[key], stream())
-    }
+    assignComponentInputs({
+      component,
+      keys,
+      willReceiveNext,
+    })
     for (const key in component.children) {
       runComponent({
         component: component.children[key],
@@ -24,16 +29,16 @@ const runComponent = ({
         willReceiveNext,
       })
     }
-    runComponentConnections({ component })
+    callComponentConnections({ component })
   } else {
-    const moduleMethods = moduleDictionary[component.modulePath](component)
-    for (const key in component.inputs) {
-      Object.assign(component.inputs[key], stream({ delegateNext: moduleMethods[key] }))
-    }
+    assignComponentInputs({
+      component,
+      delegateMethods: moduleDictionary[component.modulePath](component),
+      keys,
+      willReceiveNext,
+    })
   }
-  if (component.events) {
-    runComponentEvents({ component })
-  }
+  callComponentEvents({ component })
 }
 
 module.exports = runComponent

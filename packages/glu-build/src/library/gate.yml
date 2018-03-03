@@ -1,0 +1,9 @@
+variables:
+  state:
+  action:
+
+type:
+  store:
+    state: state
+    action: action
+    output: action

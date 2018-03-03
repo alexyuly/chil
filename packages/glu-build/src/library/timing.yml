@@ -1,0 +1,7 @@
+variables:
+  action:
+
+type:
+  gate:
+    state: number
+    action:

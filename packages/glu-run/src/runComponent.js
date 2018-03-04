@@ -26,17 +26,18 @@ const runComponent = ({
     }
     callComponentConnections({ component })
   } else {
+    const delegates = moduleDictionary[component.modulePath](component)
+    const logger = getLogger && getLogger(component, keys)
     for (const key in component.inputs) {
-      const delegates = moduleDictionary[component.modulePath](component)
-      const logger = getLogger && getLogger(component, keys)
+      const delegate = delegates[key]
       Object.assign(
         component.inputs[key],
         stream(logger
           ? (event) => {
-            delegates[key](event)
+            delegate(event)
             logger(event)
           }
-          : delegates[key])
+          : delegate)
       )
     }
   }

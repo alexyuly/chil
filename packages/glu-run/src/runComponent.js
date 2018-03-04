@@ -1,36 +1,39 @@
-const assignComponentInputs = require('./assignComponentInputs')
-const assignComponentOutput = require('./assignComponentOutput')
 const buildModuleDictionary = require('./buildModuleDictionary')
 const callComponentConnections = require('./callComponentConnections')
 const callComponentEvents = require('./callComponentEvents')
+const stream = require('./stream')
 
 const runComponent = ({
   component,
+  getLogger,
   keys = [],
   moduleDictionary = buildModuleDictionary({ component }),
-  willReceiveNext,
 }) => {
-  assignComponentOutput({
-    component,
-    keys,
-    willReceiveNext,
-  })
+  if (component.output) {
+    Object.assign(component.output, stream())
+  }
   if (component.children) {
-    assignComponentInputs({ component })
+    for (const key in component.inputs) {
+      Object.assign(component.inputs[key], stream())
+    }
     for (const key in component.children) {
       runComponent({
         component: component.children[key],
+        getLogger,
         keys: keys.concat(key),
         moduleDictionary,
-        willReceiveNext,
       })
     }
     callComponentConnections({ component })
   } else {
-    assignComponentInputs({
-      component,
-      delegateMethods: moduleDictionary[component.modulePath](component),
-    })
+    for (const key in component.inputs) {
+      const delegates = moduleDictionary[component.modulePath](component)
+      const logger = getLogger(component, keys)
+      Object.assign(component.inputs[key], stream((event) => {
+        delegates[key](event)
+        logger(event)
+      }))
+    }
   }
   callComponentEvents({ component })
 }

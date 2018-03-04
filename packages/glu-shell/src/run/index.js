@@ -3,8 +3,8 @@ const child_process = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const runComponent = require('@glu/run')
-const restoreLogs = require('./restoreLogs')
-const restoreState = require('./restoreState')
+const getLogs = require('./getLogs')
+const restoreStateFromLogs = require('./restoreStateFromLogs')
 const runShellArgs = require('./runShellArgs')
 
 const run = ({
@@ -19,18 +19,17 @@ const run = ({
   } = path.parse(buildPath)
   const rootComponent = JSON.parse(fs.readFileSync(buildPath, 'utf8'))
   const logPath = path.resolve(sourceDir, `${sourceName}.log`)
-  const logs = restoreLogs({ logPath })
+  const logs = getLogs({ logPath })
   if (logs) {
-    restoreState({
+    restoreStateFromLogs({
       component: rootComponent,
       logs,
     })
-    console.info(chalk.yellow(`Restored logs from ${logPath}`))
   }
   const logger = child_process.fork(path.resolve(__dirname, './logger'), [ logPath ])
   runComponent({
     component: rootComponent,
-    willReceiveNext: (component, keys) => (value) => {
+    getLogger: (component, keys) => (value) => {
       logger.send({
         keys,
         state: component.state,

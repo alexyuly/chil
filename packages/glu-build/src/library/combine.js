@@ -1,7 +1,9 @@
 module.exports = (component) => {
-  component.state = {
-    state: {},
-    ready: false,
+  if (component.state === undefined) {
+    component.state = {
+      state: {},
+      ready: false,
+    }
   }
   const methods = {}
   for (const key in component.variables) {

@@ -16,11 +16,7 @@ const runComponent = ({
     willReceiveNext,
   })
   if (component.children) {
-    assignComponentInputs({
-      component,
-      keys,
-      willReceiveNext,
-    })
+    assignComponentInputs({ component })
     for (const key in component.children) {
       runComponent({
         component: component.children[key],
@@ -34,8 +30,6 @@ const runComponent = ({
     assignComponentInputs({
       component,
       delegateMethods: moduleDictionary[component.modulePath](component),
-      keys,
-      willReceiveNext,
     })
   }
   callComponentEvents({ component })

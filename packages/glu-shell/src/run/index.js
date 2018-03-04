@@ -3,13 +3,15 @@ const child_process = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const runComponent = require('@glu/run')
+const restoreLogs = require('./restoreLogs')
+const restoreState = require('./restoreState')
 const runShellArgs = require('./runShellArgs')
 
 const run = ({
   buildPath,
   args,
 }) => {
-  const message = chalk.green(`GLU run '${buildPath}'`)
+  const message = chalk.green(`GLU run ${buildPath}`)
   console.time(message)
   const {
     dir: sourceDir,
@@ -17,15 +19,23 @@ const run = ({
   } = path.parse(buildPath)
   const rootComponent = JSON.parse(fs.readFileSync(buildPath, 'utf8'))
   const logPath = path.resolve(sourceDir, `${sourceName}.log`)
-  const logger = child_process.fork(path.resolve(__dirname, '../logger'), [ logPath ])
+  const logs = restoreLogs({ logPath })
+  if (logs) {
+    restoreState({
+      component: rootComponent,
+      logs,
+    })
+    console.info(chalk.yellow(`Restored logs from ${logPath}`))
+  }
+  const logger = child_process.fork(path.resolve(__dirname, './logger'), [ logPath ])
   runComponent({
     component: rootComponent,
-    willReceiveNext: (component, keys) => (event) => {
+    willReceiveNext: (component, keys) => (value) => {
       logger.send({
-        event,
         keys,
         state: component.state,
         time: Date.now(),
+        value,
       })
     },
   })

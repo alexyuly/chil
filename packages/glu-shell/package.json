@@ -11,6 +11,6 @@
     "@glu/build": "0.0.0",
     "@glu/run": "0.0.0",
     "chalk": "2.3.1",
-    "webpack": "4.0.0"
+    "webpack": "4.0.1"
   }
 }

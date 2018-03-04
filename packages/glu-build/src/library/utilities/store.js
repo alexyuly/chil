@@ -1,7 +1,9 @@
 module.exports = (fn) => (component) => {
-  component.state = {
-    state: undefined,
-    actions: [],
+  if (component.state === undefined) {
+    component.state = {
+      state: undefined,
+      actions: [],
+    }
   }
   return {
     action: (action) => {

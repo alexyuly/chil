@@ -3,8 +3,10 @@ const fs = require('fs')
 const path = require('path')
 const compile = require('webpack')
 const buildWebpackEntry = require('./buildWebpackEntry')
+const getBuildArtifact = require('../getBuildArtifact')
 
-const webpack = ({ buildPath }) => {
+const webpack = ({ sourcePath }) => {
+  const buildPath = getBuildArtifact({ sourcePath })
   const message = chalk.green(`GLU webpack ${buildPath}`)
   console.time(message)
   const {

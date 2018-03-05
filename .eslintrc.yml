@@ -12,8 +12,6 @@ rules:
   array-bracket-spacing:
     - error
     - always
-  array-element-newline:
-    - error
   arrow-parens:
     - error
   brace-style:
@@ -61,8 +59,6 @@ rules:
   no-shadow:
     - error
   no-var:
-    - error
-  object-curly-newline:
     - error
   object-curly-spacing:
     - error

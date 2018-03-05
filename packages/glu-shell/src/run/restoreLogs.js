@@ -1,24 +1,22 @@
-const restoreStateFromLogs = ({
+const restoreLogs = ({
   component,
   keys = [],
   logs,
 }) => {
   if (component.children) {
     for (const key in component.children) {
-      restoreStateFromLogs({
+      restoreLogs({
         component: component.children[key],
         keys: keys.concat(key),
         logs,
       })
     }
   } else {
-    for (const log of logs) {
-      if (log.keys.toString() === keys.toString()) {
-        component.state = log.state
-        break
-      }
+    const log = logs.find((x) => x.event.store && x.keys.toString() === keys.toString())
+    if (log) {
+      component.store = log.event.store
     }
   }
 }
 
-module.exports = restoreStateFromLogs
+module.exports = restoreLogs

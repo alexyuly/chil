@@ -1,7 +1,8 @@
 const buildModuleDictionary = require('./buildModuleDictionary')
 const callComponentConnections = require('./callComponentConnections')
 const callComponentEvents = require('./callComponentEvents')
-const stream = require('./stream')
+const connectedStream = require('./connectedStream')
+const delegatedStream = require('./delegatedStream')
 
 const runComponent = ({
   component,
@@ -9,12 +10,12 @@ const runComponent = ({
   keys = [],
   moduleDictionary = buildModuleDictionary({ component }),
 }) => {
-  if (component.output) {
-    Object.assign(component.output, stream())
-  }
   if (component.children) {
+    if (component.output) {
+      Object.assign(component.output, connectedStream())
+    }
     for (const key in component.inputs) {
-      Object.assign(component.inputs[key], stream())
+      Object.assign(component.inputs[key], connectedStream())
     }
     for (const key in component.children) {
       runComponent({
@@ -26,19 +27,27 @@ const runComponent = ({
     }
     callComponentConnections({ component })
   } else {
-    const delegates = moduleDictionary[component.modulePath](component)
-    const logger = getLogger && getLogger(component, keys)
+    if (component.output) {
+      Object.assign(component.output, connectedStream({
+        logger: getLogger && getLogger(keys, (value) => ({ output: value })),
+      }))
+    }
+    const spec = moduleDictionary[component.modulePath](component)
     for (const key in component.inputs) {
-      const delegate = delegates[key]
-      Object.assign(
-        component.inputs[key],
-        stream(logger
-          ? (event) => {
-            delegate(event)
-            logger(event)
-          }
-          : delegate)
-      )
+      Object.assign(component.inputs[key], delegatedStream({
+        logger: getLogger && getLogger(keys, (value) => ({ [`input ${key}`]: value })),
+        method: spec.methods[key],
+      }))
+    }
+    const logger = getLogger && getLogger(keys, (value) => ({ store: value }))
+    if (!component.store) {
+      component.store = spec.initialStore || {}
+    }
+    component.write = (updates) => {
+      Object.assign(component.store, updates)
+      if (logger) {
+        logger(component.store)
+      }
     }
   }
   callComponentEvents({ component })

@@ -1,24 +1,29 @@
-module.exports = (component) => {
-  if (component.state === undefined) {
-    component.state = {
-      state: {},
-      ready: false,
-    }
-  }
-  const methods = {}
-  for (const key in component.variables) {
-    methods[key] = (event) => {
-      component.state.state[key] = event
-      if (!component.state.ready) {
-        for (const innerKey in component.variables) {
-          if (component.state.state[innerKey] === undefined) {
-            return
+module.exports = (component) => ({
+  initialStore: {
+    readyToOutput: false,
+    state: {},
+  },
+  methods: Object
+    .keys(component.variables)
+    .reduce(
+      (result, methodKey) => {
+        result[methodKey] = (value) => {
+          const {
+            output,
+            store,
+            variables,
+            write,
+          } = component
+          write({ state: Object.assign({}, store.state, { [methodKey]: value }) })
+          if (store.readyToOutput) {
+            output.next(store.state)
+          } else if (Object.keys(variables).every((key) => key in store.state)) {
+            write({ readyToOutput: true })
+            output.next(store.state)
           }
         }
-        component.state.ready = true
-      }
-      component.output.next(component.state.state)
-    }
-  }
-  return methods
-}
+        return result
+      },
+      {}
+    ),
+})

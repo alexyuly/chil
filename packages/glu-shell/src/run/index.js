@@ -1,16 +1,18 @@
 const chalk = require('chalk')
-const child_process = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const runComponent = require('@glu/run')
 const getLogs = require('./getLogs')
-const restoreStateFromLogs = require('./restoreStateFromLogs')
+const getLogger = require('./getLogger')
+const restoreLogs = require('./restoreLogs')
 const runShellArgs = require('./runShellArgs')
+const getBuildArtifact = require('../getBuildArtifact')
 
 const run = ({
-  buildPath,
+  sourcePath,
   args,
 }) => {
+  const buildPath = getBuildArtifact({ sourcePath })
   const message = chalk.green(`GLU run ${buildPath}`)
   console.time(message)
   const {
@@ -21,22 +23,14 @@ const run = ({
   const logPath = path.resolve(sourceDir, `${sourceName}.log`)
   const logs = getLogs({ logPath })
   if (logs) {
-    restoreStateFromLogs({
+    restoreLogs({
       component: rootComponent,
       logs,
     })
   }
-  const logger = child_process.fork(path.resolve(__dirname, './logger'), [ logPath ])
   runComponent({
     component: rootComponent,
-    getLogger: (component, keys) => (value) => {
-      logger.send({
-        keys,
-        state: component.state,
-        time: Date.now(),
-        value,
-      })
-    },
+    getLogger: getLogger({ logPath }),
   })
   runShellArgs({
     component: rootComponent,

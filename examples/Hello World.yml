@@ -1,0 +1,13 @@
+type: sink
+
+children:
+  echo: echo
+
+connections:
+  action:
+    echo: action
+
+events:
+  - component: self
+    method: action
+    value: Hello, World!

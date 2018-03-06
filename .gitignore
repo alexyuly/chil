@@ -1,4 +1,6 @@
 *.log
 .DS_Store
 .idea
+examples/*.json
+examples/*.log
 node_modules

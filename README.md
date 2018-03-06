@@ -2,7 +2,7 @@
 
 *Compost: The Environmentally Friendly Framework*
 
-**Reduce** your code. **Reuse** your apps. **Recycle** your data.
+**Reduce** code. **Reuse** apps. **Recycle** data.
 
 #### Legal
 
@@ -14,25 +14,38 @@ Compost is a framework for building apps on top of Node.js, *with as little code
 
 ### Components
 
-Every Compost app is a **component**. A component has at least one input, and at most one output.
+Every Compost app is a **component**. Components have inputs and outputs.
 
 #### Streams
 
-Component inputs and outputs are **streams**, which send values to other streams. A component defines how its streams send values, according whether the component is a "leaf" or a "branch".
+A stream sends values to other streams. A component may have one **output stream**, or "output". A component is never responsible for defining how its output sends values. Also, a component must have one or more **input streams**, or "inputs". A component is solely responsible for defining how its inputs send values to other streams: How this happens depends on whether the component is a "leaf" or a "branch".
 
 #### Leaf Components
 
-A **leaf component**, or simply "leaf", has no children. Instead, it has a Node.js module which uses code to define how and when its input streams send values to its output stream. Soon, you'll learn how to write leafs. For now, you just need to know to use them.
+A **leaf component**, or "leaf", has no children. Instead, it has a Node.js module which uses code to define how and when its inputs send values to its own output. Soon, you'll learn how to write leafs, but for now you'll just learn how to use them.
 
 #### Branch Components
 
-A **branch component**, or "branch", has **children** which are other components (which can be leafs or branches). A branch also has **connections** which define how its streams send values.
+A **branch component**, or "branch", has **children** which are other leaf or branch components. A branch also has **connections** which define how its streams send values.
 
-You can't connect just any stream to any other stream. A connection is limited to one of three forms:
+Since a component is a solely responsible for its own inputs but never in charge of its output, a connection is limited to one of the following forms:
 - a branch input to a child input
+- a child output to a branch input
 - a child output to a child input
 - a child output to the branch output
 
-These limits exist, because of the following rules:
-- Each component is responsible for connecting its own inputs, so a branch can't connect its children's inputs.
-- Each component is responsible for connecting its children's outputs, so a branch can't connect its own output.
+Notice that a branch is responsible for connecting its own inputs and the outputs of its children.
+
+## Start Using Compost
+
+Install the Compost shell globally with NPM:
+
+`npm install --global @compost/shell`
+
+Clone this repository and run the example "Hello, world!" app:
+
+```
+git clone https://github.com/compostsoftware/compost
+cd compost
+compost run 'examples/Hello World.yml'
+```

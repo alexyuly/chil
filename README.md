@@ -1,4 +1,4 @@
-![component trees](https://github.com/alexyuly/component-trees/blob/master/images/masthead-scaled.png?raw=true)
+![compost](https://github.com/compostsoftware/compost/blob/master/images/masthead.png)
 
 Copyright 2017-2018 Alex Yuly
 

@@ -16,5 +16,5 @@ if (command === 'build') {
 } else if (command === 'webpack') {
   webpack({ sourcePath })
 } else {
-  throw new Error(`tree does not recognize command '${command}'.`)
+  throw new Error(`compost does not recognize command '${command}'.`)
 }

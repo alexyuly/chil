@@ -1,15 +1,14 @@
 {
-  "name": "@component-trees/shell",
+  "name": "@compost/shell",
   "version": "0.0.0",
-  "description": "component tree shell (command line interface)",
   "author": "Alex Yuly",
   "license": "MIT",
   "bin": {
-    "tree": "src/index.js"
+    "compost": "src/index.js"
   },
   "dependencies": {
-    "@component-trees/build": "0.0.0",
-    "@component-trees/run": "0.0.0",
+    "@compost/build": "0.0.0",
+    "@compost/run": "0.0.0",
     "chalk": "2.3.1",
     "webpack": "4.0.1"
   }

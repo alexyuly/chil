@@ -7,10 +7,10 @@ const getLogs = ({ logPath }) => {
   try {
     logFile = fs.readFileSync(logPath, 'utf8')
   } catch (error) {
-    console.info(chalk.yellow(`tree run ignored error while reading log file from ${logPath}`))
+    console.info(chalk.yellow(`compost run ignored error while reading log file from ${logPath}`))
     return undefined
   }
-  console.info(chalk.yellow(`tree run read log file from ${logPath}`))
+  console.info(chalk.yellow(`compost run read log file from ${logPath}`))
   return logFile
     .split(logSeparator)
     .reverse()

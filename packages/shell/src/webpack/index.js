@@ -7,7 +7,7 @@ const getBuildArtifact = require('../getBuildArtifact')
 
 const webpack = ({ sourcePath }) => {
   const buildPath = getBuildArtifact({ sourcePath })
-  const message = chalk.green(`tree webpack ${buildPath}`)
+  const message = chalk.green(`compost webpack ${buildPath}`)
   console.time(message)
   const {
     dir: sourceDir,
@@ -29,7 +29,7 @@ const webpack = ({ sourcePath }) => {
       stats.compilation.errors.forEach(console.error)
     } else {
       const outputPath = path.resolve(webpackConfig.output.path, webpackConfig.output.filename)
-      console.info(chalk.yellow(`tree webpack wrote file to ${outputPath}`))
+      console.info(chalk.yellow(`compost webpack wrote file to ${outputPath}`))
     }
     fs.unlinkSync(entryPath)
     console.timeEnd(message)

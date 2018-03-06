@@ -1,11 +1,10 @@
 {
-  "name": "@component-trees/run",
+  "name": "@compost/run",
   "version": "0.0.0",
-  "description": "component trees runtime engine",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/runComponent.js",
   "dependencies": {
-    "@component-trees/core": "0.0.0"
+    "@compost/core": "0.0.0"
   }
 }

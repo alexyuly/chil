@@ -1,7 +1,6 @@
 {
-  "name": "@component-trees/core",
+  "name": "@compost/core",
   "version": "0.0.0",
-  "description": "component trees core utilities",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/index.js"

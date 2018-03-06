@@ -1,4 +1,4 @@
-const { forEachConnection } = require('@component-trees/core')
+const { forEachConnection } = require('@compost/core')
 
 const callComponentConnections = ({ component }) => {
   forEachConnection(component, (origin, target) => {

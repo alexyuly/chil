@@ -1,12 +1,11 @@
 {
-  "name": "@component-trees/build",
+  "name": "@compost/build",
   "version": "0.0.0",
-  "description": "component trees build tool",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/buildComponent.js",
   "dependencies": {
-    "@component-trees/core": "0.0.0",
+    "@compost/core": "0.0.0",
     "js-yaml": "3.10.0"
   }
 }

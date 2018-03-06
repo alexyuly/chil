@@ -1,4 +1,4 @@
-const { forEachConnection } = require('@component-trees/core')
+const { forEachConnection } = require('@compost/core')
 const checkTypeInDomain = require('./checkTypeInDomain')
 
 const checkComponentConnections = ({ component }) => {

@@ -1,4 +1,4 @@
-const { forEachConnection } = require('@glu/core')
+const { forEachConnection } = require('@component-trees/core')
 
 const callComponentConnections = ({ component }) => {
   forEachConnection(component, (origin, target) => {

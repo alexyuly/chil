@@ -1,11 +1,11 @@
 {
-  "name": "@glu/run",
+  "name": "@component-trees/run",
   "version": "0.0.0",
-  "description": "Graph Language Utility: Runtime Engine",
+  "description": "component trees runtime engine",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/runComponent.js",
   "dependencies": {
-    "@glu/core": "0.0.0"
+    "@component-trees/core": "0.0.0"
   }
 }

@@ -1,12 +1,12 @@
 {
-  "name": "@glu/build",
+  "name": "@component-trees/build",
   "version": "0.0.0",
-  "description": "Graph Language Utility: Build Tool",
+  "description": "component trees build tool",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/buildComponent.js",
   "dependencies": {
-    "@glu/core": "0.0.0",
+    "@component-trees/core": "0.0.0",
     "js-yaml": "3.10.0"
   }
 }

@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 const fs = require('fs')
 const path = require('path')
-const runComponent = require('@glu/run')
+const runComponent = require('@component-trees/run')
 const getLogs = require('./getLogs')
 const getLogger = require('./getLogger')
 const restoreLogs = require('./restoreLogs')
@@ -13,7 +13,7 @@ const run = ({
   args,
 }) => {
   const buildPath = getBuildArtifact({ sourcePath })
-  const message = chalk.green(`GLU run ${buildPath}`)
+  const message = chalk.green(`tree run ${buildPath}`)
   console.time(message)
   const {
     dir: sourceDir,

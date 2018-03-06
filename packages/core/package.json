@@ -1,7 +1,7 @@
 {
-  "name": "@glu/core",
+  "name": "@component-trees/core",
   "version": "0.0.0",
-  "description": "Graph Language Utility: Core Utilities",
+  "description": "component trees core utilities",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/index.js"

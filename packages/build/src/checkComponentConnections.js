@@ -1,4 +1,4 @@
-const { forEachConnection } = require('@glu/core')
+const { forEachConnection } = require('@component-trees/core')
 const checkTypeInDomain = require('./checkTypeInDomain')
 
 const checkComponentConnections = ({ component }) => {

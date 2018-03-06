@@ -1,12 +1,12 @@
 {
-  "name": "glu",
-  "description": "Graph Language Utility",
+  "name": "component-trees",
+  "description": "component trees",
   "author": "Alex Yuly",
   "license": "MIT",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexyuly/glu.git"
+    "url": "https://github.com/alexyuly/component-trees.git"
   },
   "workspaces": [
     "packages/*"

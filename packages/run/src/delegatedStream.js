@@ -3,7 +3,9 @@ const delegatedStream = ({
   method,
 }) => ({
   next: (value) => {
-    logger(value)
+    if (logger) {
+      logger(value)
+    }
     method(value)
   },
 })

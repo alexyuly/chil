@@ -1,6 +1,6 @@
 const buildModuleDictionary = require('./buildModuleDictionary')
 const callComponentConnections = require('./callComponentConnections')
-const callComponentEvents = require('./callComponentEvents')
+const callComponentDefaults = require('./callComponentDefaults')
 const connectedStream = require('./connectedStream')
 const delegatedStream = require('./delegatedStream')
 
@@ -50,7 +50,7 @@ const runComponent = ({
       }
     }
   }
-  callComponentEvents({ component })
+  callComponentDefaults({ component })
 }
 
 module.exports = runComponent

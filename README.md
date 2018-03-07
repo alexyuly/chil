@@ -10,42 +10,102 @@ Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license. See LICENS
 
 ## What is Compost?
 
-Compost is a framework for building apps on top of Node.js, *with as little code as possible*. **Please be aware that Compost is incomplete and under active development, so there are tons more code, docs, and features coming every week. Stay tuned.**
+Compost is a framework for building apps on top of Node.js, *with as little code as possible*. Please install [Node.js](https://nodejs.org/en/) before using Compost. Familiarly with Node.js and JavaScript is recommended but not required. **This software is incomplete and under active development, so there is more code and documentation coming every week. Stay tuned.**
 
-### Components
+### An Introduction to Components
 
-Every Compost app is a **component**. Components have inputs and outputs.
+Every Compost app is a **component**. Components have inputs and outputs which are streams.
 
-#### Streams
+#### Input/Output Streams
 
-A stream sends values to other streams. A component may have one **output stream**, or "output". A component is never responsible for defining how its output sends values. Also, a component must have one or more **input streams**, or "inputs". A component is solely responsible for defining how its inputs send values to other streams: How this happens depends on whether the component is a "leaf" or a "branch".
+An input/output stream sends values to other I/O streams. A component may have one **output stream**, or "output". A component must also have one or more **input streams**, or "inputs". A component is responsible for defining how its own inputs send values to other streams: How this happens depends on whether the component is a "leaf" or a "branch".
 
 #### Leaf Components
 
-A **leaf component**, or "leaf", has no children. Instead, it has a Node.js module which uses code to define how and when its inputs send values to its own output. Soon, you'll learn how to write leafs, but for now you'll just learn how to use them.
+A **leaf component**, or "leaf", has no children. Instead, it has a Node.js module which uses JavaScript code to define how and when its inputs send values to its own output. Soon, you'll learn how to write leafs, but first you'll learn how to use them within branches.
 
 #### Branch Components
 
-A **branch component**, or "branch", has **children** which are other leaf or branch components. A branch also has **connections** which define how its streams send values.
+A **branch component**, or "branch", has **children**, which are other leaf or branch components. A branch also has **connections**, which define pairs of streams where one stream sends values to another. A connection must start from an input of the branch or an output of one of its children, and it must not end at one of these streams. This is important, because you can't connect a child's input, since that child is responsible for connecting its own inputs, privately.
 
-Since a component is a solely responsible for its own inputs but never in charge of its output, a connection is limited to one of the following forms:
-- a branch input to a child input
-- a child output to a branch input
-- a child output to a child input
-- a child output to the branch output
+### Let's Write a Component
 
-Notice that a branch is responsible for connecting its own inputs and the outputs of its children.
+Open a text editor and paste the following:
 
-## Start Using Compost
+```yaml
+type:
+  component:
+    inputs:
+      action: string
 
-Install the Compost shell globally with NPM:
+children:
+  echo: echo
+
+connections:
+  action:
+    echo: action
+
+defaults:
+  action: Hello, world!
+
+```
+
+Save this file as `Hello World.yml`. Now, use NPM to install the Compost shell:
 
 `npm install --global @compost/shell`
 
-Clone this repository and run the example "Hello, world!" app:
+Then, run your Hello World app:
+
+`compost run 'Hello World.yml'`
+
+The terminal prints something like the following:
 
 ```
-git clone https://github.com/compostsoftware/compost
-cd compost
-compost run 'examples/Hello World.yml'
+compost build wrote file to /Users/alex/dev/dev-personal/compost/examples/Hello World.json
+compost build examples/Hello World.yml: 10.505ms
+compost run ignored error while reading log file from /Users/alex/dev/dev-personal/compost/examples/Hello World.log
+Hello, World!
+compost run /Users/alex/dev/dev-personal/compost/examples/Hello World.json: 9.061ms
 ```
+
+So, what happened? Let's break down the contents of `Hello World.yml`.
+
+#### YAML
+
+According to [*The Official YAML Web Site*](http://yaml.org/), "YAML is a human friendly data serialization
+  standard for all programming languages." Compost components are written in YAML, because it is concise, it lacks unnecessary symbols like quotes and braces, and it converts directly to JSON, which makes it interoperable with JavaScript. 
+  
+YAML is easy to learn. It consists of two data structures used by Compost:
+- Dictionaries, which are rows of key-value pairs like
+```yaml
+key 1: value 1
+key 2: value 2
+key 3: value 3
+```
+- Lists, which are rows of dash-prefixed values like
+```yaml
+- value 1
+- value 2
+- value 3
+```
+
+These YAML data structures are converted directly to JSON objects and arrays.
+
+Quotes, braces, and most other symbols are not needed, because Compost YAML is a data structure, not algorithmic code. This data is fed into the Compost build system and runtime engine, which produces the application execution.
+
+#### Type
+
+Each component has a **type**, which defines the domain of values which can be sent by the component's inputs and output. `Hello World.yml` defines a component type with one input named `action`, which must be a string:
+
+```yaml
+type:
+  component:
+    inputs:
+      action: string
+```
+
+You'll learn more about the Compost type system as you go.
+
+#### Children
+
+Each component has **children**, which is a dictionary of named components. 

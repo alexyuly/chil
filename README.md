@@ -108,11 +108,13 @@ type:
       action: string
 ```
 
-The Compost type system is designed to be incrementally adoptable: You can start off using no types at all, and gradually introduce them into your components later on. You'll learn more about the Compost type system as you go.
+When it comes to I/O streams, the Compost type system is designed to be incrementally adoptable: You can start off using no types at all, then gradually introduce them into your components later on. Each component itself has a *component type*, which is composed of *stream types* like `string`. Using component types is required to define components, but using stream types is completely optional.
+
+You'll learn much more about the Compost type system as you go.
 
 ### Children
 
-As I mentioned, a leaf component has a Node.js module instead of children. I'll discuss leafs later. As the only other kind of component, a branch component has **children**, which is a dictionary mapping names to component types.
+Every branch component has **children**, which is a dictionary mapping names to component types.
 
 `Hello World.yml` has just one child, named `echo` with a type of `common/echo`:
 
@@ -127,7 +129,7 @@ A component may have any number of children, so long as those children do not in
 
 ### Connections
 
-Connections form the links between I/O streams. Each component is responsible for defining all of the connections that start from each of its own inputs and each of its children's outputs. This means that a component is not allowed to define a connection that starts from one of its children's inputs, or from its own output. This helps make reasoning about connections predictable, because the definition of any given connection has only one possible location.
+Connections form the links between I/O streams within a branch component. A branch is responsible for defining all of the connections that start from each of its own inputs and each of its children's outputs. This means that a branch is not allowed to define a connection that starts from one of its children's inputs, or from its own output. This helps make reasoning about connections predictable, because the definition of any given connection has only one possible location.
 
 `Hello World.yml` has just one connection, starting from its own input named `action`, and connecting to the `action` input of its child named `echo`:
 
@@ -137,6 +139,17 @@ connections:
     echo: action
 ```
 
-A component may have any number of connections, so long as they conform to the constraints I've just described. The `connections` section of a branch component is a dictionary where each key is the name of an input or a child, and each value is a nested dictionary where each key is the name of a child and each value is the name of one of that child's inputs, or a list of names. One of the keys in this nested dictionary can also be `output`, with an empty value, which indicates that the destination of this connection is the original branch component's output.
+A branch may have any number of connections, so long as they conform to the constraints I've just described. The `connections` section of a branch is a dictionary where each key is the name of an input or a child, and each value is a nested dictionary where each key is the name of a child and each value is the name of one of that child's inputs, or a list of names. One of the keys in this nested dictionary can also be `output`, with an empty value, which indicates that the destination of this connection is the branch's output.
 
 ### Defaults
+
+So far, we haven't defined any actual data to pass through our streams. We've defined how the work is done, but nothing will happen without some data. Each component, branch or leaf, may have an optional `defaults` section, which is a dictionary where each key is the name of an input or a child and each value is some data which will pass through a branch input or child output stream immediately after the application starts, before any other values pass through.
+
+`Hello World.yml` has one default value, from the branch's `action` input:
+
+```yaml
+defaults:
+  action: Hello, world!
+```
+
+This means that a value of `"Hello, world!"` will pass through the branch's `action` input immediately after start up. Since the branch `action` input is connected to the `echo action` input, the text `Hello, world!` gets echoed to the console immediately after the application starts.

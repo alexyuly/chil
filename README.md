@@ -24,9 +24,9 @@ A **leaf component**, or "leaf", has no children. Instead, it has a Node.js modu
 
 ### Branch Components
 
-A **branch component**, or "branch", has **children**, which are other leaf or branch components. A branch also has **connections**, which defines routes through which data passes from one stream to another.
+A **branch component**, or "branch", has **children**, which are other leaf or branch components. A branch also has **connections**, which define routes through which data passes from one stream to another.
 
-## Let's Write a Component
+### Let's Write a "Hello, World!" Component
 
 Open a text editor and paste the following:
 
@@ -71,7 +71,7 @@ So, what happened? Let's break down the contents of `Hello World.yml`, to unders
 ### YAML
 
 According to [*The Official YAML Web Site*](http://yaml.org/), "YAML is a human friendly data serialization
-  standard for all programming languages." Compost components are written in YAML, because it is concise, it lacks unnecessary symbols like quotes and braces, and it converts directly to JSON, which makes it interoperable with JavaScript. 
+  standard for all programming languages." Compost components are written in YAML, because it is concise, it lacks superfluous symbols like quotes and braces, and it converts directly to JSON, which makes it interoperable with JavaScript. 
   
 YAML is easy to learn. It consists of two data structures used by Compost:
 
@@ -123,7 +123,7 @@ children:
   echo: common/echo
 ```
 
-This makes `echo` a component with one input named `action` which causes a value to be "echoed" to the console. 
+The type `common/echo` is part of the standard library of Compost components. It defines a component with one input named `action` causing a value to be "echoed" to the console. 
 
 A component may have any number of children, so long as those children do not include the component itself, and none of those children have the component as one of their own children. Recursive relationships, or cycles, between components are not allowed, since this would cause infinite recursion. When an application is built or run, all of its child components are built or run, and so on. All of the components for an application are constructed once at start-up, and then they are connected, and data begins to pass through their I/O streams.
 
@@ -139,7 +139,7 @@ connections:
     echo: action
 ```
 
-A branch may have any number of connections, so long as they conform to the constraints I've just described. The `connections` section of a branch is a dictionary where each key is the name of an input or a child, and each value is a nested dictionary where each key is the name of a child and each value is the name of one of that child's inputs, or a list of names. One of the keys in this nested dictionary can also be `output`, with an empty value, which indicates that the destination of this connection is the branch's output.
+A branch may have any number of connections, so long as they conform to the constraints I've just described. The `connections` section of a branch is a dictionary where each key is the name of an input or a child output where connections start, and each value is a dictionary containing destinations, where each key is the name of a child and each value is a name or list of names of one of that child's inputs. One of the keys in a destination dictionary can also be `output`, with an empty value, which indicates that the destination of this connection is the branch's output.
 
 ### Defaults
 
@@ -153,3 +153,24 @@ defaults:
 ```
 
 This means that a value of `"Hello, world!"` will pass through the branch's `action` input immediately after start up. Since the branch `action` input is connected to the `echo action` input, the text `Hello, world!` gets echoed to the console immediately after the application starts.
+
+## An Introduction to Types
+
+In Compost, every application is composed of definitions, which are YAML files. Every definition has a type, found under the definition's `type` key. And every definition is either a component or a stream. So naturally, there are component types and stream types.
+
+### Component Types
+
+As you've learned, a **component type** has at least one input and at most one output:
+
+```yaml
+component:
+  inputs:
+    input name 1: input type 1
+    input name 2: input type 2
+    (etc...)
+  output: output type
+```
+
+### Stream Types
+
+The input and output types of components are **stream types**.

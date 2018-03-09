@@ -7,5 +7,5 @@ type:
     output: output
 
 extends:
-  sink:
+  common/sink:
     action: action

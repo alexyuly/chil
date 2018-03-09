@@ -2,5 +2,5 @@ variables:
   action:
 
 type:
-  timing:
+  common/timing:
     action: action

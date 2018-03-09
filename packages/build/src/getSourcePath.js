@@ -1,6 +1,3 @@
-const fs = require('fs')
-const path = require('path')
-const libraryDirs = require('./libraryDirs')
 const throwError = require('./throwError')
 
 const getSourcePath = ({
@@ -9,13 +6,21 @@ const getSourcePath = ({
   sourceDir = './',
 }) => {
   const sourceName = `${imports && imports[name] || name}.yml`
-  const sourcePaths = [ path.resolve(sourceDir, sourceName) ]
-  for (const libraryDir of libraryDirs) {
-    sourcePaths.push(path.resolve(libraryDir, sourceName))
-  }
-  for (const sourcePath of sourcePaths) {
-    if (fs.existsSync(sourcePath)) {
-      return sourcePath
+  const sources = [
+    [
+      sourceName,
+      { paths: [ sourceDir ] },
+    ],
+    [
+      `@compost/lib/${sourceName}`,
+      { paths: [ __dirname ] },
+    ],
+  ]
+  for (const source of sources) {
+    try {
+      return require.resolve(...source)
+    } catch (error) {
+      // continue
     }
   }
   return throwError.typeNameFound(sourceName)

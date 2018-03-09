@@ -1,14 +1,14 @@
 {
   "name": "@compost/shell",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "Alex Yuly",
   "license": "MIT",
   "bin": {
     "compost": "src/index.js"
   },
   "dependencies": {
-    "@compost/build": "0.0.0",
-    "@compost/run": "0.0.0",
+    "@compost/build": "1.0.0",
+    "@compost/run": "1.0.0",
     "chalk": "2.3.1",
     "webpack": "4.0.1"
   }

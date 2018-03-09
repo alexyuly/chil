@@ -1,11 +1,12 @@
 {
   "name": "@compost/build",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "Alex Yuly",
   "license": "MIT",
   "main": "src/buildComponent.js",
   "dependencies": {
-    "@compost/core": "0.0.0",
+    "@compost/core": "1.0.0",
+    "@compost/lib": "1.0.0",
     "js-yaml": "3.10.0"
   }
 }

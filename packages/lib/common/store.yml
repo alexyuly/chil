@@ -9,6 +9,6 @@ type:
       state: state
 
 extends:
-  pipe:
+  common/pipe:
     action: action
     output: output

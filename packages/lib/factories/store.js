@@ -23,10 +23,10 @@ module.exports = (reduce) => (component) => ({
         store,
         write,
       } = component
-      if (store.state !== undefined) {
-        reduce(store.state, action, output.next)
-      } else {
+      if (store.state === undefined) {
         write({ waitingActions: store.waitingActions.concat(action) })
+      } else {
+        reduce(store.state, action, output.next)
       }
     },
   },

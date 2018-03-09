@@ -4,7 +4,7 @@ Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license. See LICENS
 
 ## What is Compost?
 
-Compost is a framework for building apps with as little code as possible, using components and streams. Please install [Node.js](https://nodejs.org/en/) before using Compost. Familiarly with Node.js and JavaScript is highly recommended but not required. **This software is incomplete and under active development, so there is more code and documentation coming every week. Stay tuned.**
+Compost is a framework for building apps with as little code as possible, using components and streams. Please install [Node.js](https://nodejs.org/en/) before using Compost. Familiarity with Node.js and JavaScript is highly recommended but not required. **This software is incomplete and under active development, so there is more code and documentation coming every week. Stay tuned.**
 
 ### Version 1.0.0: Coming Soon
 
@@ -160,7 +160,7 @@ In Compost, every application is composed of definitions, which are YAML files. 
 
 ### Component Types
 
-As you've learned, a **component type** has at least one input and at most one output:
+As you've learned, a **component type** is composed of stream types, with at least one input stream and at most one output stream:
 
 ```yaml
 component:

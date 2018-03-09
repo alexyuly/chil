@@ -1,34 +1,32 @@
 ![compost](https://github.com/compostsoftware/compost/blob/master/images/masthead.png)
 
-*Compost: The Environmentally Friendly Framework*
-
-**Reduce** code. **Reuse** apps. **Recycle** data.
-
-#### Legal
-
 Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license. See LICENSE.
 
 ## What is Compost?
 
-Compost is a framework for building apps on top of Node.js, *with as little code as possible*. Please install [Node.js](https://nodejs.org/en/) before using Compost. Familiarly with Node.js and JavaScript is recommended but not required. **This software is incomplete and under active development, so there is more code and documentation coming every week. Stay tuned.**
+Compost is a framework for building apps with as little code as possible, using components and streams. Please install [Node.js](https://nodejs.org/en/) before using Compost. Familiarly with Node.js and JavaScript is highly recommended but not required. **This software is incomplete and under active development, so there is more code and documentation coming every week. Stay tuned.**
 
-### An Introduction to Components
+### Version 1.0.0: Coming Soon
+
+The next version of all packages published to NPM will probably be 1.0.0. The code in the master branch of this repository is under development and may not reflect the code last published to NPM. For the very latest version of Compost, clone the packages from GitHub and link them locally, instead of installing the packages from NPM.
+
+## An Introduction to Components
 
 Every Compost app is a **component**. Components have inputs and outputs which are streams.
 
-#### Input/Output Streams
+### Input/Output Streams
 
 An input/output stream sends values to other I/O streams. A component may have one **output stream**, or "output". A component must also have one or more **input streams**, or "inputs". A component is responsible for defining how its own inputs send values to other streams: How this happens depends on whether the component is a "leaf" or a "branch".
 
-#### Leaf Components
+### Leaf Components
 
 A **leaf component**, or "leaf", has no children. Instead, it has a Node.js module which uses JavaScript code to define how and when its inputs send values to its own output. Soon, you'll learn how to write leafs, but first you'll learn how to use them within branches.
 
-#### Branch Components
+### Branch Components
 
-A **branch component**, or "branch", has **children**, which are other leaf or branch components. A branch also has **connections**, which define pairs of streams where one stream sends values to another. A connection must start from an input of the branch or an output of one of its children, and it must not end at one of these streams. This is important, because you can't connect a child's input, since that child is responsible for connecting its own inputs, privately.
+A **branch component**, or "branch", has **children**, which are other leaf or branch components. A branch also has **connections**, which defines routes through which data passes from one stream to another.
 
-### Let's Write a Component
+## Let's Write a Component
 
 Open a text editor and paste the following:
 
@@ -39,7 +37,7 @@ type:
       action: string
 
 children:
-  echo: echo
+  echo: common/echo
 
 connections:
   action:
@@ -70,7 +68,7 @@ compost run /Users/alex/dev/dev-personal/compost/examples/Hello World.json: 9.06
 
 So, what happened? Let's break down the contents of `Hello World.yml`.
 
-#### YAML
+### YAML
 
 According to [*The Official YAML Web Site*](http://yaml.org/), "YAML is a human friendly data serialization
   standard for all programming languages." Compost components are written in YAML, because it is concise, it lacks unnecessary symbols like quotes and braces, and it converts directly to JSON, which makes it interoperable with JavaScript. 
@@ -89,13 +87,13 @@ key 3: value 3
 - value 3
 ```
 
-These YAML data structures are converted directly to JSON objects and arrays.
+These YAML data structures are analogous to JSON objects and arrays.
 
-Quotes, braces, and most other symbols are not needed, because Compost YAML is a data structure, not algorithmic code. This data is fed into the Compost build system and runtime engine, which produces the application execution.
+Quotes, braces, and most other symbols are not needed, because YAML is a data structure, not algorithmic code. This data is fed into the Compost build system and runtime engine, which executes the application.
 
-#### Type
+### Type
 
-Each component has a **type**, which defines the domain of values which can be sent by the component's inputs and output. `Hello World.yml` defines a component type with one input named `action`, which must be a string:
+Each component has a **type**, which defines the domains of values which are allowed to pass through component's inputs and output. `Hello World.yml` defines a component type with one input named `action`, which must be a string:
 
 ```yaml
 type:
@@ -104,8 +102,16 @@ type:
       action: string
 ```
 
-You'll learn more about the Compost type system as you go.
+The Compost type system is designed to be incrementally adoptable: You can start off using no types at all, and gradually introduce them into your components later on. You'll learn more about the Compost type system as you go.
 
-#### Children
+### Children
 
-Each component has **children**, which is a dictionary of named components. 
+Each component has **children**, which is a dictionary mapping names to component types.
+
+Our example has just one child, named `echo`, with a type of `common/echo`. This makes `echo` a component with one input named `action` which causes a value to be "echoed" to the console. 
+
+A component may have any number of children, so long as those children do not include the component itself, and none of those children have the component as one of their own children. Recursive relationships, or cycles, between components are not allowed, since this would cause infinite recursion. When an application is built or run, all of its child components are built or run, and so on. All of the components for an application are constructed once at start-up, and then they are connected, and data begins to pass through their I/O streams.
+
+### Connections
+
+

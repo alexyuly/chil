@@ -1,8 +1,4 @@
-const render = ({
-  element = document.body,
-  next = [],
-  prev = [],
-}) => {
+const render = (element, next = [], prev = []) => {
   const prevChildren = []
   for (let i = 0; i < element.childNodes.length; i++) {
     const prevChild = element.childNodes[i]
@@ -29,11 +25,7 @@ const render = ({
             prevChild.setAttribute(name, nextAttribute)
           }
         }
-        render({
-          element: prevChild,
-          next: nextNode.children,
-          prev: prevNode.children,
-        })
+        render(prevChild, nextNode.children, prevNode.children)
       } else {
         if (prevChild) {
           element.removeChild(prevChild)
@@ -42,10 +34,7 @@ const render = ({
         for (const name in nextNode.attributes) {
           nextChild.setAttribute(name, nextNode.attributes[name])
         }
-        render({
-          element: nextChild,
-          next: nextNode.children,
-        })
+        render(nextChild, nextNode.children)
       }
     } else if (prevNode !== nextNode) {
       if (prevChild) {
@@ -58,12 +47,9 @@ const render = ({
 
 module.exports = (component) => ({
   methods: {
-    model: (model) => {
-      render({
-        next: model,
-        prev: component.store.model,
-      })
-      component.write({ model })
+    action: (action) => {
+      render(document.body, action, component.store.action)
+      component.write({ action })
     },
   },
 })

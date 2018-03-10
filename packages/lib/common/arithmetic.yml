@@ -2,7 +2,7 @@ variables:
   type:
 
 type:
-  common/store:
+  common/reduce:
     state: type
     action: type
     output: type

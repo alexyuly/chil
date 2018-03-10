@@ -1,0 +1,24 @@
+type:
+  component:
+    inputs:
+      start:
+
+children:
+  button id: common/id
+  click intent: Click Intent
+  click count model: Click Count Model
+  click view: Click View
+
+connections:
+  start:
+    button id: action
+  button id:
+    click view: button id
+    click intent: button id
+  click intent:
+    click count model: click
+  click count model:
+    click view: click count
+
+defaults:
+  start:

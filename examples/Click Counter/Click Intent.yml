@@ -1,0 +1,20 @@
+type:
+  component:
+    inputs:
+      button id: string
+      event type: string
+    output:
+
+children:
+  event: document/event
+
+connections:
+  button id:
+    event: id
+  event type:
+    event: type
+  event:
+    output:
+
+defaults:
+  event type: click

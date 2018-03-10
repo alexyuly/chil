@@ -1,6 +1,5 @@
 module.exports = (component) => ({
   initialStore: {
-    readyToOutput: false,
     state: {},
   },
   methods: Object
@@ -8,18 +7,20 @@ module.exports = (component) => ({
     .reduce(
       (result, methodKey) => {
         result[methodKey] = (value) => {
-          const {
-            output,
-            store,
-            variables,
-            write,
-          } = component
-          write({ state: Object.assign({}, store.state, { [methodKey]: value }) })
-          if (store.readyToOutput) {
-            output.next(store.state)
-          } else if (Object.keys(variables).every((key) => key in store.state)) {
-            write({ readyToOutput: true })
-            output.next(store.state)
+          component.write({
+            state: Object.assign(
+              {},
+              component.store.state,
+              { [methodKey]: value }
+            ),
+          })
+          if (component.store.readyToOutput) {
+            component.output.next(component.store.state)
+          } else if (Object
+            .keys(component.variables)
+            .every((key) => key in component.store.state)) {
+            component.write({ readyToOutput: true })
+            component.output.next(component.store.state)
           }
         }
         return result

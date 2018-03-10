@@ -1,7 +1,7 @@
 *.log
 .DS_Store
 .idea
-examples/*.js
-examples/*.json
-examples/*.log
+examples/**/*.js
+examples/**/*.json
+examples/**/*.log
 node_modules

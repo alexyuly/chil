@@ -1,7 +1,7 @@
-module.exports = (reduce) => ({ output }) => ({
+module.exports = (fn) => (component) => ({
   methods: {
     action: (action) => {
-      reduce(action, output.next)
+      fn(action, component.output.next)
     },
   },
 })

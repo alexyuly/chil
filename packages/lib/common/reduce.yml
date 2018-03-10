@@ -1,12 +1,13 @@
 variables:
   state:
   action:
+  output:
 
 type:
   component:
-    inputs:
-      state: state
+    output: output
 
 extends:
-  common/sink:
+  common/store:
+    state: state
     action: action

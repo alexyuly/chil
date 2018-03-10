@@ -1,3 +1,3 @@
-const store = require('../factories/store')
+const reduce = require('../factories/reduce')
 
-module.exports = store((state, action, next) => setTimeout(() => next(action), state))
+module.exports = reduce((state, action, next) => setTimeout(() => next(action), state))

@@ -3,7 +3,7 @@ variables:
   action:
 
 type:
-  common/store:
+  common/reduce:
     state: state
     action: action
     output: state

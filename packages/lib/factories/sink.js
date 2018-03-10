@@ -1,1 +1,1 @@
-module.exports = (reduce) => () => ({ methods: { action: reduce } })
+module.exports = (action) => () => ({ methods: { action } })

@@ -1,0 +1,6 @@
+type:
+  component:
+    inputs:
+      id: string
+      type: string
+    output: complex

@@ -1,4 +1,3 @@
 type:
-  component:
-    inputs:
-      model: list
+  common/sink:
+    action: list

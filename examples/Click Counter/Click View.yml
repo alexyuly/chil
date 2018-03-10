@@ -1,0 +1,46 @@
+type:
+  component:
+    inputs:
+      elements: list
+      button id: string
+      click count: number
+
+children:
+  combine:
+    complex/combine:
+      button id: string
+      click count: number
+  template: document/template
+  render: document/render
+
+connections:
+  elements:
+    template: state
+  button id:
+    combine: button id
+  click count:
+    combine: click count
+  combine:
+    template: action
+  template:
+    render: action
+
+defaults:
+  elements:
+    - type: div
+      attributes:
+        style: '
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        '
+      children:
+        - type: button
+          attributes:
+            id:
+              prop: button id
+          children:
+            - Click me!
+        - type: div
+          children:
+            - prop: click count

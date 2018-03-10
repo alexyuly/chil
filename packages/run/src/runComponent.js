@@ -4,11 +4,11 @@ const callComponentDefaults = require('./callComponentDefaults')
 const connectedStream = require('./connectedStream')
 const delegatedStream = require('./delegatedStream')
 
-const runComponent = ({
+const runConnections = ({
   component,
   getLogger,
   keys = [],
-  moduleDictionary = buildModuleDictionary({ component }),
+  moduleDictionary,
 }) => {
   if (component.children) {
     if (component.output) {
@@ -18,7 +18,7 @@ const runComponent = ({
       Object.assign(component.inputs[key], connectedStream())
     }
     for (const key in component.children) {
-      runComponent({
+      runConnections({
         component: component.children[key],
         getLogger,
         keys: keys.concat(key),
@@ -50,7 +50,28 @@ const runComponent = ({
       }
     }
   }
+}
+const runDefaults = ({ component }) => {
+  if (component.children) {
+    for (const key in component.children) {
+      runDefaults({
+        component: component.children[key],
+      })
+    }
+  }
   callComponentDefaults({ component })
+}
+const runComponent = ({
+  component,
+  getLogger,
+  moduleDictionary = buildModuleDictionary({ component }),
+}) => {
+  runConnections({
+    component,
+    getLogger,
+    moduleDictionary,
+  })
+  runDefaults({ component })
 }
 
 module.exports = runComponent

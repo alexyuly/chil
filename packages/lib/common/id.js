@@ -1,9 +1,4 @@
 const shortid = require('shortid')
+const map = require('../factories/map')
 
-module.exports = (component) => ({
-  methods: {
-    action: () => {
-      component.output.next(shortid.generate())
-    },
-  },
-})
+module.exports = map(() => shortid.generate())

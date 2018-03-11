@@ -1,7 +1,9 @@
 *.log
 .DS_Store
-.idea
+.idea/
 examples/**/*.js
 examples/**/*.json
 examples/**/*.log
-node_modules
+node_modules/
+packages/garden/App.js
+packages/garden/App.json

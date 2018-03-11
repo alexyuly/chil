@@ -1,0 +1,13 @@
+type:
+  common/template:
+    state: complex
+    action:
+      complex:
+        style: string
+
+defaults:
+  state:
+    type: div
+    attributes:
+      style:
+        prop: style

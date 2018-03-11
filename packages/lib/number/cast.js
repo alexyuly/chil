@@ -1,3 +1,3 @@
-const pipe = require('../factories/pipe')
+const map = require('../factories/map')
 
-module.exports = pipe((action, next) => next(Number(action)))
+module.exports = map(Number)

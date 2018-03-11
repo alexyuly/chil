@@ -1,0 +1,6 @@
+type:
+  common/replace:
+    state: claim
+
+defaults:
+  state: true

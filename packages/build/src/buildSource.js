@@ -1,17 +1,16 @@
-const fs = require('fs')
 const path = require('path')
-const yaml = require('js-yaml')
 const checkTypeInDomain = require('./checkTypeInDomain')
 const getExtendedType = require('./getExtendedType')
+const getSource = require('./getSource')
 const isDictionary = require('./isDictionary')
 
 const buildSource = ({
-  variables,
   sourcePath,
+  variables,
   getReducedType,
 }) => {
-  const source = yaml.safeLoad(fs.readFileSync(sourcePath, 'utf8'))
-  const { dir: sourceDir } = path.parse(sourcePath)
+  const source = getSource(sourcePath)
+  const { dir } = path.parse(sourcePath)
   if (isDictionary(variables)) {
     if (!isDictionary(source.variables)) {
       source.variables = {}
@@ -23,7 +22,7 @@ const buildSource = ({
           type: source.variables[key],
           variables: source.variables,
           imports: source.imports,
-          sourceDir,
+          sourceDir: dir,
         }),
       })
       source.variables[key] = variables[key]
@@ -34,13 +33,13 @@ const buildSource = ({
       type: source.type,
       variables: source.variables,
       imports: source.imports,
-      sourceDir,
+      sourceDir: dir,
     }),
     base: getReducedType({
       type: source.extends,
       variables: source.variables,
       imports: source.imports,
-      sourceDir,
+      sourceDir: dir,
     }),
   })
   return source

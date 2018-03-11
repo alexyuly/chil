@@ -1,0 +1,7 @@
+variables:
+  action:
+
+type:
+  common/gate:
+    state: claim
+    action: action

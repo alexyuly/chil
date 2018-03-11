@@ -1,16 +1,22 @@
-const render = (element, next = [], prev = []) => {
+const render = (element, next, prev = []) => {
+  const nextNodes = next instanceof Array
+    ? next
+    : [ next ]
+  const prevNodes = prev instanceof Array
+    ? prev
+    : [ prev ]
   const prevChildren = []
   for (let i = 0; i < element.childNodes.length; i++) {
     const prevChild = element.childNodes[i]
-    if (i < next.length) {
+    if (i < nextNodes.length) {
       prevChildren.push(prevChild)
     } else {
       element.removeChild(prevChild)
     }
   }
-  for (let i = 0; i < next.length; i++) {
-    const nextNode = next[i]
-    const prevNode = prev[i]
+  for (let i = 0; i < nextNodes.length; i++) {
+    const nextNode = nextNodes[i]
+    const prevNode = prevNodes[i]
     const prevChild = prevChildren[i]
     if (nextNode.type) {
       if (prevNode && prevNode.type === nextNode.type) {
@@ -25,7 +31,9 @@ const render = (element, next = [], prev = []) => {
             prevChild.setAttribute(name, nextAttribute)
           }
         }
-        render(prevChild, nextNode.children, prevNode.children)
+        if (nextNode.children) {
+          render(prevChild, nextNode.children, prevNode.children)
+        }
       } else {
         if (prevChild) {
           element.removeChild(prevChild)
@@ -34,7 +42,9 @@ const render = (element, next = [], prev = []) => {
         for (const name in nextNode.attributes) {
           nextChild.setAttribute(name, nextNode.attributes[name])
         }
-        render(nextChild, nextNode.children)
+        if (nextNode.children) {
+          render(nextChild, nextNode.children)
+        }
       }
     } else if (prevNode !== nextNode) {
       if (prevChild) {

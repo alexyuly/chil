@@ -1,19 +1,15 @@
 const path = require('path')
-const assignComponentChildren = require('./assignComponentChildren')
+const assignComponentImplementation = require('./assignComponentImplementation')
 const assignComponentInputs = require('./assignComponentInputs')
 const assignComponentOutput = require('./assignComponentOutput')
 const buildSource = require('./buildSource')
-const checkComponentConnections = require('./checkComponentConnections')
 const getReducedType = require('./getReducedType')
 
 const buildComponent = ({
   sourcePath,
   variables,
 }) => {
-  const {
-    dir: sourceDir,
-    name: sourceName,
-  } = path.parse(sourcePath)
+  const { dir } = path.parse(sourcePath)
   const component = buildSource({
     sourcePath,
     variables,
@@ -21,22 +17,17 @@ const buildComponent = ({
   })
   assignComponentOutput({
     component,
-    sourceDir,
+    sourceDir: dir,
   })
   assignComponentInputs({
     component,
-    sourceDir,
+    sourceDir: dir,
   })
-  if (component.children) {
-    assignComponentChildren({
-      component,
-      sourceDir,
-      buildComponent,
-    })
-    checkComponentConnections({ component })
-  } else {
-    component.modulePath = path.resolve(sourceDir, `${sourceName}.js`)
-  }
+  assignComponentImplementation({
+    component,
+    sourcePath,
+    buildComponent,
+  })
   return component
 }
 

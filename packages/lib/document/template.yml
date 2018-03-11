@@ -1,4 +1,0 @@
-type:
-  common/replace:
-    state: list
-    action: complex

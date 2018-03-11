@@ -1,0 +1,31 @@
+type:
+  component:
+    inputs:
+      id: string
+      left: number
+    output: complex
+
+children:
+  style action:
+    complex/combine:
+      left: number
+  style: Style
+  element action:
+    complex/combine:
+      id: string
+      style: string
+  element: Element
+
+connections:
+  left:
+    style action: left
+  style action:
+    style: action
+  id:
+    element action: id
+  style:
+    element action: style
+  element action:
+    element: action
+  element:
+    output:

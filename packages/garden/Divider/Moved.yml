@@ -1,0 +1,39 @@
+type:
+  component:
+    inputs:
+      ids: ../Ids
+    output: document/mouse event
+
+children:
+  divider id: Id
+  divider mouse down: Mouse Down
+  root id: ../Root/Id
+  root mouse move: ../Root/Mouse Move
+  root mouse up: ../Root/Mouse Up
+  can move: claim/confirm
+  cannot move: claim/reject
+  movements:
+    common/filter:
+      action: document/mouse event
+
+connections:
+  ids:
+    divider id: action
+    root id: action
+  divider id:
+    divider mouse down: id
+  divider mouse down:
+    can move: action
+  root id:
+    root mouse move: id
+    root mouse up: id
+  root mouse move:
+    movements: action
+  root mouse up:
+    cannot move: action
+  can move:
+    movements: state
+  cannot move:
+    movements: state
+  movements:
+    output:

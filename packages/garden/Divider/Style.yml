@@ -1,0 +1,15 @@
+type:
+  string/template:
+    action:
+      complex:
+        left: number
+
+defaults:
+  state:
+    ["background: #666666;
+      bottom: 0;
+      cursor: ew-resize;
+      left: ",prop: left,"px;
+      position: absolute;
+      top: 0;
+      width: 5px;"]

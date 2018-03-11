@@ -1,0 +1,14 @@
+type:
+  string/template:
+    action:
+      complex:
+        width: number
+
+defaults:
+  state:
+    ["background: #333333;
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: ",prop: width,"px;"]

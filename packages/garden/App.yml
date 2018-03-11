@@ -1,0 +1,37 @@
+type:
+  component:
+    inputs:
+      start:
+
+children:
+  divider id: common/id
+  root id: common/id
+  ids:
+    complex/combine:
+      divider: string
+      root: string
+  divider moved: Divider/Moved
+  drawer width: Drawer/Width
+  view: View
+  render: document/render
+
+connections:
+  start:
+    divider id: action
+    root id: action
+  divider id:
+    ids: divider
+  root id:
+    ids: root
+  ids:
+    view: ids
+    divider moved: ids
+  divider moved:
+    drawer width: action
+  drawer width:
+    view: drawer width
+  view:
+    render: action
+
+defaults:
+  start:

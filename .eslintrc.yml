@@ -8,7 +8,6 @@ parserOptions:
 rules:
   array-bracket-newline:
     - error
-    - { minItems: 2 }
   array-bracket-spacing:
     - error
     - always

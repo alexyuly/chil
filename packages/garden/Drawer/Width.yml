@@ -1,0 +1,9 @@
+type:
+  complex/prop:
+    action: document/mouse event
+    output: number
+
+defaults:
+  state: clientX
+  action:
+    clientX: 400

@@ -1,0 +1,9 @@
+variables:
+  action: complex
+  output:
+
+type:
+  common/reduce:
+    state: string
+    action: action
+    output: output

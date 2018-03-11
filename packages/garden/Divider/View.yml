@@ -6,26 +6,26 @@ type:
     output: complex
 
 children:
-  style action:
+  style props:
     complex/combine:
       left: number
   style: Style
-  element action:
+  element props:
     complex/combine:
       id: string
       style: string
   element: Element
 
 connections:
-  left:
-    style action: left
-  style action:
-    style: action
   id:
-    element action: id
+    element props: id
+  left:
+    style props: left
+  style props:
+    style: action
   style:
-    element action: style
-  element action:
+    element props: style
+  element props:
     element: action
   element:
     output:

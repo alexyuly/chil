@@ -5,23 +5,23 @@ type:
     output: complex
 
 children:
-  style action:
+  style props:
     complex/combine:
       width: number
   style: Style
-  element action:
+  element props:
     complex/combine:
       style: string
   element: Element
 
 connections:
   width:
-    style action: width
-  style action:
+    style props: width
+  style props:
     style: action
   style:
-    element action: style
-  element action:
+    element props: style
+  element props:
     element: action
   element:
     output:

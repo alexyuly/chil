@@ -9,29 +9,29 @@ children:
   divider id: Divider/Id
   divider: Divider/View
   drawer: Drawer/View
+  root id: Root/Id
   root action:
     complex/combine:
       id: string
-      drawer: complex
       divider: complex
-  root id: Root/Id
+      drawer: complex
   root: Root/View
 
 connections:
   ids:
     divider id: action
     root id: action
+  drawer width:
+    divider: left
+    drawer: width
   divider id:
     divider: id
-  drawer width:
-    drawer: width
-    divider: left
-  root id:
-    root action: id
-  drawer:
-    root action: drawer
   divider:
     root action: divider
+  drawer:
+    root action: drawer
+  root id:
+    root action: id
   root action:
     root: action
   root:

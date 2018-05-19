@@ -10,7 +10,7 @@ Chil is a dynamic application programming language for expressing informational 
 
 #### Components
 
-Traditional object-oriented systems organize components in "classes", which exposes methods which other class instances may call to invoke some action or retrieve a piece of data. A chil component's interface consists of any number of inputs and one output. The flow of control is inverted. This means that components are not responsible for proactively controlling another component's behavior or reading from its data. They are only responsible for communicating their own status.
+Traditional object-oriented systems organize components in "classes", which expose methods which other class instances may call to invoke some action or retrieve a piece of data. In chil, the flow of control is inverted. This means that components are not responsible for proactively controlling another component's behavior or reading from its data. They are only responsible for communicating their own status through an output, which is connected to other component inputs.
 
 #### Hierarchy
 

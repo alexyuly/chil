@@ -14,7 +14,7 @@ Traditional object-oriented systems organize components in "classes", which expo
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call. But this limitation is arbitraily defined. In chil, communication hierarchy is explicit. Components are purely encapsulated, and communication is only allowed between directly connected components, through explicitly connected input/output channels.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call, but there is no explicit contract between each pair of components. Any component may "talk" to any other component which has a public interface. Chil has a sense of physical space, within a hierachical graph of component instances. Communication is only allowed between components which have explicitly connected input/output channels.
 
 #### Information
 
@@ -22,7 +22,7 @@ Traditional object-oriented systems typically use "getters" and "setters" to rea
 
 ## Motivation
 
-
+Most traditional systems of any scope devolve into chaos. Chil consciously imposes severe constraints on the construction of application systems, in order to make reasoning and iterating on applications easier and quicker. It also facilitates development through GUIs, eliminating the need for code at all. There is a one-to-one relationship between chil code and a graph structure which can be represented directly in a GUI.
 
 ## Specification
 

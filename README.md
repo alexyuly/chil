@@ -60,11 +60,13 @@ The `pipe` connector is constructed with a key-value pair which is the name `pip
 
 ```yml
 pipe:
-  - child component 1
-  - child component 2
-  - child component 3
+  - child object 1
+  - child object 2
+  - child object 3
   ...
 ```
+
+Incoming values are sent to the single main input of the pipe, which sends values along to the first object in the list, which sends values to the second object (if present), and so on, until values are sent to the pipe's output.
 
 ##### `fork`
 

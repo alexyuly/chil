@@ -28,6 +28,8 @@ Most traditional software systems of any scope devolve into chaos. Chil consciou
 
 ### Use of YAML
 
-Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Chil code is not algorithmic. It is a data structure, which is consumed by the chil runtime engine to produce a deterministic result based on a set of abstractions. The chil runtime engine is a like a universal state machine that produces output based on a given set of inputs. In other words, user-facing data flows through chil code, which itself is expressed as data which flows through the chil runtime.
+Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Chil code is not algorithmic. It is a data structure, which is consumed by the chil runtime engine to produce a deterministic result based on a set of abstractions. The chil runtime engine is a like a universal state machine that produces output based on a given set of inputs. In other words, user-facing data flows through chil code, which itself is expressed as data which flows through the chil runtime. YAML is well-suited to a language that is expressed purely as data. Chil code functions as a schema for parsing by the chil runtime, which is itself a universal algorithm for any kind of computation.
 
-YAML is well-suited to a language that is expressed purely as a "declared" data structure.
+### Components
+
+The fundamental unit of application development in chil is the ***component***.

@@ -14,7 +14,7 @@ Traditional object-oriented systems organize components in "classes", which expo
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call, but there is no explicit contract between each pair of components. Any component may "talk" to any other component with a public interface. Chil has a sense of physical space, within a hierachical graph of component instances. Communication is only allowed between components which have explicitly connected input/output channels.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call, but there is no explicit contract between each pair of components. Any component may "talk" to any other component with a public interface. Chil has a sense of physical space, within a hierachical tree of component instances, called objects. Communication is only allowed between components which have explicitly connected input/output channels.
 
 #### Information
 
@@ -48,4 +48,26 @@ All other dictionary keys point to streams which are inputs for values sent to t
 
 #### Component Streams
 
-Each stream of a component is defined by a "child component".
+Each stream of a component is defined by a child object.
+
+#### Connector components
+
+Special ***connector components*** form the basis of connections between child objects within some parent component. This connections specify an explicit contract for communication between each pair of connected objects.
+
+##### `pipe`
+
+The `pipe` connector is constructed with a key-value pair which is the name `pipe` with a list of child objects. A pipe is itself is a child object, constructed from other child objects.
+
+```yml
+pipe:
+  - child component 1
+  - child component 2
+  - child component 3
+  ...
+```
+
+##### `fork`
+
+##### `branch`
+
+##### `output`

@@ -22,8 +22,12 @@ Traditional object-oriented systems typically use "getters" and "setters" to rea
 
 ## Motivation
 
-Most traditional systems of any scope devolve into chaos. Chil consciously imposes severe constraints on the construction of application systems, in order to make reasoning and iterating on applications easier and quicker. It also facilitates development through GUIs, eliminating the need for code at all. There is a one-to-one relationship between chil code and a graph structure which can be represented directly in a GUI.
+Most traditional software systems of any scope devolve into chaos. Chil consciously imposes severe constraints on the construction of application systems, in order to make reasoning and iterating on applications easier and quicker. It also facilitates development through GUIs, eliminating the use of code as a necessary prerequisite to application development. There is a one-to-one relationship between chil code and a graph structure which can be represented directly in a GUI. Code can be useful, but overuse of code can be deadly when too many interests and stakeholders are involved.
 
 ## Specification
 
+### Use of YAML
 
+Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Chil code is not algorithmic. It is a data structure, which is consumed by the chil runtime engine to produce a deterministic result based on a set of abstractions. The chil runtime engine is a like a universal state machine that produces output based on a given set of inputs. In other words, user-facing data flows through chil code, which itself is expressed as data which flows through the chil runtime.
+
+YAML is well-suited to a language that is expressed purely as a "declared" data structure.

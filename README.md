@@ -32,4 +32,18 @@ Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). C
 
 ### Components
 
-The fundamental unit of application development in chil is the ***component***.
+The fundamental unit of application development in chil is the ***component***. A component is a YAML document which contains a dictionary of input streams. Each key in the dictionary is the name of an input stream. Two names are reserved for special use cases: `source` and `main`.
+
+#### Component `source`
+
+The component dictionary key `source` points to a stream which receives no incoming values. No other component may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
+
+#### Component `main`
+
+The component dictionary key `main` points to a stream which is the default input for incoming values into the component. If another component sends values to this component without specifying an input name, those values are routed to `main`. 
+
+#### Other Component Inputs
+
+All other dictionary keys point to streams which are inputs for values sent to this component at that specific input name, as opposed to values sent to an unspecified input.
+
+#### Component Streams

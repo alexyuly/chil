@@ -10,15 +10,15 @@ Chil is a dynamic application programming language for expressing informational 
 
 #### Components
 
-Traditional object-oriented systems organize components in "classes", which expose methods which other class instances may call to invoke some action or retrieve a piece of data. In chil, the flow of control is inverted. Components are not responsible for proactively controlling another component's behavior or reading from its data. They are only responsible for communicating their own status through an output, which is connected to other component inputs.
+Traditional object-oriented systems organize components in "classes", which expose methods which other class instances may call to invoke some action or retrieve a piece of data. In chil, the flow of control is inverted. Objects are not responsible for proactively controlling another object's behavior or reading from its data. They are only responsible for communicating their own status through outputs, which other objects will reactively consume.
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call, but there is no explicit contract between each pair of components. Any component may "talk" to any other component with a public interface. A chil application has a sense of physical space based on its tree of component instances, called objects. Communication is only allowed between components which have explicitly connected input/output channels.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Objects are generally restricted from calling certain methods, but there is no specific contract between each pair of objects. Any object may control or consume any public method. A chil application has a sense of physical space based on its tree of objects, which are instances of components. Communication is only allowed between two objects which share an explicit input/output contract defined in another component.
 
 #### Information
 
-Traditional object-oriented systems typically use "getters" and "setters" to read and write data. Chil components never read or mutate another component's data. Instead, they inform other components of some intention. Component communication is purely based on unidirectional messages. Once a component receives a message, it decides what actions to take. This results in 100% component encapsulation and decoupling.
+Traditional object-oriented systems typically use "getters" and "setters" to read and write data. Chil objects never read or mutate another object's data. Instead, they inform any and all listeners of some message, like an event, and do not wait for a response. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow results in 100% component encapsulation and decoupling. I call this an "informational model", as opposed to a "controller model".
 
 ## Motivation
 
@@ -36,11 +36,11 @@ The fundamental unit of application development in chil is the ***component***. 
 
 #### Component `source`
 
-The component dictionary key `source` points to a stream which receives no incoming values. No other component may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
+The component dictionary key `source` points to a stream which receives no incoming values. No other object may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
 
 #### Component `main`
 
-The component dictionary key `main` points to a stream which is the default input for incoming values into the component. If another component sends values to this component without specifying an input name, those values are routed to `main`. 
+The component dictionary key `main` points to a stream which is the default input for incoming values. If another object sends values to an instance of this component without specifying an input name, those values are routed to `main`. 
 
 #### Other Component Inputs
 
@@ -52,7 +52,7 @@ Each stream of a component is defined by a child object.
 
 #### Connector components
 
-Special ***connector components*** form the basis of connections between child objects within some parent component. This connections specify an explicit contract for communication between each pair of connected objects.
+Special ***connector components*** form the basis of connections between child objects within some parent component. These connections specify an explicit contract for communication between each pair of connected objects.
 
 ##### `pipe`
 

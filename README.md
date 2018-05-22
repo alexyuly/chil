@@ -14,11 +14,11 @@ Traditional object-oriented systems organize components in "classes", which expo
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call, but there is no explicit contract between each pair of components. Any component may "talk" to any other component with a public interface. Chil has a sense of physical space, within a hierachical tree of component instances, called objects. Communication is only allowed between components which have explicitly connected input/output channels.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Components are limited in what methods they can call, but there is no explicit contract between each pair of components. Any component may "talk" to any other component with a public interface. A chil application has a sense of physical space based on its tree of component instances, called objects. Communication is only allowed between components which have explicitly connected input/output channels.
 
 #### Information
 
-Traditional object-oriented systems typically use "getters" and "setters" to read and write data. Chil components never read or mutate another component's data. Instead, they inform other components of some intention. Component communication is purely based on messages. Once a component receives a message, it decides what actions to take. This results in 100% component encapsulation and decoupling.
+Traditional object-oriented systems typically use "getters" and "setters" to read and write data. Chil components never read or mutate another component's data. Instead, they inform other components of some intention. Component communication is purely based on unidirectional messages. Once a component receives a message, it decides what actions to take. This results in 100% component encapsulation and decoupling.
 
 ## Motivation
 
@@ -60,13 +60,22 @@ The `pipe` connector is constructed with a key-value pair which is the name `pip
 
 ```yml
 pipe:
+  # main input
+  # |
+  # v
   - child object 1
+  # v
   - child object 2
+  # v
   - child object 3
-  ...
+  # v
+  # any other child objects
+  # |
+  # v
+  # output
 ```
 
-Incoming values are sent to the single main input of the pipe, which sends values along to the first object in the list, which sends values to the second object (if present), and so on, until values are sent to the pipe's output.
+Incoming values are sent to the pipe's main (and only) input, which outputs to the first object in the list, which outputs to the second object (if present), and so on, until values are sent to the overall pipe's output.
 
 ##### `fork`
 

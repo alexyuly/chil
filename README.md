@@ -14,7 +14,7 @@ Traditional object-oriented systems organize components in "classes", which expo
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Each object is restricted from calling certain methods, but there is no specific contract between each pair of object and method. Any object may unpredictably call any available method it references (and references themselves may be freely kept and passed around), at any time and place in code, resulting in couplings and complexity. In chil, object containment is defined by a directed, rooted tree. That is, there is a strict parent/child relationship between objects: If object A is a parent of (i.e., contains) object B, then object B *must not* contain object A, or the chil compiler throws an error.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Each object is restricted from calling certain methods, but there is no specific contract between each pair of object and method. Any object may unpredictably call any available method it references (and references themselves may be freely kept and passed around), at any time and place in code, resulting in couplings and complexity. In chil, object containment is defined by a directed, rooted tree. That is, there is a strict parent/child relationship between object references: If object A is a parent of (i.e., contains) object B, then object B *must not* be a parent of object A, or the chil compiler throws an error.
 
 #### Information
 
@@ -101,5 +101,7 @@ fork:
 ```
 
 ##### `branch`
+
+The `branch` connector takes a single object. Incoming values are sent to the object *and* the overall branch output. The object output is also sent to the overall branch output. (Like forks, branches are synchronous.)
 
 ##### `output`

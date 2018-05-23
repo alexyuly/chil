@@ -10,11 +10,11 @@ Chil is a dynamic application programming language for expressing informational 
 
 #### Components
 
-Traditional object-oriented systems organize components in "classes", which expose methods which other class instances may call to invoke some action or retrieve a piece of data. In chil, the flow of control is inverted. Objects are not responsible for proactively controlling another object's behavior or reading from its data. They are only responsible for communicating their own status through outputs, which other objects will reactively consume.
+Traditional object-oriented systems organize components in "classes", which expose methods for other objects to use to invoke some action or retrieve data. In chil, the flow of control is inverted. Objects are not responsible for proactively controlling another object's behavior or reading from its data. They are only responsible for communicating their own status through outputs, which other objects will reactively consume.
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Objects are generally restricted from calling certain methods, but there is no specific contract between each pair of objects. Any object may control or consume any public method. A chil application has a sense of physical space based on its tree of objects, which are instances of components. Communication is only allowed between two objects which share an explicit input/output contract defined in another component.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Objects are generally restricted from calling certain methods, but there is no specific contract between each pair of objects. Any object may unpredictably call any available methods, resulting in couplings and complexity. A chil application has a sense of physical space based on its tree of objects, which are instances of components. Communication is only allowed between two objects which share an explicit input/output contract defined in another component.
 
 #### Information
 
@@ -56,7 +56,7 @@ Special ***connector components*** form the basis of connections between child o
 
 ##### `pipe`
 
-The `pipe` connector is constructed with a key-value pair which is the name `pipe` with a list of child objects. A pipe is itself is a child object, constructed from other child objects.
+The `pipe` connector is constructed with a key-value pair which is the name `pipe` with a list of child objects. A pipe is itself is a child object, constructed from other child objects. Incoming values are sent to the first object in the list, which outputs to the second object (if present), and so on, until values are sent to the overall pipe's output.
 
 ```yml
 pipe:
@@ -75,9 +75,22 @@ pipe:
   # output
 ```
 
-Incoming values are sent to the pipe's main (and only) input, which outputs to the first object in the list, which outputs to the second object (if present), and so on, until values are sent to the overall pipe's output.
-
 ##### `fork`
+
+The `fork` connector also takes a list of child objects. Incoming values are sent to each of the objects, and the output from each object is sent to the overall fork's output. This happens synchronously.
+
+```yml
+fork:
+  # main input
+  # v
+  - child object 1  # -> output
+  #
+  # main input
+  # v
+  - child object 2  # -> output
+  #
+  # etc...
+```
 
 ##### `branch`
 

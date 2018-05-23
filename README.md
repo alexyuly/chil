@@ -14,7 +14,7 @@ Traditional object-oriented systems organize components in "classes", which expo
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Objects are generally restricted from calling certain methods, but there is no specific contract between each pair of objects. Any object may unpredictably call any available methods, resulting in couplings and complexity. A chil application has a sense of physical space based on its tree of objects, which are instances of components. Communication is only allowed between two objects which share an explicit input/output contract defined in another component.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Objects are generally restricted from calling certain methods, but there is no specific contract between each pair of objects. Any object may unpredictably call any available methods, resulting in couplings and complexity. A chil application has a sense of physical space based on its tree of objects, which are instances of components. Communication is only possible between two objects which share an explicit input/output contract defined in another component.
 
 #### Information
 
@@ -64,12 +64,12 @@ pipe:
   # |
   # v
   - child object 1
+  # |
   # v
   - child object 2
+  # |
   # v
-  - child object 3
-  # v
-  # any other child objects
+  # etc...
   # |
   # v
   # output
@@ -82,12 +82,20 @@ The `fork` connector also takes a list of child objects. Incoming values are sen
 ```yml
 fork:
   # main input
+  # |
   # v
-  - child object 1  # -> output
+  - child object 1
+  # |
+  # v
+  # output
   #
   # main input
+  # |
   # v
-  - child object 2  # -> output
+  - child object 2
+  # |
+  # v
+  # output
   #
   # etc...
 ```

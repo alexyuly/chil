@@ -10,25 +10,25 @@ Chil is a dynamic application programming language for expressing informational 
 
 #### Components
 
-Traditional object-oriented systems organize components in "classes", which expose methods for other objects to use to invoke some action or retrieve data. In chil, the flow of control is inverted. Objects are not responsible for proactively controlling another object's behavior or reading from its data. They are only responsible for communicating their own status through outputs, which other objects will reactively consume.
+Traditional object-oriented systems organize components in "classes", which expose methods for objects to use to invoke some action or retrieve data. In chil, the flow of control is inverted. An object is not responsible for proactively controlling or fetching another object's data. It is only responsible for communicating its own status through a single output, which other objects will consume and process according to their own internal behavior.
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Objects are generally restricted from calling certain methods, but there is no specific contract between each pair of objects. Any object may unpredictably call any available methods, resulting in couplings and complexity. A chil application has a sense of physical space based on its tree of objects, which are instances of components. Communication is only possible between two objects which share an explicit input/output contract defined in another component.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Each object is restricted from calling certain methods, but there is no specific contract between each pair of object and method. Any object may unpredictably call any available method it references (and references themselves may be freely kept and passed around), at any time and place in code, resulting in couplings and complexity. In chil, object containment is defined by a directed, rooted tree. That is, there is a strict parent/child relationship between objects: If object A is a parent of (i.e., contains) object B, then object B *must not* contain object A, or the chil compiler throws an error.
 
 #### Information
 
-Traditional object-oriented systems typically use "getters" and "setters" to read and write data. Chil objects never read or mutate another object's data. Instead, they inform any and all listeners of some message, like an event, and do not wait for a response. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow results in 100% component encapsulation and decoupling. I call this an "informational model", as opposed to a "controller model".
+Traditional object-oriented systems typically use "getters" and "setters" to read and write data. A chil object never reads or mutates another object's data. Instead, it informs its listeners of some message and does not wait for responses. An object may only listen to messages from its siblings or parent. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow makes 100% component encapsulation and decoupling possible. This results in an "informational model", as opposed to a "controller model", of software design.
 
 ## Motivation
 
-Most traditional software systems of any scope devolve into chaos. Chil consciously imposes severe constraints on the construction of application systems, in order to make reasoning and iterating on applications easier and quicker. It also facilitates development through GUIs, eliminating the use of code as a necessary prerequisite to application development. There is a one-to-one relationship between chil code and a graph structure which can be represented directly in a GUI. Code is often useful, but overuse of code to form the foundation of large, complex systems can be paralyzing when too many interests and stakeholders are involved.
+Many traditional software systems of any scope devolve into chaos. Chil consciously imposes severe constraints on the construction of systems, in order to make reasoning and iterating on applications easier and quicker. It also facilitates development through GUIs, eliminating the use of code as a necessary prerequisite to development. There is a one-to-one relationship between chil code and a graph structure which can be represented directly in a GUI. Code is often useful, but overuse of code to form the foundation of large, complex systems can be paralyzing when too many interests and stakeholders are involved.
 
 ## Specification
 
 ### Use of YAML
 
-Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Chil code is not algorithmic. It is a data structure, which is consumed by the chil runtime engine to produce a deterministic result based on a constant set of abstractions. The chil runtime engine is a universal state machine that produces output based on a given set of inputs. User-facing data flows through chil code, which itself is expressed as data, which flows through the chil runtime. YAML is well-suited to a language that is expressed purely as data. Chil code functions as a schema for parsing by the chil runtime, which is itself a universal algorithm for any kind of computation.
+Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Chil code is not algorithmic. It is a data structure, which is consumed by the chil runtime engine to produce a deterministic result based on a constant set of abstractions. User-facing data flows through chil code, which itself is expressed as data, which flows through the chil runtime. YAML is well-suited to a language that is expressed purely as data. Chil code functions as a schema for parsing by the chil runtime, which is itself a universal algorithm for any kind of computation.
 
 ### Components
 

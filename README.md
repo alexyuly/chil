@@ -48,7 +48,24 @@ All other dictionary keys point to streams which are inputs for values sent to t
 
 #### Component Streams
 
-Each stream of a component is defined by a child object.
+Each stream of a component is defined by a reference to a stream of a child object. A "reference to a stream" can be expressed in multiple forms:
+
+1. the name of a component, for the main input of the single object of that type
+  a. for example, `echo`
+2. the name of a component plus a locally unique ID, for the main input of the object with the given type and ID
+  a. for example, `document events # mousemove`
+3. one of (1) or (2), followed by an arrow to the name of an input of that object
+  a. for example, `gate -> state`
+  b. for example, `delay # interval -> state`
+4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
+  a. This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
+  b. for example, `delay # interval: 500`
+  c. for example:
+```
+document template:
+  type: div
+  child: Hello, world!
+```
 
 #### Connector components
 

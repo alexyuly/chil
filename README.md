@@ -36,7 +36,9 @@ Chil code is a literal representation of the model and state of a system, rather
 
 ### Runtime agnostic
 
-Because of its complete reliance on abstract data structures, chil code is completely runtime agnostic, allowing any set of native runtime and modules to be used. The first one to be implemented will support Node.js (and thus JavaScript as the module language of choice). The child code compiler will also be itself implemented in Node.js, although this is irrelevant to the runtime execution of a chil application. Node.js is chosen for its broad applicability across clients and services coupled with a unified language syntax.
+Because of its complete reliance on abstract data structures, chil code is completely runtime agnostic, allowing any set of native runtime and modules to be used. The first chil runtime engine will be implemented in Node.js, because of its broad applicability across clients and service, coupled with the unified language syntax of JavaScript.
+
+The chil code compiler will also be implemented in Node.js, although this is irrelevant to the runtime execution of a chil application, which could be based on any engine, Node.js or otherwise.
 
 ### Convention over configuration
 

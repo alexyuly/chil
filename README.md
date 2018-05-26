@@ -28,11 +28,15 @@ Traditional object-oriented systems typically use "getters" and "setters" to rea
 
 ### Isolation of algorithms
 
-As a language, chil aims to isolate algorithms to the lowest possible level of abstraction, relying on pure data flow for high level processing, in the form of objects expressed as compositions of other objects. This results in a paradigm shift from thinking about "how" components interact with each other, to "what" is the contract between components, with the matter of low-level operations left to combination of a native runtime and accessory modules.
+As a language, chil aims to isolate algorithms to the lowest possible level of abstraction, relying on pure data flow for high level processing, in the form of objects expressed as compositions of other objects. This results in a paradigm shift from thinking about "how" components interact with each other, to "what" is the contract between components, with the matter of low-level operations left to a combination of a core native runtime and supporting native modules.
 
 ### Code as data
 
 Chil code is a literal representation of the model and state of a system, rather than a set of instructions which leads to the creation of such a system. This eliminates the conceptual distance between code and data. Components are blind to whether data is saved as "state" in the transient memory of the application, or persisted as "files" in a database. Components are blind to the procedural implementation of processes with which they are directly unconcerned.
+
+### Runtime agnostic
+
+Because of its complete reliance on abstract data structures, chil code is completely runtime agnostic, allowing any set of native runtime and modules to be used. The first one to be implemented will support Node.js (and thus JavaScript as the module language of choice). The child code compiler will also be itself implemented in Node.js, although this is irrelevant to the runtime execution of a chil application. Node.js is chosen for its broad applicability across clients and services coupled with a unified language syntax.
 
 ### Convention over configuration
 

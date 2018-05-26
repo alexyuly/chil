@@ -22,13 +22,21 @@ In chil, object containment is defined by a directed, rooted tree. That is, ther
 
 #### Information
 
-Traditional object-oriented systems typically use "getters" and "setters" to read and write data. A chil object never reads or mutates another object's data. Instead, it informs its listeners of some message and does not ever receive responses. An object may only listen to messages from its siblings or parent, as defined by the component within which it is constructed. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow makes 100% component decoupling possible. Components communicate by expressing information, rather than fetching or controlling information in another component. This reactive, asynchronous approach facilitates ***automation*** (instead of fetching) and ***encapsulation*** (instead of controlling). Automation and encapsulation outrank all other concepts for their importance in high-level software systems design.
+Traditional object-oriented systems typically use "getters" and "setters" to read and write data. A chil object never reads or mutates another object's data. Instead, it informs its listeners of some message and never receives direct responses. An object may only listen to messages from its siblings or parent, as defined by the component within which it is constructed. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow makes 100% component decoupling possible. Components communicate by expressing information, rather than fetching or controlling information in another component. This reactive, asynchronous approach facilitates ***automation*** (instead of fetching) and ***encapsulation*** (instead of controlling). Automation and encapsulation outrank all other concepts for their importance in high-level software systems design.
 
 ## Principles
 
 ### Isolation of algorithms
 
 As a language, chil aims to isolate algorithms to the lowest possible level of abstraction, relying on pure data flow for high level processing, in the form of objects expressed as compositions of other objects. This results in a paradigm shift from thinking about "how" components interact with each other, to "what" is the contract between components, with the matter of low-level operations left to combination of a native runtime and accessory modules.
+
+### Code as data
+
+Chil code is a literal representation of the model and state of a system, rather than a set of instructions which leads to the creation of such a system. This eliminates the conceptual distance between code and data. Components are blind to whether data is saved as "state" in the transient memory of the application, or persisted as "files" in a database. Components are blind to the procedural implementation of processes with which they are directly unconcerned.
+
+### Convention over configuration
+
+Imports and dependency management are handled as automatically as possible by the chil compiler. References to component types are resolved through the file system according to a well-defined traversal order, which eliminates the need to explicitly specify package imports.
 
 ## Specification
 
@@ -83,7 +91,7 @@ The `pipe` connector is constructed with a key-value pair which is the name `pip
 
 ```yml
 pipe:
-  # main input
+  # in
   # |
   # v
   - child object 1
@@ -95,7 +103,7 @@ pipe:
   # etc...
   # |
   # v
-  # output
+  # out
 ```
 
 ##### `fork`
@@ -104,27 +112,27 @@ The `fork` connector also takes a list of child objects. Incoming values are sen
 
 ```yml
 fork:
-  # main input
+  # in
   # |
   # v
   - child object 1
   # |
   # v
-  # output
+  # out
   #
-  # main input
+  # in
   # |
   # v
   - child object 2
   # |
   # v
-  # output
+  # out
   #
   # etc...
 ```
 
 ##### `branch`
 
-The `branch` connector takes a single object. Incoming values are sent to the object *and* the overall branch output. The object output is also sent to the overall branch output. (Like forks, branches are synchronous.)
+The `branch` connector takes a single object. Incoming values are sent to the object *and* the overall branch output. The object output is also sent to the overall branch output. (Like pipes and forks, branches are synchronous.)
 
-##### `output`
+##### `sink`

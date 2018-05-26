@@ -79,19 +79,19 @@ Each stream of a component is defined by a reference to a stream of a child obje
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
   - for example, `delay # interval: 500`
   - for example:
-```
+```yml
 document template:
   type: div
   child: Hello, world!
 ```
 
-#### Connector components
+#### Connector objects
 
-Special ***connector components*** form the basis of connections between child objects within some parent component. These connections specify an explicit contract for communication between each pair of connected objects.
+Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. These connections specify an explicit contract for communication between each pair of connected streams.
 
 ##### `pipe`
 
-The `pipe` connector is constructed with a key-value pair which is the name `pipe` with a list of child objects. A pipe is itself is a child object, constructed from other child objects. Incoming values are sent to the first object in the list, which outputs to the second object (if present), and so on, until values are sent to the overall pipe's output.
+The `pipe` connector is constructed with a list of references to streams. Incoming values are sent to the first stream in the list, whose object outputs to the second stream (if present), and so on, until values are sent to the overall pipe's output.
 
 ```yml
 pipe:
@@ -112,7 +112,7 @@ pipe:
 
 ##### `fork`
 
-The `fork` connector also takes a list of child objects. Incoming values are sent to each of the objects, and the output from each object is sent to the overall fork's output. This happens synchronously.
+The `fork` connector is also constructed with a list of references to streams. Incoming values are synchronously sent to each of the streams, and the output from each stream's object is sent to the overall fork's output.
 
 ```yml
 fork:
@@ -137,6 +137,35 @@ fork:
 
 ##### `branch`
 
-The `branch` connector takes a single object. Incoming values are sent to the object *and* the overall branch output. The object output is also sent to the overall branch output. (Like pipes and forks, branches are synchronous.)
+The `branch` connector is constructed with a single reference to a stream. Incoming values are synchronously sent to the stream *and* the overall branch output. The stream's object output is also sent to the overall branch output.
+
+```yml
+branch:
+  # in
+  # |
+  # v
+  child object
+  # |
+  # v
+  # out
+  #
+  # in
+  # |
+  # v
+  # out
+```
 
 ##### `sink`
+
+The `sink` connector is also constructed with a single reference to a stream. Incoming values are synchronously sent to the stream. Then, the stream's object output is "sinked" directly to the output of the component.
+
+```yml
+sink:
+  # in
+  # |
+  # v
+  child object
+  # |
+  # v
+  # component out
+```

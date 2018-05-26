@@ -74,20 +74,15 @@ Each stream of a component is defined by a reference to a stream of a child obje
   - for example, `document events # mousemove`
 3. one of (1) or (2), followed by an arrow to the name of an input of that object
   - for example, `gate -> state`
-  - for example, `delay # interval -> state`
+  - or, for example, `delay # interval -> state`
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
   - for example, `delay # interval: 500`
-  - for example:
-```yml
-document template:
-  type: div
-  child: Hello, world!
-```
+5. a connector object
 
 #### Connector objects
 
-Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. These connections specify an explicit contract for communication between each pair of connected streams.
+Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object is an unique instance which is constructed with a key-value pair which is the name of the connector, plus a value which is some combination of one or more references to streams:
 
 ##### `pipe`
 

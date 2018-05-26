@@ -36,35 +36,33 @@ Chil code is a literal representation of the model and state of a system, rather
 
 ### Runtime agnostic
 
-Because of its complete reliance on abstract data structures, chil code is completely runtime agnostic, allowing any set of native runtime and modules to be used. The first chil runtime engine will be implemented in Node.js, because of its broad applicability across clients and service, coupled with the unified language syntax of JavaScript.
-
-The chil code compiler will also be implemented in Node.js, although this is irrelevant to the runtime execution of a chil application, which could be based on any engine, Node.js or otherwise.
+Because of its complete reliance on abstract data structures, chil code is completely runtime agnostic, allowing any set of native runtime and modules to be used. The first chil runtime engine will be implemented in Node.js, because of its broad applicability across clients and services, paired with a unified, modern language syntax found in JavaScript. (The chil code compiler will also be implemented in Node.js, although this is irrelevant to the runtime execution of a chil application, which could be based on any engine, Node.js or otherwise.)
 
 ### Convention over configuration
 
-Imports and dependency management are handled as automatically as possible by the chil compiler. References to component types are resolved through the file system according to a well-defined traversal order, which eliminates the need to explicitly specify package imports.
+Imports and dependency management are handled as automatically as possible by the chil compiler: References to component types are resolved through the file system according to a well-defined traversal order, which eliminates the need to explicitly specify package imports.
 
 ## Specification
 
 ### Use of YAML
 
-Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). YAML is well-suited to a language that is expressed purely as data.
+Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). YAML is well-suited to a language expressed purely as data.
 
 ### Components
 
-The fundamental unit of application development in chil is the ***component***. A component is a YAML document which contains a dictionary of streams. Each key in the dictionary is the name of a stream. Two names are reserved for special use cases: `source` and `main`.
+The fundamental unit of application development in chil is the ***component***. A component is a YAML document which contains a dictionary of references to streams. Each key in the dictionary is the name of an input into the component. Two names are reserved for special use cases: `source` and `main`.
 
 #### Component `source`
 
-The component dictionary key `source` points to a stream which receives no incoming values. No other object may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
+The component dictionary key `source` references a stream which receives no incoming values. No other object may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
 
 #### Component `main`
 
-The component dictionary key `main` points to a stream which is the default input for incoming values. If another object sends values to an instance of this component without specifying an input name, those values are routed to `main`. 
+The component dictionary key `main` references a stream which is the default input for incoming values. If another object sends values to an instance of this component without specifying an input name, those values are routed to `main`. 
 
 #### Other Component Inputs
 
-All other dictionary keys point to streams which are inputs for values sent to this component at that specific input name, as opposed to values sent to an unspecified input.
+All other dictionary keys reference streams which are inputs for values sent to this component at that specific input name, as opposed to values sent to an unspecified input.
 
 #### Component Streams
 

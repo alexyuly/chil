@@ -68,7 +68,7 @@ All other names reference streams which are inputs for values sent to this compo
 
 #### References to streams
 
-Each stream of a component is defined by a reference to a stream of a child object. A "reference to a stream" can be expressed in multiple forms:
+Each key in a component's dictionary is mapped to a reference to a stream which exists within the component. These streams are constructed implicitly by chil at compile time. Each stream is part of an object, which is an instance of a child component. A "reference to a stream" can be expressed in multiple forms:
 
 1. the name of a component, for the main input of the single object of that type
   - for example, `echo`
@@ -84,7 +84,7 @@ Each stream of a component is defined by a reference to a stream of a child obje
 
 #### Connector objects
 
-Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object behaves just like an instance of any component with a single `main` input, which receives incoming values and outputs them to all connected listeners.
+Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object behaves just like an instance of any component with a single `main` input stream, which receives incoming values and sends them out to all connected listeners.
 
 The `pipe` connector is constructed with a list of references to streams. Incoming values are sent to the first stream in the list, whose object outputs to the second stream (if present), and so on, until values are sent to the overall pipe's output.
 

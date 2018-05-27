@@ -73,13 +73,14 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
 1. the name of a component, for the main input of the single object of that type
   - for example, `echo`
 2. the name of a component followed by an "at" symbol with a locally unique ID, for the main input of the object with the given type and ID
-  - for example, `document events @ mousemove`
+  - for example, `document events @mousemove`
 3. one of (1) or (2), followed by an arrow to the name of an input of that object
   - for example, `gate -> state`
-  - or, for example, `delay @ interval -> state`
+  - or, for example, `delay @interval -> state`
+  - Note, the whitespace around each symbol is not important: The chil compiler will trim whitespace around symbols.
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
-  - for example, `delay @ interval: 500`
+  - for example, `delay @interval: 500`
 5. a connector object
 
 #### Connector objects

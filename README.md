@@ -72,8 +72,9 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
 
 1. the name of a component, for the main input of the single object of that type
   - for example, `echo`
-2. the name of a component followed by a `@` *preposition* with a locally unique ID, for the main input of the object with the given type and ID
+2. the name of a component followed by an `@` ("at") *preposition* with a locally unique ID, for the main input of the locally unique instance of that component
   - for example, `document events @mousemove`
+  - Note, if no id is provided, such as `document events @`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
 3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
   - for example, `gate ->state`
   - or, for example, `delay @interval ->state`

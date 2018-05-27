@@ -50,21 +50,23 @@ Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Y
 
 ### Components
 
-The fundamental unit of application development in chil is the ***component***. A component is a YAML document which contains a dictionary of references to streams. Each key in the dictionary is the name of an input into the component. Two names are reserved for special use cases: `source` and `main`.
+The fundamental unit of application development in chil is the ***component***. A component is a YAML document which contains a dictionary mapping stream names to references to streams. Two names are reserved for special use cases: `source` and `main`.
 
-#### Component `source`
+#### Component stream names
 
-The component dictionary key `source` references a stream which receives no incoming values. No other object may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
+##### `source`
 
-#### Component `main`
+The name `source` is reserved for a reference to a stream which receives no incoming values. No other object may send values to this stream. This is useful for defining streams which are the original "source" of some data, with no prior inputs.
 
-The component dictionary key `main` references a stream which is the default input for incoming values. If another object sends values to an instance of this component without specifying an input name, those values are routed to `main`. 
+##### `main`
 
-#### Other Component Inputs
+The name `main` is reserved for a reference to a stream which is the default input for incoming values. If another object sends values to an instance of this component without specifying an input name, those values are routed to `main`. 
 
-All other dictionary keys reference streams which are inputs for values sent to this component at that specific input name, as opposed to values sent to an unspecified input.
+##### Other stream names
 
-#### Component Streams
+All other names reference streams which are inputs for values sent to this component at that specific input name, as opposed to values sent to an unspecified input.
+
+#### References to streams
 
 Each stream of a component is defined by a reference to a stream of a child object. A "reference to a stream" can be expressed in multiple forms:
 
@@ -82,9 +84,7 @@ Each stream of a component is defined by a reference to a stream of a child obje
 
 #### Connector objects
 
-Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object is an unique instance which is constructed with a key-value pair which is the name of the connector, plus a value which is some combination of one or more references to streams:
-
-##### `pipe`
+Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object behaves just like an instance of any component with a single `main` input, which receives incoming values and outputs them to all connected listeners.
 
 The `pipe` connector is constructed with a list of references to streams. Incoming values are sent to the first stream in the list, whose object outputs to the second stream (if present), and so on, until values are sent to the overall pipe's output.
 

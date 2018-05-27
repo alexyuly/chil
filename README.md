@@ -12,11 +12,11 @@ Chil is a dynamic application programming language for expressing informational 
 
 Traditional object-oriented systems organize components in classes, which expose methods for objects to use to invoke some action or retrieve data. Classes may extend other classes by overriding their methods, and therefore they are overriding their behavior. This approach prioritizes control flow over data flow, resulting in lots of flexibility over controlling the particular low-level operations of CPU and memory, and not much flexibility over manipulating the flow of information, i.e. inputs and outputs.
 
-In contrast to classes, chil objects are instances of ***components***, which are contracts of communication between instances of other types of components. Low-level operations are strictly delegated to "leaf components", which are components at the lowest level of abstraction which construct no other objects and whose behavior is derived from some relatively low-level code such as JavaScript. (It could even be C, if you love pain and need more performance.)
+In contrast to classes, chil objects are instances of ***components***, which are contracts of communication between instances of other types of components, organized within a tree. Low-level operations are strictly delegated to "leaf components" at the lowest level of the abstraction tree, which construct no other objects and whose behavior is derived from some relatively low-level code such as JavaScript. (It could even be C, if you love pain and need more performance.)
 
 #### Hierarchy
 
-Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Each object is restricted from calling certain methods, but there is no specific contract between each pair of object and method. Any object may unpredictably call any available method it references (and references themselves may be freely kept and passed around), at any time and place in code, resulting in couplings and complexity.
+Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Each method is restricted from calling certain other methods, but there is no specific contract between each pair. Methods may unpredictably pass references around and call them at any time and place in code, resulting in couplings and complexity.
 
 In chil, object containment is defined by a directed, rooted tree. That is, there is a strict parent/child relationship between component types: If component A constructs an instance of component B, then component B *must not* construct an instance of component A, or the chil compiler throws an error, since a cycle in type relationships would result in infinite recursion. Since all object construction happens synchronously at compile time, recursion in construction of objects is not possible. This apparent limitation is actually a strength, because it makes system behavior more predictable.
 
@@ -32,7 +32,7 @@ As a language, chil aims to isolate algorithms to the lowest possible level of a
 
 ### Code as data
 
-Chil code is a literal representation of the model and state of a system, rather than a set of instructions which leads to the creation of such a system. This eliminates the conceptual distance between code and data. Components are blind to whether data is saved as "state" in the transient memory of the application, or persisted as "files" in a database. Components are blind to the procedural implementation of processes with which they are directly unconcerned.
+Chil code is an explicit model of a system, rather than a set of instructions which implies the creation of such a system. This greatly reduces the conceptual distance between code and data. Components are blind to the procedural implementation of processes with which they are directly unconcerned, such as whether data is saved as "state" in the transient memory of the application or persisted as "files" in a database.
 
 ### Runtime agnostic
 
@@ -93,10 +93,10 @@ pipe:
   # in
   # |
   # v
-  - child object 1
+  - stream 1
   # |
   # v
-  - child object 2
+  - stream 2
   # |
   # v
   # etc...
@@ -114,7 +114,7 @@ fork:
   # in
   # |
   # v
-  - child object 1
+  - stream 1
   # |
   # v
   # out
@@ -122,7 +122,7 @@ fork:
   # in
   # |
   # v
-  - child object 2
+  - stream 2
   # |
   # v
   # out
@@ -139,7 +139,7 @@ branch:
   # in
   # |
   # v
-  child object
+  stream 
   # |
   # v
   # out
@@ -159,7 +159,7 @@ sink:
   # in
   # |
   # v
-  child object
+  stream
   # |
   # v
   # component out

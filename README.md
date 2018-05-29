@@ -1,10 +1,10 @@
-# chil
+# Chil
 
 Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license. See LICENSE.
 
 ## Introduction
 
-Chil is a dynamic application programming language for expressing informational hierarchies formed by components. In fact, the name "chil" is an acronym for "component hierarchy information language".
+Chil is a dynamic application programming language for expressing informational hierarchies formed by components. In fact, the name "Chil" is an acronym for "component hierarchy information language".
 
 ### Comparison vs. traditional object-oriented systems
 
@@ -12,23 +12,23 @@ Chil is a dynamic application programming language for expressing informational 
 
 Traditional object-oriented systems organize components in classes, which expose methods for objects to use to invoke some action or retrieve data. Classes may extend other classes by overriding their methods, and therefore they are overriding their behavior. This approach prioritizes control flow over data flow, resulting in lots of flexibility over controlling the particular low-level operations of CPU and memory, and not much flexibility over manipulating the flow of information, i.e. inputs and outputs.
 
-In contrast to classes, chil objects are instances of ***components***, which are contracts of communication between instances of other types of components, organized within a tree. Low-level operations are strictly delegated to "leaf components" at the lowest level of the abstraction tree, which construct no other objects and whose behavior is derived from some relatively low-level code such as JavaScript. (It could even be C, if you love pain and need more performance.)
+In contrast to classes, Chil objects are instances of ***components***, which are contracts of communication between instances of other types of components, organized within a tree. Low-level operations are strictly delegated to "leaf components" at the lowest level of the abstraction tree, which construct no other objects and whose behavior is derived from some relatively low-level code such as JavaScript. (It could even be C, if you love pain and need more performance.)
 
 #### Hierarchy
 
 Traditional object-oriented systems implement some form of communication hierarchy through keywords like "public" and "private". Each method is restricted from calling certain other methods, but there is no specific contract between each pair. Methods may unpredictably pass references around and call them at any time and place in code, resulting in couplings and complexity.
 
-In chil, object containment is defined by a directed, rooted tree. That is, there is a strict parent/child relationship between component types: If component A constructs an instance of component B, then component B *must not* construct an instance of component A, or the chil compiler throws an error, since a cycle in type relationships would result in infinite recursion. Since all object construction happens synchronously at compile time, recursion in construction of objects is not possible. This apparent limitation is actually a strength, because it makes system behavior more predictable.
+In Chil, object containment is defined by a directed, rooted tree. That is, there is a strict parent/child relationship between component types: If component A constructs an instance of component B, then component B *must not* construct an instance of component A, or the Chil compiler throws an error, since a cycle in type relationships would result in infinite recursion. Since all object construction happens synchronously at compile time, recursion in construction of objects is not possible. This apparent limitation is actually a strength, because it makes system behavior more predictable.
 
 #### Information
 
-Traditional object-oriented systems typically use "getters" and "setters" to read and write data. A chil object never reads or mutates another object's data. Instead, it informs its listeners of some message and never receives direct responses. An object may only listen to messages from its siblings or parent, as defined by the component within which it is constructed. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow makes 100% component decoupling possible. Components communicate by expressing information, rather than fetching or controlling information in another component. This reactive, asynchronous approach facilitates ***automation*** (instead of fetching) and ***encapsulation*** (instead of controlling). Automation and encapsulation outrank all other concepts for their importance in high-level software systems design.
+Traditional object-oriented systems typically use "getters" and "setters" to read and write data. A Chil object never reads or mutates another object's data. Instead, it informs its listeners of some message and never receives direct responses. An object may only listen to messages from its siblings or parent, as defined by the component within which it is constructed. Once a component receives a message, it decides what actions to take. This kind of rigorous single-directional data flow makes 100% component decoupling possible. Components communicate by expressing information, rather than fetching or controlling information in another component. This reactive, asynchronous approach facilitates ***automation*** (instead of fetching) and ***encapsulation*** (instead of controlling). Automation and encapsulation outrank all other concepts for their importance in high-level software systems design.
 
 ## Principles
 
 ### Isolation of algorithms
 
-As a language, chil aims to isolate algorithms to the lowest possible level of abstraction, relying on pure data flow for high level processing, in the form of objects expressed as compositions of other objects. This results in a paradigm shift from thinking about "how" components interact with each other, to "what" is the contract between components, with the matter of low-level operations left to a combination of a core native runtime and supporting native modules.
+As a language, Chil aims to isolate algorithms to the lowest possible level of abstraction, relying on pure data flow for high level processing, in the form of objects expressed as compositions of other objects. This results in a paradigm shift from thinking about "how" components interact with each other, to "what" is the contract between components, with the matter of low-level operations left to a combination of a core native runtime and supporting native modules.
 
 ### Code as data
 
@@ -36,11 +36,11 @@ Chil code is an explicit model of a system, rather than a set of instructions wh
 
 ### Runtime agnostic
 
-Because of its complete reliance on abstract data structures, chil code is completely runtime agnostic, allowing any set of native compiler, runtime, and modules to be used. The first chil engine will be implemented in Node.js, because of its broad applicability across clients and services, paired with a unified, modern language syntax found in JavaScript.
+Because of its complete reliance on abstract data structures, Chil code is completely runtime agnostic, allowing any set of native runtime and modules to be used. The first Chil runtime will be implemented in Node.js, because of its broad applicability across clients and services, paired with a unified, modern language syntax found in JavaScript.
 
 ### Convention over configuration
 
-Imports and dependency management are handled as automatically as possible by the chil compiler: References to component types are resolved through the file system according to a well-defined traversal order, which eliminates the need to explicitly specify package imports.
+Imports and dependency management are handled as automatically as possible by the Chil compiler: References to component types are resolved through the file system according to a well-defined traversal order, which eliminates the need to explicitly specify package imports.
 
 ## Specification
 
@@ -50,7 +50,7 @@ Chil code conforms to the [YAML 1.2 spec](http://yaml.org/spec/1.2/spec.html). Y
 
 ### Components
 
-The fundamental unit of application development in chil is the ***component***. A component is a YAML document which contains a dictionary mapping stream names to references to streams. Two names are reserved for special use cases: `source` and `main`.
+The fundamental unit of application development in Chil is the ***component***. A component is a YAML document which contains a dictionary mapping stream names to references to streams. Two names are reserved for special use cases: `source` and `main`.
 
 #### Component stream names
 
@@ -68,7 +68,7 @@ All other names reference streams which are inputs for values sent to this compo
 
 #### References to streams
 
-Each key in a component's dictionary is mapped to a reference to a stream which exists within the component. These streams are constructed implicitly by chil at compile time. Each stream is part of an object, which is an instance of a child component. A "reference to a stream" can be expressed in multiple forms:
+Each key in a component's dictionary is mapped to a reference to a stream which exists within the component. These streams are constructed implicitly by Chil at compile time. Each stream is part of an object, which is an instance of a child component. A "reference to a stream" can be expressed in multiple forms:
 
 1. the name of a component, for the main input of the single object of that type
   - for example, `echo`
@@ -78,7 +78,7 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
 3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
   - for example, `gate ->state`
   - or, for example, `delay @interval ->state`
-  - Note, the whitespace around each preposition is not important: The chil compiler trims whitespace around prepositions. However, it is conventional to format prepositions with a single leading space and no trailing space.
+  - Note, the whitespace around each preposition is not important: The Chil compiler trims whitespace around prepositions. However, it is conventional to format prepositions with a single leading space and no trailing space.
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
   - for example, `delay @interval: 500`

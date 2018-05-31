@@ -1,7 +1,0 @@
-variables:
-  action:
-
-type:
-  component:
-    inputs:
-      action: action

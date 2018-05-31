@@ -1,8 +1,0 @@
-variables:
-  state:
-  action: complex
-
-type:
-  common/replace:
-    state: state
-    action: action

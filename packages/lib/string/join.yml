@@ -1,4 +1,0 @@
-type:
-  common/replace:
-    state: string
-    action: list

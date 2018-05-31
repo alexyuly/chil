@@ -60,7 +60,7 @@ The name `source` is reserved for a reference to a stream which receives no inco
 
 ##### `main`
 
-The name `main` is reserved for a reference to a stream which is the default input for incoming values. If another object sends values to an instance of this component without specifying an input name, those values are routed to `main`. 
+The name `main` is reserved for a reference to a stream which is the default input for incoming values. If an object sends values to an instance of this component without specifying an input name, those values are routed to `main`. Also, if an object sends values while specifying an input name which is not defined, those values are routed to `main` as well. While this behavior serves no purpose in most (non-leaf) components (and results in a compiler warning), for leaf components like `document template` (which are defined in a native language), this behavior is useful because the undefined input name is passed to the native method, allowing for operations like templating.
 
 ##### Other stream names
 
@@ -77,11 +77,11 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
   - Note, if no id is provided, such as `document events @`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
 3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
   - for example, `gate ->state`
-  - or, for example, `delay @interval ->state`
+  - or, for example, `delay @my delay ->state`
   - Note, the whitespace around each preposition is not important: The Chil compiler trims whitespace around prepositions. However, it is conventional to format prepositions with a single leading space and no trailing space.
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
-  - for example, `delay @interval: 500`
+  - for example, `delay @my delay: 500`
 5. a connector object
 
 #### Connector objects
@@ -166,3 +166,36 @@ sink:
   # v
   # component out
 ```
+
+### Idioms
+
+#### `state` as a "secondary" input
+
+As `main` is the default, primary input name of a component, `state` is typically the "secondary" input. Whereas `main` is properly used to direct the flow of data *through* a component resulting in values "sinked" through its output, `state` is properly used to direct values into the component which are stored and used asynchronously by `main`. For example, the `delay` native component has two inputs, `main` and `state`, where `main` triggers a delayed output, and `state` controls the number of milliseconds for the delay. 
+
+#### Collapsing only children
+
+If a parent node in the YAML data structure has only a single child, then that parent and its only child may be "collapsed" into a single node.
+
+The expanded form
+```yml
+main:
+  sink:
+    document template:
+      type: div
+      child:
+        - "Hello, "
+        - {$: name}
+```
+is translated into the collapsed form
+```yml
+main / sink / document template:
+  type: div
+  child:
+    - "Hello, "
+    - {$: name}
+```
+
+The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
+
+Note that the forward slash `/` is a reserved symbol within Chil names. The compiler will throw an error if it is used incorrectly.

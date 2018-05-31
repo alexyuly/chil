@@ -1,6 +1,0 @@
-type:
-  document/event:
-    output: document/mouse event
-
-defaults:
-  type: mousedown

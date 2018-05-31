@@ -1,6 +1,0 @@
-variables:
-  action:
-
-type:
-  common/timing:
-    action: action

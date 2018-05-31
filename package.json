@@ -1,11 +1,11 @@
 {
-  "name": "compost",
+  "name": "chil",
   "author": "Alex Yuly",
   "license": "MIT",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/compostsoftware/compost.git"
+    "url": "https://github.com/alexyuly/chil.git"
   },
   "workspaces": [
     "packages/*"
@@ -14,6 +14,6 @@
     "test": "eslint 'packages/**/*.js'"
   },
   "devDependencies": {
-    "eslint": "4.17.0"
+    "eslint": "4.19.1"
   }
 }

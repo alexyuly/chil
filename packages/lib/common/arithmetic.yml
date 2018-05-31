@@ -1,8 +1,0 @@
-variables:
-  type:
-
-type:
-  common/reduce:
-    state: type
-    action: type
-    output: type

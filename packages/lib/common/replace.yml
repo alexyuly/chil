@@ -1,9 +1,0 @@
-variables:
-  state:
-  action:
-
-type:
-  common/reduce:
-    state: state
-    action: action
-    output: state

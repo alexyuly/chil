@@ -1,0 +1,10 @@
+{
+  "name": "@chil/compiler",
+  "version": "0.0.0",
+  "author": "Alex Yuly",
+  "license": "MIT",
+  "main": "main.js",
+  "dependencies": {
+    "js-yaml": "3.11.0"
+  }
+}

@@ -1,9 +1,0 @@
-variables:
-  output: complex
-
-type:
-  component:
-    inputs:
-      id: string
-      type: string
-    output: output

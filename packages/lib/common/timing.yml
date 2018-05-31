@@ -1,7 +1,0 @@
-variables:
-  action:
-
-type:
-  common/gate:
-    state: number
-    action: action

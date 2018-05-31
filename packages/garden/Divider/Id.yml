@@ -1,7 +1,0 @@
-type:
-  complex/prop:
-    action: ../Ids
-    output: string
-
-defaults:
-  state: divider

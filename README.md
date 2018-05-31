@@ -80,7 +80,7 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
   - for example, `document events@ mousemove`
   - Note, if no id is provided, such as `document events@`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
 3. one of (1) or (2), followed by an `->` ("arrow") postfix to the name of an input of that object
-  - for example, `gate-> state`
+  - for example, `gate ->state`
   - or, for example, `delay@ my delay-> state`
   - Note, the whitespace around each postfix is not important: The Chil compiler trims whitespace around postfix operators. However, it is conventional to format postfix operators with no leading space and a single trailing space.
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized

@@ -2,6 +2,8 @@
 
 Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license. See LICENSE.
 
+*This is a work in progress.*
+
 ## Introduction
 
 Chil is a dynamic application programming language for expressing informational hierarchies formed by components. In fact, the name "Chil" is an acronym for "component hierarchy information language".
@@ -191,7 +193,7 @@ main:
 ```
 is translated into the collapsed form
 ```yml
-main /sink /document template:
+main \sink \document template:
   type: div
   child:
     - "Hello, "
@@ -200,4 +202,6 @@ main /sink /document template:
 
 The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
 
-Note that the forward slash `/` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if it these symbols are used incorrectly.
+Note that the backward slash `\` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if it these symbols are used incorrectly.
+
+When referencing components by their relative file path, always use the forward slash `/`, even on Windows systems where the OS prefers the backslash.

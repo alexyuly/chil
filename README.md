@@ -76,16 +76,16 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
 
 1. the name of a component, for the main input of the single object of that type
   - for example, `echo`
-2. the name of a component followed by an `@` ("at") *postfix* with a locally unique ID, for the main input of the locally unique instance of that component
-  - for example, `document events@ mousemove`
-  - Note, if no id is provided, such as `document events@`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
-3. one of (1) or (2), followed by an `->` ("arrow") postfix to the name of an input of that object
+2. the name of a component followed by an `@` ("at") *preposition* with a locally unique ID, for the main input of the locally unique instance of that component
+  - for example, `document events @mousemove`
+  - Note, if no id is provided, such as `document events @`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
+3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
   - for example, `gate ->state`
-  - or, for example, `delay@ my delay-> state`
-  - Note, the whitespace around each postfix is not important: The Chil compiler trims whitespace around postfix operators. However, it is conventional to format postfix operators with no leading space and a single trailing space.
+  - or, for example, `delay @my delay ->state`
+  - Note, the whitespace around each preposition is not important: The Chil compiler trims whitespace around prepositions. However, it is conventional to format prepositions with a single leading space and no trailing space.
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
-  - for example, `delay@ my delay: 500`
+  - for example, `delay @my delay: 500`
 5. a connector object
 
 #### Connector objects
@@ -193,7 +193,7 @@ main:
 ```
 is translated into the collapsed form
 ```yml
-main\ sink\ document template:
+main \sink \document template:
   type: div
   child:
     - "Hello, "
@@ -202,6 +202,6 @@ main\ sink\ document template:
 
 The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
 
-Note that the backward slash `\` is a reserved postfix which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.
+Note that the backward slash `\` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.
 
 When referencing components by their relative file path, always use the forward slash `/`, even on Windows systems where the OS prefers the backslash.

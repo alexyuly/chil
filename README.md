@@ -60,7 +60,9 @@ The name `source` is reserved for a reference to a stream which receives no inco
 
 ##### `main`
 
-The name `main` is reserved for a reference to a stream which is the default input for incoming values. If an object sends values to an instance of this component without specifying an input name, those values are routed to `main`. Also, if an object sends values while specifying an input name which is not defined, those values are routed to `main` as well. While this behavior serves no purpose in most (non-leaf) components (and results in a compiler warning), for leaf components like `document template` (which are defined in a native language), this behavior is useful because the undefined input name is passed to the native method, allowing for operations like templating.
+The name `main` is reserved for a reference to a stream which is the default input for incoming values. If an object sends values to an instance of this component without specifying an input name, those values are routed to `main`.
+
+If an object sends values while specifying an input name which is not defined, those values are routed to `main` as well. While this behavior serves no purpose in most (non-leaf) components (and results in a compiler warning), for leaf components like `document template` (which are defined in a native language), this behavior is useful because the undefined input name is passed to the native method, allowing for operations like templating.
 
 ##### Other stream names
 
@@ -189,7 +191,7 @@ main:
 ```
 is translated into the collapsed form
 ```yml
-main / sink / document template:
+main /sink /document template:
   type: div
   child:
     - "Hello, "
@@ -198,4 +200,4 @@ main / sink / document template:
 
 The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
 
-Note that the forward slash `/` is a reserved symbol within Chil names. The compiler will throw an error if it is used incorrectly.
+Note that the forward slash `/` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if it these symbols are used incorrectly.

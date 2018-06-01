@@ -92,6 +92,8 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
 
 Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object behaves just like an instance of any component with a single `main` input stream, which receives incoming values and sends them out to all connected listeners.
 
+##### `pipe`
+
 The `pipe` connector is constructed with a list of references to streams. Incoming values are sent to the first stream in the list, whose object outputs to the second stream (if present), and so on, until values are sent to the overall pipe's output.
 
 ```yml
@@ -205,3 +207,9 @@ The collapsed form is preferred to the expanded form, and the compiler emits a w
 Note that the backward slash `\` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.
 
 When referencing components by their relative file path, always use the forward slash `/`, even on Windows systems where the OS prefers the backslash.
+
+### Type system
+
+#### Separation of components and information
+
+Chil maintains a rigorous separation of components which encapsulate control flow, and the information which flows through these components. Each object is an instance of a "type" of component. Each value sent to an input of an object is an instance of a "type" of information. A component type declaration is composed of a `.layout` file which contains the YAML implementation of that component. To reference an instance of a component (known as an "object"), one refer

@@ -24,4 +24,6 @@ Chil is a *push* system, in a world where most object-oriented languages are *pu
 
 ## 1 Compiler architecture
 
-Chil is designed to be universally applicable to, and agnostic of the differences between, various runtime environments, where appropriate. Source code expressed as any number of YAML files is sent to the Chil compiler, which outputs a "intermediate code" expressed as a single JSON file. Chil intermediate code (CIC) is parsed by a Chil runtime engine specific to a given platform such as Node.js.
+Chil is designed to be universally applicable to, and agnostic of the differences between, various runtime environments, where appropriate. Source code expressed as any number of YAML files is sent to the Chil compiler, which outputs *Chil intermediate code* (*CIC*), expressed as a single JSON file. CIC is parsed by a Chil runtime engine which executes the code on a specific platform such as Node.js.
+
+A single source file is passed as an argument to the compiler *shell*, which enters the object graph at that point and builds a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object.

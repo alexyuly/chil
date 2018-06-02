@@ -18,8 +18,10 @@ Chil is a different kind of object-oriented system, built for business and consu
 
 Chil organizes data into components, which are built from instances of other components. Functions are replaced by streams, which are organized into components instead of classes. In terms of data flow, streams are unidirectional while functions are bidirectional. Streams are autonomous, while functions are tools. A stream listens for incoming data and sends outgoing data, of its own accord. A function is called by a subject in order to manipulate an object. A stream gives to an object, while objects take from functions.
 
-### Push and pull
+Chil is a *push* system, in a world where most object-oriented languages are *pull* systems. *Push* is the design philosophy that objects should 1) report their own status, and 2) listen for the status of other objects. An object should never access the data of another object, nor should it ever directly control the behavior of another object. In this way, object responsibilities are well encapsulated, and data flow is separate from control flow.
 
-Chil is a *push* system, in a world where most object-oriented languages are *pull* systems. *Push* is the design philosophy that objects should 1) report their own status, and 2) listen for the status of other objects. An object should never access the data of another object, nor should it ever directly control the behavior of another object. In this way, objects are well encapsulated, and data flow is separate from control flow.
+*Pull* is the design philosophy that objects should 1) allow other objects to fetch their status, and 2) allow other objects to directly control their behavior. In this way, object responsibilities are not encapsulated at all, and data and control flow are mixed, which makes control flow harder to reason about, and data flow harder to change.
 
-*Pull* is the design philosophy that objects should 1) allow other objects to fetch their status, and 2) allow other objects to control their behavior. In this way, objects are not encapsulated at all, and data flow is mixed with control flow, which makes control flow harder to reason about.
+## 1 Compiler architecture
+
+Chil is designed to be universally applicable to, and agnostic of the differences between, various runtime environments, where appropriate. Source code expressed as any number of YAML files is sent to the Chil compiler, which outputs a "intermediate code" expressed as a single JSON file. Chil intermediate code (CIC) is parsed by a Chil runtime engine specific to a given platform such as Node.js.

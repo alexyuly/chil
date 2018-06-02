@@ -28,6 +28,6 @@ Chil is designed to be universally applicable to, and agnostic of the difference
 
 A single source file is passed as an argument to the compiler *shell*, which enters the object graph at that point and builds a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object.
 
-![Figure 1.1: a visual representation of parent-child relationships (concentric circles) and sibling relationships (adjacent circles)](images/Figure-1-1.png)
+![Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)](images/Figure-1-1.png)
 
-Figure 1.1: a visual representation of parent-child relationships (concentric circles) and sibling relationships (adjacent circles)
+Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)

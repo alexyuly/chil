@@ -28,7 +28,7 @@ All object construction happens at compile time, so no reference passing is allo
 
 The source code for a Chil application is expressed as any number of YAML files. A single source file, called the *root component*, is passed as an argument to the compiler, which enters the application's object graph at that point and outputs a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object. Compiler output is in the form of *Chil intermediate code* (*CIC*), expressed as a single JSON file. CIC is parsed by a Chil runtime engine which executes the code on a specific platform such as Node.js. The use of an intermediate language allows Chil to be decoupled from any particular runtime environment.
 
-The object graph of a Chil application could be represented something like the following image, where the outermost circle depicts the root component:
+The object graph of a Chil application, and its CIC JSON data structure, can be represented something like the following image, where the outermost circle depicts the root component:
 
 ![Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)](images/Figure-1-1.png)
 
@@ -38,9 +38,9 @@ Notice how no connections (i.e., sibling relationships) are allowed to cross the
 
 ## 2 Source code
 
-Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.layout`, according to its purpose. The purpose of a layout source file is to define the flow of data through each stream of a component. A component is a collection of streams which receive input and send output on behalf of the component. The data flow of each stream is delegated to a stream of a "child" component.
+Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.layout`, according to its purpose.
 
-The purpose of a domain source file is to define the types of data permitted to be sent into each stream of a component. Each component must have a layout file, but the domain file is optional. If no domain file exists, then each input stream will be permitted to receive any value. If a domain file does exist, then any input stream for which no domain is specified will be permitted to receive any value, as well.
+
 
 ### 2.1 Domain source files
 
@@ -48,19 +48,15 @@ The optional domain source file for a given component is expressed as a YAML doc
 
 #### 2.1.1 Numbers
 
-The type of data which includes all valid JSON numbers is expressed as `number`. So, an example of a simple domain file for a component with one input which accepts only numbers might look like
-
-```yaml
-main: number
-```
+The type of data which includes all valid JSON numbers is expressed as `number`.
 
 The types of data which include numbers which are less than, greater than, less than or equal to, and greater than or equal to, are expressed as key-value pairs:
 
 ```yaml
 under: literal number value
 over: literal number value
-under ?: literal number value
-over ?: literal number value
+under or =: literal number value
+over or =: literal number value
 ...
 ```
 
@@ -96,7 +92,7 @@ Unspecified keys are not constrained to any type. Regular expressions are valid 
 The type of data which is constrained to a single literal value of any type, is expressed as a key-value pair:
 
 ```yaml
-?: literal value
+=: literal value
 ```
 
 #### 2.1.6 Union of types
@@ -104,7 +100,7 @@ The type of data which is constrained to a single literal value of any type, is 
 The type of data which includes the union of an unordered sequence of types of data, is expressed as
 
 ```yaml
-union:
+any of:
   - type 1
   - type 2
 ...
@@ -113,9 +109,9 @@ union:
 An enumeration is defined by a union of literal values:
 
 ```yaml
-union:
-  - ?: literal value 1
-  - ?: literal value 2
+any of:
+  - =: literal value 1
+  - =: literal value 2
   ...
 ```
 
@@ -124,13 +120,35 @@ union:
 The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
 
 ```yaml
-intersect:
+all of:
   - type 1
   - type 2
 ...
 ```
 
-The compiler emits a warning if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty.
+The compiler throws an error if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty, for example:
+
+```yaml
+# This type definition makes no sense:
+all of:
+  - =: 0
+  - =: 1
+```
+
+The compiler will throw an error:
+
+```
+Empty type error
+Line 135, Char 2
+all of:
+  - =: 0
+  - =: 1
+  ^
+Types of `=: 0` and `=: 1` are disjoint. The result of `all of` is empty.
+Did you mean to use `any of`?
+```
+
+If you want to define an empty type, you must explicitly use the `never` keyword.
 
 #### 2.1.7 Inverse of a type
 

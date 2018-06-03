@@ -40,13 +40,19 @@ Notice how no connections (i.e., sibling relationships) are allowed to cross the
 
 Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.layout`, according to its purpose.
 
-
-
 ### 2.1 Domain source files
 
 The optional domain source file for a given component is expressed as a YAML document with a dictionary mapping names of input streams, to the types of data permitted to be sent to those inputs. This forms the *domain* of a component. A type of data is defined as a set of values. Some types are inherent to chil and may be referenced in any domain file.
 
-#### 2.1.1 Numbers
+#### 2.1.1 Literal values
+
+The simplest type is the type of data which is constrained to a single literal value of any type, expressed as a key-value pair:
+
+```yaml
+=: literal value
+```
+
+#### 2.1.2 Numbers
 
 The type of data which includes all valid JSON numbers is expressed as `number`.
 
@@ -60,7 +66,7 @@ over or =: literal number value
 ...
 ```
 
-#### 2.1.2 Strings
+#### 2.1.3 Strings
 
 The type of data which includes all valid JSON strings is expressed as `string`.
 
@@ -70,11 +76,11 @@ The type of data which includes strings which match a given regular expression, 
 match: regular expression
 ```
 
-#### 2.1.3 Lists
+#### 2.1.4 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
 
-#### 2.1.4 Lookups
+#### 2.1.5 Lookups
 
 The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
@@ -86,14 +92,6 @@ lookup:
 ```
 
 Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
-
-#### 2.1.5 Literal values
-
-The type of data which is constrained to a single literal value of any type, is expressed as a key-value pair:
-
-```yaml
-=: literal value
-```
 
 #### 2.1.6 Union of types
 
@@ -115,7 +113,7 @@ any of:
   ...
 ```
 
-#### 2.1.6 Intersection of types
+#### 2.1.7 Intersection of types
 
 The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
 
@@ -150,7 +148,7 @@ Did you mean to use `any of`?
 
 If you want to define an empty type, you must explicitly use the `never` keyword.
 
-#### 2.1.7 Inverse of a type
+#### 2.1.8 Inverse of a type
 
 The type of data which includes all values which are not included in a given type, is expressed as
 

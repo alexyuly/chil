@@ -36,11 +36,11 @@ Figure 1.1: a visual representation of parent-child relationships (overlapping c
 
 Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.layout` or `.domain`, according to its purpose. The purpose of a layout source file is to define the flow of data through each stream of a component. A component is a collection of streams which receive input and send output on behalf of the component. The data flow of each stream is delegated to a stream of a "child" component.
 
-The purpose of a domain source file is to define the types of data permitted to be sent into each stream of the same component. So, there is a 1:1 mapping of a component to a set of layout and domain files. Within this set, the domain file is optional. If nonexistent, then the type of data permitted for each input is the union of all possible types of data.
+The purpose of a domain source file is to define the types of data permitted to be sent into each stream of a component. Each component must have a layout file, but the domain file is optional. If no domain file exists, then each input stream will be permitted to receive any value. If a domain file does exist, then any input stream for which no domain is specified will be permitted to receive any value, as well.
 
 ### 2.1 Domain source files
 
-The optional domain source file for a given component is expressed as a YAML document with a dictionary mapping names of input streams, to the types of data permitted to be sent to those inputs. A type of data is defined as a set of values. Some types are inherent to chil and may be referenced in any domain file.
+The optional domain source file for a given component is expressed as a YAML document with a dictionary mapping names of input streams, to the types of data permitted to be sent to those inputs. This forms the *domain* of a component. A type of data is defined as a set of values. Some types are inherent to chil and may be referenced in any domain file.
 
 #### 2.1.1 Numbers
 

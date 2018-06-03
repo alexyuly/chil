@@ -50,6 +50,23 @@ The type of data which includes all valid JSON numbers is expressed as `number`.
 main: number
 ```
 
+The types of data which include numbers which are less than, greater than, less than or equal to, and greater than or equal to, are expressed as
+
+```yaml
+input 1:
+  <: literal number value
+  
+input 2:
+  >: literal number value
+  
+input 3:
+  <=: literal number value
+  
+input 4:
+  >=: literal number value
+...
+```
+
 #### 2.1.2 Strings
 
 The type of data which includes all valid JSON strings is expressed as `string`.
@@ -71,15 +88,12 @@ lookup:
 
 Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
 
-#### 2.1.5 Enumerated values
+#### 2.1.5 Literal values
 
-The type of data which includes any of a specifically enumerated set of literal values of any type, is expressed as
+The type of data which includes any of a specific literal values of any type, is expressed as a key-value pair:
 
 ```yaml
-literal:
-  - literal value 1
-  - literal value 2
-  ...
+=: literal value
 ```
 
 #### 2.1.6 Union of types
@@ -87,10 +101,19 @@ literal:
 The type of data which includes the union of an unordered sequence of types of data, is expressed as
 
 ```yaml
-in any of:
+union:
   - type 1
   - type 2
 ...
+```
+
+An enumeration is defined by a union of literal values:
+
+```yaml
+union:
+  - =: literal value 1
+  - =: literal value 2
+  ...
 ```
 
 #### 2.1.6 Intersection of types
@@ -98,7 +121,7 @@ in any of:
 The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
 
 ```yaml
-in all of:
+intersect:
   - type 1
   - type 2
 ...

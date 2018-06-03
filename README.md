@@ -44,7 +44,7 @@ The optional domain source file for a given component is expressed as a YAML doc
 
 #### 2.1.1 Numbers
 
-The type of data which includes all valid JSON numbers is expressed as `number`. So, a simple domain file for a component with one input which accepts only numbers looks like
+The type of data which includes all valid JSON numbers is expressed as `number`. So, an example of a simple domain file for a component with one input which accepts only numbers might look like
 
 ```yaml
 main: number

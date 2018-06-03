@@ -53,10 +53,10 @@ main: number
 The types of data which include numbers which are less than, greater than, less than or equal to, and greater than or equal to, are expressed as key-value pairs:
 
 ```yaml
-less than: literal number value
-more than: literal number value
-less than ?: literal number value
-more than ?: literal number value
+under: literal number value
+over: literal number value
+under ?: literal number value
+over ?: literal number value
 ...
 ```
 

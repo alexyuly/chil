@@ -64,6 +64,12 @@ over ?: literal number value
 
 The type of data which includes all valid JSON strings is expressed as `string`.
 
+The type of data which includes strings which match a given regular expression, is expressed as
+
+```yaml
+match: regular expression
+```
+
 #### 2.1.3 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
@@ -83,7 +89,7 @@ Unspecified keys are not constrained to any type. Regular expressions are valid 
 
 #### 2.1.5 Literal values
 
-The type of data which includes any of a specific literal values of any type, is expressed as a key-value pair:
+The type of data which is constrained to a single literal value of any type, is expressed as a key-value pair:
 
 ```yaml
 ?: literal value

@@ -12,7 +12,7 @@ This standard defines the first edition of the Chil Language. Chil is a dynamic 
 
 The fundmental unit of traditional object-oriented systems is a *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B, which returns to class A.
 
-Moreover, pervasive object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since a change in the behavior of an inherited parent method, or the removal of a parent override, result in unclear consequences as to the behavior of child methods. This creates a domino effect which makes software unmaintainable, by causing base classes to become the base of a house of cards which can't be moved without destroying the system.
+Moreover, pervasive object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since a change in the behavior of an inherited parent method, or the removal of a parent override, results in unclear consequences as to the behavior of child methods. This creates a domino effect which makes code unmaintainable, by causing base classes to become the base of a house of cards which can't be moved without destroying the system.
 
 Worse yet, objects may freely pass references around the object graph, allowing references to travel and live arbitrarily far from the object which constructed their own referenced objects. If class A passes a reference to its own private field to a method of class B, then class B has access to private data (or perhaps even functions) of class A, which violates object-oriented encapsulation.
 
@@ -20,7 +20,7 @@ Worse yet, objects may freely pass references around the object graph, allowing 
 
 In contrast to traditional object-oriented systems, the fundamental of unit of Chil is the *component*, which is a prototype for a stateless set of interconnected streams, with *0-n* keyed inputs and *1* output. Each input feeds values into a *stream*, which is a reference to an input of a child of the component.
 
-Each component defines a set of component instances called *children*, which are referenced within streams. Special *connection objects* form the bridge of communication between children.
+Each component defines a set of component instances called *children*, which are referenced within streams. Special *connection objects* form the bridge of communication between children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be connected to the component output, in various ways.
 
 All object construction happens at compile time, so no reference passing is allowed. Object reference relationships are defined by the communication contract expressed in a component's source code, which is established at compile time and enforced during runtime.
 
@@ -54,7 +54,7 @@ The simplest type is the type of data which is constrained to a single literal v
 
 #### 2.1.2 Null
 
-The type of data which is constrained to the value of JSON `null` is expressed as `null`.
+The type of data which is constrained to the value of JSON `null` is expressed as `null`. The concept of "null" has no significance with a data-flow framework like Chil, so please don't introduce null into greenfield systems. Nulls exist for legacy use only, and because the compiler outputs CIC (Chil intermediate code) which relies on JSON.
 
 #### 2.1.3 True or false
 

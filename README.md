@@ -32,22 +32,39 @@ A single source file is passed as an argument to the compiler *shell*, which ent
 
 Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)
 
-## 2 Component behavior
+## 2 Source code
 
-Chil is organized around the *component*, which is a collection of streams which receive input and send output on behalf of the component. 
+Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.layout` or `.domain`, according to its purpose. The purpose of a layout source file is to define the flow of data through each stream of a component. A component is a collection of streams which receive input and send output on behalf of the component. The data flow of each stream is delegated to a stream of a "child" component.
 
-## 3 Source code
+The purpose of a domain source file is to define the types of data permitted to be sent into each stream of the same component. So, there is a 1:1 mapping of a component to a set of layout and domain files. Within this set, the domain file is optional. If nonexistent, then the type of data permitted for each input is the union of all possible types of data.
 
-Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.layout` or `.domain`, according to its purpose. The purpose of a layout source file is to define the flow of data through each input stream of a component. The purpose of a domain source file is to define the types of data permitted to be sent to each input stream of the same component. So, there is a 1:1 mapping of a component to a set of layout and domain files. Within this set, the domain file is optional. If nonexistent, then the type of data permitted for each input is the union of all possible types of data.
+### 2.1 Domain source files
 
-### 3.1 Domain source files
+The optional domain source file for a given component is expressed as a YAML document with a dictionary mapping names of input streams, to the types of data permitted to be sent to those inputs. A type of data is defined as a set of values. Some types are inherent to chil and may be referenced in any domain file.
 
-The domain source file for a given component is expressed as a YAML document with a dictionary mapping names of input streams, to the types of data permitted to be sent to those inputs. A type of data is defined as a set of values. Some types are inherent to chil and may be referenced in any domain file.
+#### 2.1.1 Numbers
 
-#### 3.1.1 Numbers
-
-The type of data which includes all valid JSON numbers is expressed as `number`. So, a simple domain file for a component with one input which accepts only numbers looks like:
+The type of data which includes all valid JSON numbers is expressed as `number`. So, a simple domain file for a component with one input which accepts only numbers looks like
 
 ```yaml
 main: number
+```
+
+#### 2.1.2 Strings
+
+The type of data which includes all valid JSON strings is expressed as `string`.
+
+#### 2.1.3 Lists
+
+The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
+
+#### 2.1.4 Lookups
+
+The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects whose properties are constrained to a specific set of key-type pairs is expressed as
+
+```yaml
+lookup:
+  key 1: type 1
+  key 2: type 2
+  ...
 ```

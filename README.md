@@ -52,7 +52,15 @@ The simplest type is the type of data which is constrained to a single literal v
 =: literal value
 ```
 
-#### 2.1.2 Numbers
+#### 2.1.2 Null
+
+The type of data which is constrained to the value of JSON `null` is expressed as `null`.
+
+#### 2.1.3 True or false
+
+The type of data which is constrained to JSON booleans is expressed as `true or false`.
+
+#### 2.1.4 Numbers
 
 The type of data which includes all valid JSON numbers is expressed as `number`.
 
@@ -66,7 +74,7 @@ over or =: literal number value
 ...
 ```
 
-#### 2.1.3 Strings
+#### 2.1.5 Strings
 
 The type of data which includes all valid JSON strings is expressed as `string`.
 
@@ -76,11 +84,11 @@ The type of data which includes strings which match a given regular expression, 
 match: regular expression
 ```
 
-#### 2.1.4 Lists
+#### 2.1.6 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
 
-#### 2.1.5 Lookups
+#### 2.1.7 Lookups
 
 The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
@@ -93,7 +101,7 @@ lookup:
 
 Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
 
-#### 2.1.6 Union of types
+#### 2.1.8 Union of types
 
 The type of data which includes the union of an unordered sequence of types of data, is expressed as
 
@@ -113,7 +121,7 @@ any of:
   ...
 ```
 
-#### 2.1.7 Intersection of types
+#### 2.1.9 Intersection of types
 
 The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
 
@@ -146,9 +154,16 @@ Types of `=: 0` and `=: 1` are disjoint. The result of `all of` is empty.
 Did you mean to use `any of`?
 ```
 
-If you want to define an empty type, you must explicitly use the `never` keyword.
+If you want to define an empty type, you must explicitly use the `never` keyword. For example, you could use `never` to define a type which includes all JSON objects which absolutely never have any value defined for a given key:
 
-#### 2.1.8 Inverse of a type
+```yaml
+lookup:
+  I want this key: number
+  I want this key too: string
+  I never want this key: never
+```
+
+#### 2.1.10 Inverse of a type
 
 The type of data which includes all values which are not included in a given type, is expressed as
 

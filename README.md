@@ -34,6 +34,8 @@ The object graph of a Chil application could be represented something like the f
 
 Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)
 
+Notice how no connections (i.e., sibling relationships) are allowed to cross the circumference of any component's circle. This illustrates how pure object-oriented encapsulation of data is achieved by Chil.
+
 ## 2 Source code
 
 Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.layout`, according to its purpose. The purpose of a layout source file is to define the flow of data through each stream of a component. A component is a collection of streams which receive input and send output on behalf of the component. The data flow of each stream is delegated to a stream of a "child" component.

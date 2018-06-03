@@ -50,20 +50,13 @@ The type of data which includes all valid JSON numbers is expressed as `number`.
 main: number
 ```
 
-The types of data which include numbers which are less than, greater than, less than or equal to, and greater than or equal to, are expressed as
+The types of data which include numbers which are less than, greater than, less than or equal to, and greater than or equal to, are expressed as key-value pairs:
 
 ```yaml
-input 1:
-  <: literal number value
-  
-input 2:
-  >: literal number value
-  
-input 3:
-  <=: literal number value
-  
-input 4:
-  >=: literal number value
+less than: literal number value
+more than: literal number value
+less than ?: literal number value
+more than ?: literal number value
 ...
 ```
 
@@ -93,7 +86,7 @@ Unspecified keys are not constrained to any type. Regular expressions are valid 
 The type of data which includes any of a specific literal values of any type, is expressed as a key-value pair:
 
 ```yaml
-=: literal value
+?: literal value
 ```
 
 #### 2.1.6 Union of types
@@ -111,8 +104,8 @@ An enumeration is defined by a union of literal values:
 
 ```yaml
 union:
-  - =: literal value 1
-  - =: literal value 2
+  - ?: literal value 1
+  - ?: literal value 2
   ...
 ```
 

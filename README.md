@@ -12,9 +12,9 @@ This standard defines the first edition of the Chil Language. Chil is a dynamic 
 
 The fundmental unit of traditional object-oriented systems is a *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B, which returns to class A.
 
-Moreover, pervasive object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since a change in the behavior of an inherited parent method, or the removal of a parent override, results in unclear consequences as to the behavior of child methods. This creates a domino effect which makes code unmaintainable, by causing base classes to become the base of a house of cards which can't be moved without destroying the system.
+Moreover, pervasive object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since a change in the behavior of an inherited parent method or the removal of a parent override, results in unclear consequences as to the behavior of child methods. This creates a domino effect which makes code unmaintainable, by causing base classes to become the base of a house of cards which can't be moved without destroying the system.
 
-Worse yet, objects may freely pass references around the object graph, allowing references to travel and live arbitrarily far from the object which constructed their own referenced objects. If class A passes a reference to its own private field to a method of class B, then class B has access to private data (or perhaps even functions) of class A, which violates object-oriented encapsulation.
+Worse yet, objects may freely pass references around the object graph, allowing references to travel and live arbitrarily far from the object which constructed their own referenced objects. If class A passes a reference to its own private field to a method of class B, then class B has access to private data (or perhaps even functions) of class A, which violates the concept of object-oriented encapsulation.
 
 ### Contrasting features of Chil
 
@@ -34,7 +34,7 @@ The object graph of a Chil application, and its CIC JSON data structure, can be 
 
 Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)
 
-Notice how no connections (i.e., sibling relationships) are allowed to cross the circumference of any component's circle. This illustrates how pure object-oriented encapsulation of data is achieved by Chil.
+Notice how no connections (i.e., sibling relationships) are allowed to cross the circumference of any component's circle. This  visually illustrates how Chil achieves pure object-oriented encapsulation of data.
 
 ## 2 Source code
 
@@ -73,6 +73,8 @@ under or =: literal number value
 over or =: literal number value
 ...
 ```
+
+If your type definitions require more specificity, Chil supports the `integer` keyword for the type which includes only integers, as well as `whole` for the type which includes `0,1,2,3,...`, and `natural` for the type which includes `1,2,3,...`.
 
 #### 2.1.5 Strings
 

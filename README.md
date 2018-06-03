@@ -8,19 +8,21 @@ Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license.
 
 This standard defines the first edition of the Chil Language. Chil is a dynamic application programming language for expressing informational hierarchies formed by components. The *Chil* name is an acronym for *component hierarchy information language*.
 
-The fundmental unit of traditional object-oriented systems is a *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*.
+### Overview of traditional object-oriented systems
 
-In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B, which returns to class A.
+The fundmental unit of traditional object-oriented systems is a *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B, which returns to class A.
 
 Moreover, pervasive object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since a change in the behavior of an inherited parent method, or the removal of a parent override, result in unclear consequences as to the behavior of child methods. This creates a domino effect which makes software unmaintainable, by causing base classes to become the base of a house of cards which can't be moved without destroying the system.
 
-Worse yet, objects may freely pass references around the object graph, allowing references to travel and live arbitrarily far from their objects. If class A passes a reference to its own private field to a method of class B, then class B has access to private data (or perhaps even functions) of class A, which violates object-oriented encapsulation.
+Worse yet, objects may freely pass references around the object graph, allowing references to travel and live arbitrarily far from the object which constructed their own referenced objects. If class A passes a reference to its own private field to a method of class B, then class B has access to private data (or perhaps even functions) of class A, which violates object-oriented encapsulation.
 
-Chil is organized around components, which are composed of instances of other components. Functions are replaced by streams, which are organized into components instead of classes. In terms of data flow, streams are unidirectional while functions are bidirectional. Streams are autonomous, while functions are tools. A stream listens for incoming data and sends outgoing data, of its own accord. A function is called by a subject in order to manipulate an object.
+### Contrasting features of Chil
 
-Chil is a *push* system, in a world where most object-oriented languages are *pull* systems. *Push* is the design philosophy that objects should 1) report their own status, and 2) listen for the status of other objects. An object should never access the data of another object, nor should it ever directly control the behavior of another object. In this way, object responsibilities are well encapsulated, and data flow is separate from control flow.
+In contrast to traditional object-oriented systems, the fundamental of unit of Chil is the *component*, which is a prototype for a stateless set of interconnected streams, with *0-n* keyed inputs and *1* output. Each input feeds values into a *stream*, which is a reference to an input of a child of the component.
 
-*Pull* is the design philosophy that objects should 1) allow other objects to fetch their status, and 2) allow other objects to directly control their behavior. In this way, object responsibilities are not encapsulated at all, and data and control flow are mixed, which makes control flow harder to reason about, and data flow harder to change.
+Each component defines a set of component instances called *children*, which are referenced within streams. Special *connection objects* form the bridge of communication between children.
+
+All object construction happens at compile time, so no reference passing is allowed. Object reference relationships are defined by the communication contract expressed in a component's source code, which is established at compile time and enforced during runtime.
 
 ## 1 Compiler architecture
 

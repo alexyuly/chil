@@ -60,11 +60,56 @@ The type of data which includes all valid JSON Arrays is expressed as `list`. Th
 
 #### 2.1.4 Lookups
 
-The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects whose properties are constrained to a specific set of key-type pairs is expressed as
+The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
 ```yaml
 lookup:
   key 1: type 1
   key 2: type 2
   ...
+```
+
+Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
+
+#### 2.1.5 Enumerated values
+
+The type of data which includes any of a specifically enumerated set of literal values of any type, is expressed as
+
+```yaml
+literal:
+  - literal value 1
+  - literal value 2
+  ...
+```
+
+#### 2.1.6 Union of types
+
+The type of data which includes the union of an unordered sequence of types of data, is expressed as
+
+```yaml
+in any of:
+  - type 1
+  - type 2
+...
+```
+
+#### 2.1.6 Intersection of types
+
+The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
+
+```yaml
+in all of:
+  - type 1
+  - type 2
+...
+```
+
+The compiler emits a warning if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty.
+
+#### 2.1.7 Inverse of a type
+
+The type of data which includes all values which are not included in a given type, is expressed as
+
+```yaml
+not: type
 ```

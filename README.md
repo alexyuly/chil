@@ -161,10 +161,14 @@ lookup:
   I never want this key: never
 ```
 
-#### 2.1.10 Inverse of a type
+#### 2.1.9 Inverse of a type
 
 The type of data which includes all values which are not included in a given type, is expressed as
 
 ```yaml
 not: type
 ```
+
+### 2.2 Layout source files
+
+The required layout source file for a given component is expressed as a YAML document with a dictionary mapping names of inputs to references to streams.

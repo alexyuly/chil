@@ -172,3 +172,141 @@ not: type
 ### 2.2 Layout source files
 
 The required layout source file for a given component is expressed as a YAML document with a dictionary mapping names of inputs to references to streams.
+
+#### 2.2.1 References to streams
+
+Each key in a component's dictionary is mapped to a reference to a stream which exists within the component. These streams are constructed implicitly by Chil at compile time. Each stream is part of an object, which is an instance of a child component. A "reference to a stream" can be expressed in multiple forms:
+
+1. the name of a component, for the main input of the single object of that type
+  - for example, `echo`
+2. the name of a component followed by an `@` ("at") *preposition* with a locally unique ID, for the main input of the locally unique instance of that component
+  - for example, `document events @mousemove`
+  - Note, if no id is provided, such as `document events @`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
+3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
+  - for example, `gate ->state`
+  - or, for example, `delay @my delay ->state`
+  - Note, the whitespace around each preposition is not important: The Chil compiler trims whitespace around prepositions. However, it is conventional to format prepositions with a single leading space and no trailing space.
+4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
+  - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
+  - for example, `delay @my delay: 500`
+5. a connector object
+
+#### 2.2.2 Connector objects
+
+Special ***connector objects*** form the basis of connections between streams of child objects within some parent component. A connector object behaves just like an instance of any component with a single `main` input stream, which receives incoming values and sends them out to all connected listeners.
+
+##### `pipe`
+
+The `pipe` connector is constructed with a list of references to streams. Incoming values are sent to the first stream in the list, whose object outputs to the second stream (if present), and so on, until values are sent to the overall pipe's output.
+
+```yml
+pipe:
+  # in
+  # |
+  # v
+  - stream 1
+  # |
+  # v
+  - stream 2
+  # |
+  # v
+  # etc...
+  # |
+  # v
+  # out
+```
+
+##### `fork`
+
+The `fork` connector is also constructed with a list of references to streams. Incoming values are synchronously sent to each of the streams, and the output from each stream's object is sent to the overall fork's output.
+
+```yml
+fork:
+  # in
+  # |
+  # v
+  - stream 1
+  # |
+  # v
+  # out
+  #
+  # in
+  # |
+  # v
+  - stream 2
+  # |
+  # v
+  # out
+  #
+  # etc...
+```
+
+##### `branch`
+
+The `branch` connector is constructed with a single reference to a stream. Incoming values are synchronously sent to the stream *and* the overall branch output. The stream's object output is also sent to the overall branch output.
+
+```yml
+branch:
+  # in
+  # |
+  # v
+  stream 
+  # |
+  # v
+  # out
+  #
+  # in
+  # |
+  # v
+  # out
+```
+
+##### `sink`
+
+The `sink` connector is also constructed with a single reference to a stream. Incoming values are synchronously sent to the stream. Then, the stream's object output is "sinked" directly to the output of the component.
+
+```yml
+sink:
+  # in
+  # |
+  # v
+  stream
+  # |
+  # v
+  # component out
+```
+
+### 3 Idioms
+
+#### 3.1 `state` as a "secondary" input
+
+As `main` is the default, primary input name of a component, `state` is typically the "secondary" input. Whereas `main` is properly used to direct the flow of data *through* a component resulting in values "sinked" through its output, `state` is properly used to direct values into the component which are stored and used asynchronously by `main`. For example, the `delay` native component has two inputs, `main` and `state`, where `main` triggers a delayed output, and `state` controls the number of milliseconds for the delay. 
+
+#### 3.2 Collapsing only children
+
+If a parent node in the YAML data structure has only a single child, then that parent and its only child may be "collapsed" into a single node.
+
+The expanded form
+```yml
+main:
+  sink:
+    document template:
+      type: div
+      child:
+        - "Hello, "
+        - {$: name}
+```
+is translated into the collapsed form
+```yml
+main \sink \document template:
+  type: div
+  child:
+    - "Hello, "
+    - {$: name}
+```
+
+The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
+
+Note that the backward slash `\` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.
+
+When referencing components by their relative file path, always use the forward slash `/`, even on Windows systems where the OS prefers the backslash.

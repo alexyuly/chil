@@ -42,9 +42,19 @@ Chil source code is formatted according to the [YAML 1.2 specification](http://y
 
 ### 2.1 Domain source files
 
-The optional domain source file for a given component is expressed as a YAML document with a dictionary mapping names of inputs to types of data permitted to be sent to those inputs. This forms the *domain* of a component. A type of data is defined as a set of values. Some types are inherent to Chil, and these types may be referenced in any domain file.
+The domain source file is an optional file with a `.domain` extension. It defines the type of data which each input of a given component is allowed to receive. These types are checked at compile time. They are known as the component *domain*. The name of the domain source file is the name of the component for which the domain is defined.
 
-#### 2.1.1 Literal values
+#### 2.1.1 Domain source file format
+
+The domain source file is a valid YAML document. It contains a dictionary which maps names of input streams to type references.
+
+#### 2.1.2 Type references
+
+A *type reference* is a unique keyword which specifies a type of data, which is a given set of values.
+
+TODO: How to define and import type references?
+
+##### 2.1.2.1 Literal values
 
 The simplest type is the type of data which is constrained to a single literal value of any type, expressed as a key-value pair:
 
@@ -52,11 +62,11 @@ The simplest type is the type of data which is constrained to a single literal v
 =: literal value
 ```
 
-#### 2.1.2 True or false
+##### 2.1.2.2 True or false
 
 The type of data which is constrained to JSON booleans is expressed as `true or false`.
 
-#### 2.1.3 Numbers
+##### 2.1.2.3 Numbers
 
 The type of data which includes all valid JSON numbers is expressed as `number`.
 
@@ -72,7 +82,7 @@ over or =: literal number value
 
 If your type definitions require more specificity, Chil supports the `integer` keyword for the type which includes only integers, as well as `whole` for the type which includes `0,1,2,3,...`, and `natural` for the type which includes `1,2,3,...`.
 
-#### 2.1.4 Strings
+##### 2.1.2.4 Strings
 
 The type of data which includes all valid JSON strings is expressed as `string`.
 
@@ -82,11 +92,11 @@ The type of data which includes strings which match a given regular expression, 
 match: regular expression
 ```
 
-#### 2.1.5 Lists
+##### 2.1.2.5 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
 
-#### 2.1.6 Lookups
+##### 2.1.2.6 Lookups
 
 The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
@@ -99,7 +109,7 @@ lookup:
 
 Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
 
-#### 2.1.7 Union of types
+##### 2.1.2.7 Union of types
 
 The type of data which includes the union of an unordered sequence of types of data, is expressed as
 
@@ -119,7 +129,7 @@ any of:
   ...
 ```
 
-#### 2.1.8 Intersection of types
+##### 2.1.2.8 Intersection of types
 
 The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
 
@@ -161,7 +171,7 @@ lookup:
   I never want this key: never
 ```
 
-#### 2.1.9 Inverse of a type
+##### 2.1.2.9 Inverse of a type
 
 The type of data which includes all values which are not included in a given type, is expressed as
 

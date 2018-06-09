@@ -12,7 +12,7 @@ This standard defines the first edition of the Chil Language. Chil is a dynamic 
 
 The fundmental unit of traditional object-oriented systems is the *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B, which returns to class A.
 
-Moreover, pervasive object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. This creates a domino effect which makes code unmaintainable, by causing base classes to become the foundation of a house of cards which can't be adjusted without shifting the whole system.
+Moreover, common object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. This creates a domino effect which makes code unmaintainable, by causing base classes to become the foundation of a house of cards which can't be adjusted without shifting the whole system.
 
 Worse yet, objects may freely pass references around the object graph, allowing a reference to travel arbitrarily far from the object which constructed its own referenced object. If class A passes a reference to its own private field to a method of class B, then class B gains access to private data (or perhaps even functions) of class A, which violates the concept of object-oriented encapsulation.
 
@@ -22,7 +22,7 @@ In contrast to traditional object-oriented systems, the fundamental of unit of C
 
 Each component defines a set of component instances called *children*, which are referenced within streams. Special *connection objects* form the bridge of communication between children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be connected to the component output, in various ways.
 
-All object construction happens at compile time, so no reference passing is allowed. Object reference relationships are defined by the communication contract expressed in a component's source code, which is established at compile time and enforced during runtime.
+All object construction and relation happens at compile time, so no reference passing is allowed. Object reference relationships are defined by the proximity of objects within source code, rather than the state of objects which hold references.
 
 ## 1 Compiler architecture
 
@@ -59,7 +59,7 @@ TODO: How to define and import type references?
 The simplest type is the type of data which is constrained to a single literal value of any type, expressed as a key-value pair:
 
 ```yaml
-=: literal value
+is: literal value
 ```
 
 ##### 2.1.2.2 True or false
@@ -75,8 +75,8 @@ The types of data which include numbers which are less than, greater than, less 
 ```yaml
 under: literal number value
 over: literal number value
-under or =: literal number value
-over or =: literal number value
+under or is: literal number value
+over or is: literal number value
 ...
 ```
 
@@ -124,8 +124,8 @@ An enumeration is defined by a union of literal values:
 
 ```yaml
 any of:
-  - =: literal value 1
-  - =: literal value 2
+  - is: literal value 1
+  - is: literal value 2
   ...
 ```
 
@@ -145,8 +145,8 @@ The compiler throws an error if any intersected types are disjoint, meaning that
 ```yaml
 # This type definition makes no sense:
 all of:
-  - =: 0
-  - =: 1
+  - is: 0
+  - is: 1
 ```
 
 The compiler will throw an error:
@@ -155,10 +155,10 @@ The compiler will throw an error:
 Empty type error
 Line 135, Char 2
 all of:
-  - =: 0
-  - =: 1
+  - is: 0
+  - is: 1
   ^
-Types of `=: 0` and `=: 1` are disjoint. The result of `all of` is empty.
+Types of `is: 0` and `is: 1` are disjoint. The result of `all of` is empty.
 Did you mean to use `any of`?
 ```
 

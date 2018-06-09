@@ -6,7 +6,7 @@ Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license.
 
 ## Introduction
 
-This standard defines the first edition of the Chil Language. Chil is a data-driven application programming language for expressing informational hierarchies of components. The *Chil* name is an acronym for *component hierarchy information language*.
+This standard defines the first edition of the Chil Language, a data-driven application programming language. The *Chil* name is an acronym for *component hierarchy information language*.
 
 ### Overview of traditional object-oriented systems
 
@@ -26,7 +26,7 @@ All object construction and relation happens at compile time, so no reference pa
 
 ## 1 Compiler architecture
 
-The source code for a Chil application is expressed as any number of YAML files. A single source file, called the *root component*, is passed as an argument to the compiler, which enters the application's object graph at that point and outputs a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object. Compiler output is in the form of *Chil intermediate code* (*CIC*), expressed as a single JSON file. CIC is parsed by a Chil runtime engine which executes the code on a specific platform such as Node.js. The use of an intermediate language allows Chil to be decoupled from any particular runtime environment.
+The source code for a Chil application is expressed as any number of YAML files. A single source file (or a pair of files), called the *root component*, is passed as an argument to the compiler, which enters the application's object graph at that point and outputs a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object. Compiler output is in the form of *Chil intermediate code* (*CIC*), expressed as a single JSON file. CIC is parsed by a Chil runtime engine which executes the code on a specific platform such as Node.js. The use of an intermediate language allows Chil to be decoupled from any particular runtime environment.
 
 The object graph of a Chil application, and its CIC JSON data structure, can be represented something like the following image, where the outermost circle depicts the root component:
 
@@ -207,7 +207,7 @@ Each key in a component's dictionary is mapped to a reference to a stream which 
 3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
   - for example, `gate ->state`
   - or, for example, `delay @my delay ->state`
-  - Note, the whitespace around each preposition is not important: The Chil compiler trims whitespace around prepositions. However, it is conventional to format prepositions with a single leading space and no trailing space.
+  - Note, the whitespace around each preposition is not important: The Chil compiler trims whitespace around each symbol, which includes names (such as `delay` or `my delay`) and prepositions (such as `@` or `->`). However, it is conventional to format prepositions with a single leading space and no trailing space.
 4. a key-value pair with a key of one of (1), (2), or (3), followed by a value passed to the object when it is initialized
   - This key-value pair is called a constructor. At most one constructor per object is allowed. Constructors are not required, and the location of the constructor within code is irrelevant. All objects are constructed for which exist at least one reference of any kind.
   - for example, `delay @my delay: 500`
@@ -302,7 +302,7 @@ sink:
 
 #### 3.1 `state` as a "secondary" input
 
-As `main` is the default, primary input name of a component, `state` is typically the "secondary" input. Whereas `main` is properly used to direct the flow of data *through* a component resulting in values "sinked" through its output, `state` is properly used to direct values into the component which are stored and used asynchronously by `main`. For example, the `delay` native component has two inputs, `main` and `state`, where `main` triggers a delayed output, and `state` controls the number of milliseconds for the delay. 
+Whereas `main` refers to the default, primary input of a component, `state` typically refers to the "secondary" input. And whereas `main` is properly used to define a component's data *throughput* resulting in values "sinked" through its output, `state` is properly used to define a component's data *storage* which handles values used asynchronously by the main stream. For example, the `delay` native component has two inputs, `main` and `state`, where `main` triggers a delayed output, and `state` controls the number of milliseconds for the delay. 
 
 #### 3.2 Collapsing only children
 

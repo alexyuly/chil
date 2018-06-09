@@ -6,23 +6,23 @@ Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license.
 
 ## Introduction
 
-This standard defines the first edition of the Chil Language. Chil is a dynamic application programming language for expressing informational hierarchies formed by components. The *Chil* name is an acronym for *component hierarchy information language*.
+This standard defines the first edition of the Chil Language. Chil is a data-driven application programming language for expressing informational hierarchies of components. The *Chil* name is an acronym for *component hierarchy information language*.
 
 ### Overview of traditional object-oriented systems
 
-The fundmental unit of traditional object-oriented systems is the *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B, which returns to class A.
+The fundmental unit of traditional object-oriented systems is the *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B which returns to class A.
 
 Moreover, common object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. This makes object-oriented code unmaintainable over time, because base classes to become the foundation of a house of cards which can't be adjusted without shifting the whole system.
 
-Worse yet, objects may freely pass references around the object graph, allowing a reference to travel arbitrarily far from the object which constructed its own referenced object. If class A passes a reference to its own private field to a method of class B, then class B gains access to private data (or perhaps even functions) of class A, which violates the concept of object-oriented encapsulation.
+Worse yet, objects may freely pass references around the object graph, allowing a reference to travel arbitrarily far from the object which constructed its own referenced object. If class A passes a reference to its own private field to a method of class B, then class B gains access to private data (or perhaps even functions) of class A, which completely violates the spirit of object-oriented encapsulation.
 
 ### Contrasting features of Chil
 
-In contrast to traditional object-oriented systems, the fundamental of unit of Chil is the *component*, which is a prototype for a stateless set of interconnected streams, with *0-n* named inputs and *1* output. Each input feeds values into a *stream*, which is a reference to an input of a child of the component.
+In contrast to traditional object-oriented systems, the fundamental of unit of Chil is the *component*, a prototype for a stateless set of interconnected streams with a single output and *0 or more* named inputs. Each input feeds values into a *stream*, which is a reference to an input of a child of the component.
 
-Each component defines a set of component instances called *children*, which are referenced within streams. Special *connection objects* form the bridge of communication between children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be connected to the component output, in various ways.
+Each component owns a set of objects called *children*, which are referenced within streams. Special *connection objects*, which are a kind of children, form the bridge of communication between children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be connected to the component output, in various ways.
 
-All object construction and relation happens at compile time, so no reference passing is allowed. Object reference relationships are defined by the proximity of objects within source code, rather than the state of objects which hold references. Moreover, all objects are stateless, except for those at the lowest level of abstraction, which may hold their own private state.
+All object construction and relation happens at compile time, so no reference passing is allowed. Object reference relationships are defined by the proximity of objects within source code, rather than the state of objects which hold references. Moreover, all objects are stateless, except for those defined at the lowest level using native code, which may independently manage their own private state.
 
 ## 1 Compiler architecture
 

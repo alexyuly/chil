@@ -36,9 +36,11 @@ The object graph of a Chil application, and its CIC JSON data structure, can be 
 
 ### 1.1 Pure encapsulation
 
-In the above diagram, no connection "lines" are allowed to cross the circumference of any component "circle". This visually illustrates Chil's guiding principle: pure object-oriented encapsulation.
+In the above diagram, no connection "lines" are allowed to cross the circumference of any component "circle". This visually illustrates Chil's first guiding principle: pure object-oriented encapsulation.
 
-TODO
+Most traditional object-oriented languages violate the spirit of encapsulation by allowing objects to relate with other objects which are physically distant in code, thereby conceptually binding together distant code passages. Chil enforces the idea of *proximity*, that objects which have close relationships must live close together in code.
+
+Proximity enforcement enables pure encapsulation. Since object relationships are defined at compile time and kept constant during runtime, Chil guarantees that all flow of data into and out of each object is self-evident in code. There are no more surprises for humans trying understand the flow of data, like, *How did object foo access the data of bar??*, or *How did object foo call a method on bar?!*.
 
 ### 1.2 Strong, flexible types
 
@@ -56,11 +58,7 @@ The domain source file is an optional file with a `.domain` extension. It define
 
 The domain source file is a valid YAML document. It contains a dictionary which maps names of input streams to type references.
 
-#### 2.1.2 Type references
-
-A *type reference* is a unique keyword which specifies a type of data, which is a given set of values.
-
-TODO: How to define and import type references?
+#### 2.1.2 Fundamental types
 
 ##### 2.1.2.1 Literal values
 
@@ -186,6 +184,10 @@ The type of data which includes all values which are not included in a given typ
 ```yaml
 not: type
 ```
+
+#### 2.1.3 Composed types
+
+TODO
 
 ### 2.2 Schema source files
 

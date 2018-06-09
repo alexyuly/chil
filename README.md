@@ -12,7 +12,7 @@ This standard defines the first edition of the Chil Language. Chil is a data-dri
 
 The fundmental unit of traditional object-oriented systems is the *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B which returns to class A.
 
-Moreover, common object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. This makes object-oriented code unmaintainable over time, because base classes to become the foundation of a house of cards which can't be adjusted without shifting the whole system.
+Moreover, popular object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. This makes object-oriented code unmaintainable over time, because base classes to become the foundation of a house of cards which can't be adjusted without shifting the whole system.
 
 Worse yet, objects may freely pass references around the object graph, allowing a reference to travel arbitrarily far from the object which constructed its own referenced object. If class A passes a reference to its own private field to a method of class B, then class B gains access to private data (or perhaps even functions) of class A, which completely violates the spirit of object-oriented encapsulation.
 
@@ -32,13 +32,21 @@ The object graph of a Chil application, and its CIC JSON data structure, can be 
 
 ![Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)](images/Figure-1-1.png)
 
-Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)
+**Figure 1.1:** a diagram of parent-child relationships (overlapping circles) and sibling relationships (connected circles)
 
-Notice how no connections (i.e., sibling relationships) are allowed to cross the circumference of any component's circle. This  visually illustrates how Chil achieves pure object-oriented encapsulation of data.
+### 1.1 Pure encapsulation
+
+In the above diagram, no connection "lines" are allowed to cross the circumference of any component "circle". This visually illustrates Chil's guiding principle: pure object-oriented encapsulation.
+
+TODO
+
+### 1.2 Strong, flexible types
+
+TODO
 
 ## 2 Source code
 
-Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.layout`, according to its purpose.
+Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.schema`, according to its purpose.
 
 ### 2.1 Domain source files
 
@@ -179,9 +187,9 @@ The type of data which includes all values which are not included in a given typ
 not: type
 ```
 
-### 2.2 Layout source files
+### 2.2 Schema source files
 
-The required layout source file for a given component is expressed as a YAML document with a dictionary mapping names of inputs to references to streams.
+The required schema source file for a given component is expressed as a YAML document with a dictionary mapping names of inputs to references to streams.
 
 #### 2.2.1 References to streams
 

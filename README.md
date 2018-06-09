@@ -44,11 +44,9 @@ Proximity enforcement enables pure encapsulation. Since object relationships are
 
 ### 1.2 Strong, flexible types
 
-At compile time, static type safety is both a first-class concept and incrementally adoptable. Every input of every object can have an optional static type definition.
+At compile time, static type safety is both a first-class concept and incrementally adoptable. Every input of every object can have an optional static type definition, which the compiler checks against the implicit type of each output which is connected to the target input.
 
-At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*.
-
-Chil unifies the concept *conditionals* with types. At compile time, types serve as conditional checks for the compiler to ensure that each connection specified in code is allowed. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
+At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*. Chil unifies the concept *conditionals* with types. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
 
 ## 2 Source code
 
@@ -66,7 +64,7 @@ The domain source file is a valid YAML document. It contains a dictionary which 
 
 ##### 2.1.2.1 Literal values
 
-The simplest type is the type of data which is constrained to a single literal value of any type, expressed as a key-value pair:
+The simplest type of data is constrained to a single literal value of any type, expressed as a key-value pair:
 
 ```yaml
 is: literal value

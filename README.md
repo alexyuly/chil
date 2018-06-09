@@ -44,7 +44,11 @@ Proximity enforcement enables pure encapsulation. Since object relationships are
 
 ### 1.2 Strong, flexible types
 
-TODO
+At compile time, static type safety is both a first-class concept and incrementally adoptable. Every input of every object can have an optional static type definition.
+
+At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*.
+
+Chil unifies the concept *conditionals* with types. At compile time, types serve as conditional checks for the compiler to ensure that each connection specified in code is allowed. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
 
 ## 2 Source code
 

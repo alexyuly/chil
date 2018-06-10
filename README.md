@@ -144,7 +144,9 @@ not:
 
 ##### 1.2.1.6 Predicate type syntax
 
-Also note: The type of `not |is: 0` includes *all* values which are not 0, including strings, objects, and so on. The type of just all *numbers* which are not 0, could be expressed as:
+The inverse of a type includes *all values* which are not in that type, indepedent of any context about the domain of possible types. Sometimes, it is desirable to specify a *predicate type*, which constrains the domain of a given type, by intersecting with the predicate.
+
+For example, the type of `not |is: 0` includes all values which are not 0, like strings and lookups. The type of all *numbers* which are not 0, can be expressed verbosely as a type intersection:
 
 ```yaml
 all of:
@@ -152,7 +154,7 @@ all of:
   - not |is: 0
 ```
 
-However, Chil provides a shorthand *predicate type* syntax for constraining the domain of a type within another "predicate" type, which must be a single value like `number`, as opposed to a constructed type which is a key-value pair like `not: number`.
+However, Chil also provides a shorthand syntax for constraining the domain of a type within another "predicate" type, which must be a single value like `number`, as opposed to a constructed type which is a key-value pair like `not: number`.
 
 Generically,
 
@@ -162,10 +164,10 @@ all of:
   - type
 ```
 
-is equivalent to
+is equivalent to the predicate type syntax
 
 ```yaml
-?predicate |type
+?predicate: type
 ```
 
 where `predicate` is a type value, and `type` is any type including a constructed type key-value.

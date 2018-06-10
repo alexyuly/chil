@@ -42,17 +42,21 @@ Most traditional object-oriented languages violate the spirit of encapsulation b
 
 Proximity enforcement enables pure encapsulation. Since object relationships are defined at compile time and kept constant during runtime, Chil guarantees that all flow of data into and out of each object is self-evident in code. There are no more surprises for humans trying understand the flow of data, like, *How did object foo access the data of bar??*, or *How did object foo call a method on bar?!*.
 
-### 1.2 Strong, flexible types
+### 1.2 Module system
+
+
+
+### 1.3 Strong, flexible types
 
 Chil types can be used statically or dynamically, that is, at compile time or runtime. At compile time, types serve as strong, static validation of the flow of data in and out of objects, before runtime. At runtime, types serve as strong, *dynamic* validation of data flow based on potentially variable inputs.
 
-Chil types unify the concepts of *static type checking* and *conditional validation*, by replacing traditional conditionals like `if` and `while` with type objects that dynamically filter incoming data. The compiler automatically optimizes for unnecessary dynamic types, that is types which could be statically declared, by excluding them from the execution plan and emitting a warning to the console.
+Chil types unify the concepts of *static type checking* and *conditional validation*, by replacing traditional conditionals like `if` and `while` with type objects that dynamically filter incoming data. The compiler automatically optimizes for unnecessary dynamic types, that is types which could (and probably should) be statically declared, by excluding them from the execution plan and emitting a warning to the console.
 
-#### 1.2.1 Basic types
+#### 1.3.1 Basic types
 
 Basic types are inherent to Chil and recognized by the compiler at any point in source code.
 
-##### 1.2.1.1 Literal type: `is`
+##### 1.3.1.1 Literal type: `is`
 
 The type which includes just a single literal value of any type, expressed as a key-value pair:
 
@@ -60,7 +64,7 @@ The type which includes just a single literal value of any type, expressed as a 
 is: literal value
 ```
 
-##### 1.2.1.2 Union of types: `any of`
+##### 1.3.1.2 Union of types: `any of`
 
 The type which includes the union of a set of types of data, is expressed as
 
@@ -80,7 +84,7 @@ any of:
   ...
 ```
 
-##### 1.2.1.3 Intersection of types: `all of`
+##### 1.3.1.3 Intersection of types: `all of`
 
 The type which includes the intersection of a set of types of data, is expressed as
 
@@ -113,11 +117,11 @@ Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty t
 Use `nothing` to explicitly specify the empty type.
 ```
 
-##### 1.2.1.4 Empty type: `nothing`
+##### 1.3.1.4 Empty type: `nothing`
 
 The type which includes no values, that is the empty set, is expressed as `nothing`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `nothing`.
 
-##### 1.2.1.5 Inverse of a type: `not`
+##### 1.3.1.5 Inverse of a type: `not`
 
 The type which includes all values which are not in a given type, is expressed as
 
@@ -135,45 +139,7 @@ not:
 not |is: 0
 ```
 
-##### 1.2.1.6 Predicate type syntax
-
-The inverse of a type includes *all values* which are not in that type, independent of any context about the domain of possible types. Sometimes, it is desirable to specify a *predicate type*, which constrains the domain of a given type, by intersecting with the predicate.
-
-For example, the type of `not |is: 0` includes all values which are not 0, like strings and lookups. The type of all *numbers* which are not 0, can be expressed verbosely as a type intersection:
-
-```yaml
-all of:
-  - number
-  - not |is: 0
-```
-
-However, Chil also provides a shorthand syntax for constraining the domain of a type within another "predicate" type, which must be a single value like `number`, as opposed to a constructed type which is a key-value pair like `not: number`.
-
-Generically,
-
-```yaml
-all of:
-  - predicate
-  - type
-```
-
-is equivalent to the predicate type syntax
-
-```yaml
-?predicate: type
-```
-
-where `predicate` is a type value, and `type` is any type including a constructed type key-value.
-
-So, in this case, we can write
-
-```yaml
-?number |not |is: 0
-```
-
-to replace the original example.
-
-##### 1.2.1.7 Numbers
+##### 1.3.1.6 Numbers
 
 The type which includes all valid JSON numbers is expressed as `number`:
 - The type of numbers less than a given value is expressed as `under: literal number value`.
@@ -181,16 +147,27 @@ The type which includes all valid JSON numbers is expressed as `number`:
 
 Chil also supports the `integer` keyword for the type of just all integers, as well as `whole` for the type of `0,1,2,3,...`, and `natural` for the type of `1,2,3,...`.
 
-##### 1.2.1.8 Strings
+`number` can be constructed with another type which specifies that the given type is constrained to the domain of numbers. (In other words, the resulting type is the given type intersected with the type of `number`.) For example, to express the type that is *all numbers* which are not 0 (rather than *all values*, including strings, lookups, and so on):
 
-The type of data which includes all valid JSON strings is expressed as `string`:
-- The type of strings which match a given regular expression is expressed as `match: regular expression`.
+```yaml
+number |not |is: 0
+```
 
-##### 1.2.1.9 Lists
+##### 1.3.1.7 Strings
+
+The type of data which includes all valid JSON strings is expressed as `string`. Moreover, the type of strings which match a given regular expression is expressed as `match: regular expression`.
+
+Like `number`, `string` may also be constructed with another type which is constrained to the domain of `string`, for example
+
+```yaml
+string |not |match: ^Strings that start with this
+```
+
+##### 1.3.1.8 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
 
-##### 1.2.1.10 Lookups
+##### 1.3.1.9 Lookups
 
 The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
@@ -203,16 +180,23 @@ lookup:
 
 Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
 
-#### 1.2.2 Custom types
+#### 1.3.2 Modular types
 
-Custom types are defined by a component with one `main` input, which conditionally sinks incoming values.
+Modular types are defined by a file with a `.type` extension, which is formatted a YAML document with a single key-value pair that is a type.
 
-For example, the type of JSON booleans is implemented as a custom type named `true or false`, which allows any incoming values to pass through which match either `true` or `false`:
+For example:
+
+1) The type of JSON booleans is implemented as a modular type named `true or false`, which includes just `true` and `false`:
 
 ```yaml
-main |sink |any of:
+any of:
   - is: true
   - is: false
+```
+2) The type of negative integers is implemented as a modular type named `negative integers`:
+
+```yaml
+integer |not: whole
 ```
 
 ## 2 Source code

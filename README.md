@@ -46,7 +46,7 @@ Proximity enforcement enables pure encapsulation. Since object relationships are
 
 Chil types can be used statically or dynamically, that is, at compile time or runtime. At compile time, types serve as strong, static validation of the flow of data in and out of objects, before runtime. At runtime, types serve as strong, *dynamic* validation of data flow based on potentially variable inputs.
 
-Chil types unify the concepts of *static type checking* and *conditional validation*, by replacing traditional conditionals like `if` and `while` with type objects that dynamically filter incoming data.
+Chil types unify the concepts of *static type checking* and *conditional validation*, by replacing traditional conditionals like `if` and `while` with type objects that dynamically filter incoming data. The compiler automatically optimizes for unnecessary dynamic types, that is types which could be statically declared, by excluding them from the execution plan and emitting a warning to the console.
 
 #### 1.2.1 Basic types
 
@@ -112,8 +112,6 @@ all of:
 Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty type.
 Use `nothing` to explicitly specify the empty type.
 ```
-
-TODO: Explain the differences between `all of` and `pipe` (see section 2.2.2).
 
 ##### 1.2.1.4 Empty type: `nothing`
 
@@ -219,29 +217,25 @@ main |sink |any of:
 
 ## 2 Source code
 
-Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.schema`, according to its purpose.
+Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). The source code for each component consists of one required file with a `.domain` extension, and an optional second file with a `.schema` extension.
 
 ### 2.1 Domain source files
 
-The domain source file is an optional file with a `.domain` extension. It defines the type of data which each input of a given component is allowed to receive from a connection. These types, known as the component *domain*, are checked at compile time. The name of the domain source file is the name of the component for which the domain is defined.
-
-#### 2.1.1 Domain source file format
-
-The domain source file is a valid YAML document. It contains a dictionary which maps names of input streams to type references.
+The domain source file is an optional file with a `.domain` extension. It is formatted as YAML document with a dictionary mapping names of inputs to types. The name of the file is the name of the component for which the given domain is defined. A domain defines static type checking for a component's inputs. The compiler checks the explicit type of each input against the implicit type of each connected output. (Note: connections are specified within the `.schema` file.)
 
 ### 2.2 Schema source files
 
-The required schema source file for a given component is expressed as a YAML document with a dictionary mapping names of inputs to references to streams.
+The schema source file is a required file with a `.schema` extension. It is formatted as YAML document with a dictionary mapping names of inputs to references to streams.
 
 #### 2.2.1 References to streams
 
 Each key in a component's dictionary is mapped to a reference to a stream which exists within the component. These streams are constructed implicitly by Chil at compile time. Each stream is part of an object, which is an instance of a child component. A "reference to a stream" can be expressed in multiple forms:
 
-1. the name of a component, for the main input of the single object of that type
+1. just the name of a component, for the main input of a single anonymous object of that type
   - for example, `echo`
-2. the name of a component followed by an `@` ("at") *preposition* with a locally unique ID, for the main input of the locally unique instance of that component
+2. the name of a component followed by an `@` ("at") *preposition* with a locally unique ID, which may be empty, for the main input of the locally unique instance of that component
   - for example, `document events @mousemove`
-  - Note, if no id is provided, such as `document events @`, then a locally unique, anonymous instance is referenced. Since it is anonymous, it can't be referenced anywhere else.
+  - or, for example, `document events @`
 3. one of (1) or (2), followed by an `->` ("arrow") *preposition* to the name of an input of that object
   - for example, `gate ->state`
   - or, for example, `delay @my delay ->state`
@@ -367,4 +361,4 @@ main |sink |document template:
 
 The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
 
-Note that the vertical bar `|` is a reserved preposition which cannot be used as part of Chil names, just as `@` and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.
+Note that the vertical bar `|` is a reserved preposition which cannot be used as part of Chil names, just as `?`, `@`, and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.

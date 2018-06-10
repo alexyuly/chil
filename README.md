@@ -28,13 +28,13 @@ All object construction and relation happens at compile time, so no reference pa
 
 The source code for a Chil application is expressed as any number of YAML files. A single source file (or a pair of files), called the *root component*, is passed as an argument to the compiler, which enters the application's object graph at that point and outputs a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object. Compiler output is in the form of *Chil intermediate code* (*CIC*), expressed as a single JSON file. CIC is parsed by a Chil runtime engine which executes the code on a specific platform such as Node.js. The use of an intermediate language allows Chil to be decoupled from any particular runtime environment.
 
+### 1.1 Pure encapsulation
+
 The object graph of a Chil application, and its CIC JSON data structure, can be represented something like the following image, where the outermost circle depicts the root component:
 
 ![Figure 1.1: a visual representation of parent-child relationships (overlapping circles) and sibling relationships (connected circles)](images/Figure-1-1.png)
 
 **Figure 1.1:** a diagram of parent-child relationships (overlapping circles) and sibling relationships (connected circles)
-
-### 1.1 Pure encapsulation
 
 In the above diagram, no connection "lines" are allowed to cross the circumference of any component "circle". This visually illustrates Chil's first guiding principle: pure object-oriented encapsulation.
 
@@ -48,21 +48,9 @@ At compile time, static type safety is both a first-class concept and incrementa
 
 At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*. Chil unifies the concept *conditionals* with types. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
 
-## 2 Source code
+#### 1.2.1 Fundamental types
 
-Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.schema`, according to its purpose.
-
-### 2.1 Domain source files
-
-The domain source file is an optional file with a `.domain` extension. It defines the type of data which each input of a given component is allowed to receive. These types are checked at compile time. They are known as the component *domain*. The name of the domain source file is the name of the component for which the domain is defined.
-
-#### 2.1.1 Domain source file format
-
-The domain source file is a valid YAML document. It contains a dictionary which maps names of input streams to type references.
-
-#### 2.1.2 Fundamental types
-
-##### 2.1.2.1 Literal values
+##### 1.2.1.1 Literal values
 
 The simplest type of data is constrained to a single literal value of any type, expressed as a key-value pair:
 
@@ -70,9 +58,15 @@ The simplest type of data is constrained to a single literal value of any type, 
 is: literal value
 ```
 
-##### 2.1.2.2 True or false
+##### 1.2.1.2 True or false
 
-The type of data which is constrained to JSON booleans is expressed as `true or false`.
+The type of data which is constrained to JSON booleans is expressed as `true or false`. This is equivalent to
+
+```yaml
+any of:
+  - is: true
+  - is: false
+```
 
 ##### 2.1.2.3 Numbers
 
@@ -90,7 +84,7 @@ over or is: literal number value
 
 If your type definitions require more specificity, Chil supports the `integer` keyword for the type which includes only integers, as well as `whole` for the type which includes `0,1,2,3,...`, and `natural` for the type which includes `1,2,3,...`.
 
-##### 2.1.2.4 Strings
+##### 1.2.1.4 Strings
 
 The type of data which includes all valid JSON strings is expressed as `string`.
 
@@ -100,11 +94,11 @@ The type of data which includes strings which match a given regular expression, 
 match: regular expression
 ```
 
-##### 2.1.2.5 Lists
+##### 1.2.1.5 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
 
-##### 2.1.2.6 Lookups
+##### 1.2.1.6 Lookups
 
 The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
@@ -117,7 +111,7 @@ lookup:
 
 Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
 
-##### 2.1.2.7 Union of types
+##### 1.2.1.7 Union of types
 
 The type of data which includes the union of an unordered sequence of types of data, is expressed as
 
@@ -137,7 +131,7 @@ any of:
   ...
 ```
 
-##### 2.1.2.8 Intersection of types
+##### 1.2.1.8 Intersection of types
 
 The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
 
@@ -179,7 +173,7 @@ lookup:
   I never want this key: never
 ```
 
-##### 2.1.2.9 Inverse of a type
+##### 1.2.1.9 Inverse of a type
 
 The type of data which includes all values which are not included in a given type, is expressed as
 
@@ -187,9 +181,21 @@ The type of data which includes all values which are not included in a given typ
 not: type
 ```
 
-#### 2.1.3 Composed types
+#### 1.2.2 Composed types
 
 TODO
+
+## 2 Source code
+
+Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). Each source file has an extension of either `.domain` or `.schema`, according to its purpose.
+
+### 2.1 Domain source files
+
+The domain source file is an optional file with a `.domain` extension. It defines the type of data which each input of a given component is allowed to receive from a connection. These types, known as the component *domain*, are checked at compile time. The name of the domain source file is the name of the component for which the domain is defined.
+
+#### 2.1.1 Domain source file format
+
+The domain source file is a valid YAML document. It contains a dictionary which maps names of input streams to type references.
 
 ### 2.2 Schema source files
 

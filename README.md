@@ -10,7 +10,7 @@ This standard defines the first edition of the Chil Language, a data-driven appl
 
 ### Overview of traditional object-oriented systems
 
-The fundmental unit of traditional object-oriented systems is the *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B which returns to class A.
+The fundmental unit of traditional object-oriented systems is the *class*, which is a prototype for a [closure](https://en.wikipedia.org/wiki/Closure_(computer_programming)) (or other similar implementation) whose interface consists of a set of public functions called *methods*. Methods form the bridge of communication between instances of classes, called *objects*. In terms of a directed object graph, classes result in a high degree of bidirectional data flow, since in order for interaction to occur, an instance of class A must delegate control to an instance of class B which returns to class A.
 
 Moreover, popular object-oriented languages like C++, Java, and JavaScript, support freely inheriting and overriding methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. This makes object-oriented code unmaintainable over time, because base classes to become the foundation of a house of cards which can't be adjusted without shifting the whole system.
 
@@ -345,4 +345,4 @@ main |sink |document template:
 
 The collapsed form is preferred to the expanded form, and the compiler emits a warning when expanded form is found. Collapsed form is more concise and more readable, with fewer lines and less indentation.
 
-Note that the vertical bar `|` is a reserved preposition which cannot be used as part of Chil names, just as `?`, `@`, and `->` are reserved and cannot be used. The compiler will throw an error if these symbols are used incorrectly.
+Note that the vertical bar `|` is a reserved preposition which cannot be used as part of any name, just as `@` and `->` are reserved and cannot be used in names. The compiler will throw an error if these symbols are used incorrectly.

@@ -125,25 +125,20 @@ Use `never` to explicitly specify the empty type.
 
 ##### 1.2.1.5 Empty type: `never`
 
-The type which includes no values, i.e. the empty set, is expressed as `never`. At compile time, the empty set may not be implied, or an "empty type error" will be thrown. The empty set must be used explicitly, using `never`.
+The type which includes no values, i.e. the empty set, is expressed as `never`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `never`.
 
 ##### 1.2.1.6 Numbers
 
 The type which includes all valid JSON numbers is expressed as `number`:
-- The type of numbers which are less than a given value is expressed as `under: literal number value`.
-- The type of numbers which are greater than a given value is expressed as `under: literal number value`.
+- The type of numbers less than a given value is expressed as `under: literal number value`.
+- The type of numbers  greater than a given value is expressed as `over: literal number value`.
 
 Chil also supports the `integer` keyword for the type of just all integers, as well as `whole` for the type of `0,1,2,3,...`, and `natural` for the type of `1,2,3,...`.
 
 ##### 1.2.1.7 Strings
 
-The type of data which includes all valid JSON strings is expressed as `string`.
-
-The type of data which includes strings which match a given regular expression, is expressed as
-
-```yaml
-match: regular expression
-```
+The type of data which includes all valid JSON strings is expressed as `string`:
+- The type of strings which match a given regular expression is expressed as `match: regular expression`.
 
 ##### 1.2.1.8 Lists
 

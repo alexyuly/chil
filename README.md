@@ -130,21 +130,16 @@ not: type
 For example, to express the type that is all values which are *not* 0:
 
 ```yaml
+not:
+  is: 0
+  
+# or, in shorthand form
 not |is: 0
 ```
 
-Note: The vertical bar `|` symbol is used as shorthand for a tree of objects with only children, that is, in this case
-
-```yaml
-not:
-  is: 0
-```
-
-(see section 3.2)
-
 ##### 1.2.1.6 Predicate type syntax
 
-The inverse of a type includes *all values* which are not in that type, indepedent of any context about the domain of possible types. Sometimes, it is desirable to specify a *predicate type*, which constrains the domain of a given type, by intersecting with the predicate.
+The inverse of a type includes *all values* which are not in that type, independent of any context about the domain of possible types. Sometimes, it is desirable to specify a *predicate type*, which constrains the domain of a given type, by intersecting with the predicate.
 
 For example, the type of `not |is: 0` includes all values which are not 0, like strings and lookups. The type of all *numbers* which are not 0, can be expressed verbosely as a type intersection:
 

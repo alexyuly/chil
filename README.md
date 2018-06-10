@@ -44,6 +44,8 @@ Proximity enforcement enables pure encapsulation. Since object relationships are
 
 ### 1.2 Strong, flexible types
 
+Chil types can be used statically or dynamically, i.e. either at compile time or runtime.
+
 At compile time, static type safety is both a first-class concept and incrementally adoptable. Every input of every object can have an optional static type definition, which the compiler checks against the implicit type of each output which is connected to the target input.
 
 At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*. Chil unifies the concept *conditionals* with types. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
@@ -52,67 +54,25 @@ At runtime, Chil does away with conditional statements like *if* and *while*, in
 
 Basic types are inherent to Chil and recognized by the compiler at any point in source code.
 
-##### 1.2.1.1 Literal values
+##### 1.2.1.1 Literal type: `is`
 
-The type of data which includes just a single literal value of any type, expressed as a key-value pair:
+The type which includes just a single literal value of any type, expressed as a key-value pair:
 
 ```yaml
 is: literal value
 ```
 
-##### 1.2.1.2 Inverse of a type
+##### 1.2.1.2 Inverse of a type: `not`
 
-The type of data which includes all values which are not in a given type, is expressed as
+The type which includes all values which are not in a given type, is expressed as
 
 ```yaml
 not: type
 ```
 
-##### 1.2.1.3 Numbers
+##### 1.2.1.3 Union of types: `any of`
 
-The type of data which includes all valid JSON numbers is expressed as `number`.
-
-The types of data which include numbers which are less than, greater than, less than or equal to, and greater than or equal to, are expressed as key-value pairs:
-
-```yaml
-under: literal number value
-over: literal number value
-under or is: literal number value
-over or is: literal number value
-```
-
-If your type definitions require more specificity, Chil supports the `integer` keyword for the type which includes only integers, as well as `whole` for the type which includes `0,1,2,3,...`, and `natural` for the type which includes `1,2,3,...`.
-
-##### 1.2.1.4 Strings
-
-The type of data which includes all valid JSON strings is expressed as `string`.
-
-The type of data which includes strings which match a given regular expression, is expressed as
-
-```yaml
-match: regular expression
-```
-
-##### 1.2.1.5 Lists
-
-The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
-
-##### 1.2.1.6 Lookups
-
-The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
-
-```yaml
-lookup:
-  key 1: type 1
-  key 2: type 2
-  ...
-```
-
-Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
-
-##### 1.2.1.7 Union of types
-
-The type of data which includes the union of an unordered sequence of types of data, is expressed as
+The type which includes the union of a set of types of data, is expressed as
 
 ```yaml
 any of:
@@ -130,9 +90,9 @@ any of:
   ...
 ```
 
-##### 1.2.1.8 Intersection of types
+##### 1.2.1.4 Intersection of types: `all of`
 
-The type of data which includes the intersection of an unordered sequence of types of data, is expressed as
+The type which includes the intersection of a set of types of data, is expressed as
 
 ```yaml
 all of:
@@ -159,18 +119,48 @@ all of:
   - is: 0
   - is: 1
   ^
-Types of `is: 0` and `is: 1` are disjoint. The result of `all of` is empty.
-Did you mean to use `any of`?
+Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty type.
+Use `never` to explicitly specify the empty type.
 ```
 
-If you want to define an empty type, you must explicitly use the `never` keyword. For example, you could use `never` to define a type which includes all JSON objects which absolutely never have any value defined for a given key:
+##### 1.2.1.5 Empty type: `never`
+
+The type which includes no values, i.e. the empty set, is expressed as `never`. At compile time, the empty set may not be implied, or an "empty type error" will be thrown. The empty set must be used explicitly, using `never`.
+
+##### 1.2.1.6 Numbers
+
+The type which includes all valid JSON numbers is expressed as `number`:
+- The type of numbers which are less than a given value is expressed as `under: literal number value`.
+- The type of numbers which are greater than a given value is expressed as `under: literal number value`.
+
+Chil also supports the `integer` keyword for the type of just all integers, as well as `whole` for the type of `0,1,2,3,...`, and `natural` for the type of `1,2,3,...`.
+
+##### 1.2.1.7 Strings
+
+The type of data which includes all valid JSON strings is expressed as `string`.
+
+The type of data which includes strings which match a given regular expression, is expressed as
+
+```yaml
+match: regular expression
+```
+
+##### 1.2.1.8 Lists
+
+The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
+
+##### 1.2.1.9 Lookups
+
+The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 
 ```yaml
 lookup:
-  I want this key: number
-  I want this key too: string
-  I never want this key: never
+  key 1: type 1
+  key 2: type 2
+  ...
 ```
+
+Unspecified keys are not constrained to any type. Regular expressions are valid keys, against which actual keys will be tested, and if matching, those keys will be constrained to the given type.
 
 #### 1.2.2 Custom types
 

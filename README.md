@@ -110,14 +110,14 @@ all of:
   - is: 1
   ^
 Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty type.
-Use `never` to explicitly specify the empty type.
+Use `nothing` to explicitly specify the empty type.
 ```
 
-(Also note, for future reference: `all of` is equivalent to `pipe` (see section 2.2.2), in that it connects a sequence of streams, however `all of` performs additional validation to ensure that all streams reference a )
+TODO: Explain the differences between `all of` and `pipe` (see section 2.2.2).
 
-##### 1.2.1.4 Empty type: `never`
+##### 1.2.1.4 Empty type: `nothing`
 
-The type which includes no values, that is the empty set, is expressed as `never`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `never`.
+The type which includes no values, that is the empty set, is expressed as `nothing`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `nothing`.
 
 ##### 1.2.1.5 Inverse of a type: `not`
 

@@ -60,7 +60,66 @@ The type which includes just a single literal value of any type, expressed as a 
 is: literal value
 ```
 
-##### 1.2.1.2 Inverse of a type: `not`
+##### 1.2.1.2 Union of types: `any of`
+
+The type which includes the union of a set of types of data, is expressed as
+
+```yaml
+any of:
+  - type 1
+  - type 2
+  ...
+```
+
+An enumeration is defined by a union of literal values:
+
+```yaml
+any of:
+  - is: literal value 1
+  - is: literal value 2
+  ...
+```
+
+##### 1.2.1.3 Intersection of types: `all of`
+
+The type which includes the intersection of a set of types of data, is expressed as
+
+```yaml
+all of:
+  - type 1
+  - type 2
+  ...
+```
+
+Note: The compiler throws an error if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty, for example
+
+```yaml
+# This type definition makes no sense:
+all of:
+  - is: 0
+  - is: 1
+```
+
+The compiler will throw an error:
+
+```
+Empty type error
+Line 135, Char 2
+all of:
+  - is: 0
+  - is: 1
+  ^
+Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty type.
+Use `never` to explicitly specify the empty type.
+```
+
+(Also note, for future reference: `all of` is equivalent to `pipe` (see section 2.2.2), in that it connects a sequence of streams, however `all of` performs additional validation to ensure that all streams reference a )
+
+##### 1.2.1.4 Empty type: `never`
+
+The type which includes no values, that is the empty set, is expressed as `never`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `never`.
+
+##### 1.2.1.5 Inverse of a type: `not`
 
 The type which includes all values which are not in a given type, is expressed as
 
@@ -83,7 +142,7 @@ not:
 
 (see section 3.2)
 
-###### 1.2.1.2.1 Type inversion includes the global set of all values
+##### 1.2.1.6 Predicate type syntax
 
 Also note: The type of `not |is: 0` includes *all* values which are not 0, including strings, objects, and so on. The type of just all *numbers* which are not 0, could be expressed as:
 
@@ -119,66 +178,7 @@ So, in this case, we can write
 
 to replace the original example.
 
-##### 1.2.1.3 Union of types: `any of`
-
-The type which includes the union of a set of types of data, is expressed as
-
-```yaml
-any of:
-  - type 1
-  - type 2
-  ...
-```
-
-An enumeration is defined by a union of literal values:
-
-```yaml
-any of:
-  - is: literal value 1
-  - is: literal value 2
-  ...
-```
-
-##### 1.2.1.4 Intersection of types: `all of`
-
-The type which includes the intersection of a set of types of data, is expressed as
-
-```yaml
-all of:
-  - type 1
-  - type 2
-  ...
-```
-
-Note: The compiler throws an error if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty, for example
-
-```yaml
-# This type definition makes no sense:
-all of:
-  - is: 0
-  - is: 1
-```
-
-The compiler will throw an error:
-
-```
-Empty type error
-Line 135, Char 2
-all of:
-  - is: 0
-  - is: 1
-  ^
-Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty type.
-Use `never` to explicitly specify the empty type.
-```
-
-(Also note, for future reference: `all of` is equivalent to `pipe` (see section 2.2.2), in that it connects a sequence of streams, however `all of` performs additional validation to ensure that all streams reference a )
-
-##### 1.2.1.5 Empty type: `never`
-
-The type which includes no values, that is the empty set, is expressed as `never`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `never`.
-
-##### 1.2.1.6 Numbers
+##### 1.2.1.7 Numbers
 
 The type which includes all valid JSON numbers is expressed as `number`:
 - The type of numbers less than a given value is expressed as `under: literal number value`.
@@ -186,16 +186,16 @@ The type which includes all valid JSON numbers is expressed as `number`:
 
 Chil also supports the `integer` keyword for the type of just all integers, as well as `whole` for the type of `0,1,2,3,...`, and `natural` for the type of `1,2,3,...`.
 
-##### 1.2.1.7 Strings
+##### 1.2.1.8 Strings
 
 The type of data which includes all valid JSON strings is expressed as `string`:
 - The type of strings which match a given regular expression is expressed as `match: regular expression`.
 
-##### 1.2.1.8 Lists
+##### 1.2.1.9 Lists
 
 The type of data which includes all valid JSON Arrays is expressed as `list`. The type of Arrays whose elements are constrained to a specific type is expressed as `list: type`.
 
-##### 1.2.1.9 Lookups
+##### 1.2.1.10 Lookups
 
 The type of data which includes all valid non-Array JSON Objects is expressed as `lookup`. The type of Objects for which certain properties are constrained to specific types is expressed as
 

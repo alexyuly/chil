@@ -44,11 +44,9 @@ Proximity enforcement enables pure encapsulation. Since object relationships are
 
 ### 1.2 Strong, flexible types
 
-Chil types can be used statically or dynamically, i.e. either at compile time or runtime.
+Chil types can be used statically or dynamically, that is, at compile time or runtime. At compile time, types serve as strong, static validation of the flow of data in and out of objects, before runtime. At runtime, types serve as strong, *dynamic* validation of data flow based on potentially variable inputs.
 
-At compile time, static type safety is both a first-class concept and incrementally adoptable. Every input of every object can have an optional static type definition, which the compiler checks against the implicit type of each output which is connected to the target input.
-
-At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*. Chil unifies the concept *conditionals* with types. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
+Chil types unify the concepts of *static type checking* and *conditional validation*, by replacing traditional conditionals like `if` and `while` with type objects that dynamically filter incoming data.
 
 #### 1.2.1 Basic types
 
@@ -69,6 +67,57 @@ The type which includes all values which are not in a given type, is expressed a
 ```yaml
 not: type
 ```
+
+For example, to express the type that is all values which are *not* 0:
+
+```yaml
+not |is: 0
+```
+
+Note: The vertical bar `|` symbol is used as shorthand for a tree of objects with only children, that is, in this case
+
+```yaml
+not:
+  is: 0
+```
+
+(see section 3.2)
+
+###### 1.2.1.2.1 Type inversion includes the global set of all values
+
+Also note: The type of `not |is: 0` includes *all* values which are not 0, including strings, objects, and so on. The type of just all *numbers* which are not 0, could be expressed as:
+
+```yaml
+all of:
+  - number
+  - not |is: 0
+```
+
+However, Chil provides a shorthand syntax for constraining the domain of a type within another type, which must be a single value, as opposed to a constructed type which is a key-value pair.
+
+Generically,
+
+```yaml
+all of:
+  - predicate
+  - type
+```
+
+is equavalent to
+
+```yaml
+*predicate |type
+```
+
+where `predicate` is a type value, and `type` is any type including a constructed type key-value.
+
+So, in this case, we can write
+
+```yaml
+*number |not |is: 0`
+```
+
+to replace the original example.
 
 ##### 1.2.1.3 Union of types: `any of`
 
@@ -101,7 +150,7 @@ all of:
   ...
 ```
 
-The compiler throws an error if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty, for example:
+Note: The compiler throws an error if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty, for example
 
 ```yaml
 # This type definition makes no sense:
@@ -123,9 +172,11 @@ Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty t
 Use `never` to explicitly specify the empty type.
 ```
 
+(Also note, for future reference: `all of` is equivalent to `pipe` (see section 2.2.2), in that it connects a sequence of streams, however `all of` performs additional validation to ensure that all streams reference a )
+
 ##### 1.2.1.5 Empty type: `never`
 
-The type which includes no values, i.e. the empty set, is expressed as `never`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `never`.
+The type which includes no values, that is the empty set, is expressed as `never`. Type expressions which implicitly reduce to the empty set will result in an "empty type error" being thrown. The empty set must be expressed explicitly with `never`.
 
 ##### 1.2.1.6 Numbers
 

@@ -48,27 +48,27 @@ At compile time, static type safety is both a first-class concept and incrementa
 
 At runtime, Chil does away with conditional statements like *if* and *while*, in favor of the idea of *dynamic type safety*. Every expression of a set of data is considered to be a *type*. Chil unifies the concept *conditionals* with types. At runtime, types serve as conditional checks for the engine to filter which values are allowed to pass through.
 
-#### 1.2.1 Fundamental types
+#### 1.2.1 Basic types
+
+Basic types are inherent to Chil and recognized by the compiler at any point in source code.
 
 ##### 1.2.1.1 Literal values
 
-The simplest type of data is constrained to a single literal value of any type, expressed as a key-value pair:
+The type of data which includes just a single literal value of any type, expressed as a key-value pair:
 
 ```yaml
 is: literal value
 ```
 
-##### 1.2.1.2 True or false
+##### 1.2.1.2 Inverse of a type
 
-The type of data which is constrained to JSON booleans is expressed as `true or false`. This is equivalent to
+The type of data which includes all values which are not in a given type, is expressed as
 
 ```yaml
-any of:
-  - is: true
-  - is: false
+not: type
 ```
 
-##### 2.1.2.3 Numbers
+##### 1.2.1.3 Numbers
 
 The type of data which includes all valid JSON numbers is expressed as `number`.
 
@@ -79,7 +79,6 @@ under: literal number value
 over: literal number value
 under or is: literal number value
 over or is: literal number value
-...
 ```
 
 If your type definitions require more specificity, Chil supports the `integer` keyword for the type which includes only integers, as well as `whole` for the type which includes `0,1,2,3,...`, and `natural` for the type which includes `1,2,3,...`.
@@ -119,7 +118,7 @@ The type of data which includes the union of an unordered sequence of types of d
 any of:
   - type 1
   - type 2
-...
+  ...
 ```
 
 An enumeration is defined by a union of literal values:
@@ -139,7 +138,7 @@ The type of data which includes the intersection of an unordered sequence of typ
 all of:
   - type 1
   - type 2
-...
+  ...
 ```
 
 The compiler throws an error if any intersected types are disjoint, meaning that they share no common values and the resulting set is empty, for example:
@@ -173,17 +172,17 @@ lookup:
   I never want this key: never
 ```
 
-##### 1.2.1.9 Inverse of a type
+#### 1.2.2 Custom types
 
-The type of data which includes all values which are not included in a given type, is expressed as
+Custom types are defined by a component with one `main` input, which conditionally sinks incoming values.
+
+For example, the type of JSON booleans is implemented as a custom type named `true or false`, which allows any incoming values to pass through which match either `true` or `false`:
 
 ```yaml
-not: type
+main |sink |any of:
+  - is: true
+  - is: false
 ```
-
-#### 1.2.2 Composed types
-
-TODO
 
 ## 2 Source code
 

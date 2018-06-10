@@ -152,7 +152,7 @@ all of:
   - not |is: 0
 ```
 
-However, Chil provides a shorthand syntax for constraining the domain of a type within another type, which must be a single value, as opposed to a constructed type which is a key-value pair.
+However, Chil provides a shorthand *predicate type* syntax for constraining the domain of a type within another "predicate" type, which must be a single value like `number`, as opposed to a constructed type which is a key-value pair like `not: number`.
 
 Generically,
 
@@ -173,7 +173,7 @@ where `predicate` is a type value, and `type` is any type including a constructe
 So, in this case, we can write
 
 ```yaml
-*number |not |is: 0`
+*number |not |is: 0
 ```
 
 to replace the original example.

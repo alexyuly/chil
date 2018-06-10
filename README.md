@@ -162,10 +162,10 @@ all of:
   - type
 ```
 
-is equavalent to
+is equivalent to
 
 ```yaml
-*predicate |type
+?predicate |type
 ```
 
 where `predicate` is a type value, and `type` is any type including a constructed type key-value.
@@ -173,7 +173,7 @@ where `predicate` is a type value, and `type` is any type including a constructe
 So, in this case, we can write
 
 ```yaml
-*number |not |is: 0
+?number |not |is: 0
 ```
 
 to replace the original example.

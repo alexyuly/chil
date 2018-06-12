@@ -56,7 +56,7 @@ Basic types are inherent to Chil and recognized by the compiler at any point in 
 
 ##### 1.2.1.1 Literal type: `is`
 
-The type which includes just a single literal value of any type, expressed as a key-value pair:
+The type which includes just a single literal value of any type, is expressed as
 
 ```yaml
 is: literal value
@@ -356,3 +356,11 @@ Note that the vertical bar `|` is a reserved preposition which cannot be used as
 #### 3.2 `state` as a "secondary" input
 
 Whereas `main` refers to the default, primary input of a component, `state` typically refers to the "secondary" input. And whereas `main` is properly used to define a component's data *throughput* resulting in values "sinked" through its output, `state` is properly used to define a component's data *storage* which handles values used asynchronously by the main stream. For example, the `delay` native component has two inputs, `main` and `state`, where `main` triggers a delayed output, and `state` controls the number of milliseconds for the delay.
+
+# Examples
+
+## One-line 'Hello, world!'
+
+```yaml
+main |echo: Hello, world!
+```

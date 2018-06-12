@@ -16,11 +16,11 @@ The fundmental unit of traditional object-oriented systems is the *class*, which
 
 Moreover, popular object-oriented languages like C++, Java, and JavaScript, encourage unlimited inheritance and overrides of methods in order to define the particular control flow of a class. Method inheritance and overrides tightly couple children to their parents, since modifying an inherited parent method or removing a parent override may result in unclear consequences as to the behavior of child methods. Thus, object-oriented code becomes unmaintainable over time, since base classes can't be adjusted without shifting the whole system.
 
-Worse yet, objects may freely pass references around the object graph, allowing a reference to travel arbitrarily far from the object which constructed its own referenced object. If class A passes a reference to its own private field to a method of class B, then class B gains access to private data (or perhaps even methods) of class A, which violates the spirit of object-oriented encapsulation.
+Worse yet, objects may freely pass references around the object graph, allowing a reference to travel arbitrarily far from the object which constructed its own referenced object. If class A passes a reference to its own private field to a method of class B, then class B gains access to private data or even methods of class A, which violates the spirit of object-oriented encapsulation.
 
 ### Contrasting features of Chil
 
-In contrast to traditional object-oriented systems, the fundamental of unit of Chil is the *component*, a prototype for a stateless set of interconnected streams with a single output and *0 or more* named inputs. Each component owns a set of objects called *children*, which are interconnected to form *streams*.
+In contrast to traditional object-oriented systems, the fundamental of unit of Chil is the *component*, a prototype for a stateless set of interconnected streams with a single output and zero or more named inputs. Each component owns a set of objects called *children*, which are interconnected to form *streams*. A stream is a path of data through objects.
 
 Special *connection objects*, which are also children, form the bridge of communication between other children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be "sinked" to the component output, in various ways.
 
@@ -141,7 +141,7 @@ not |is: 0
 
 The type which includes all valid JSON numbers is expressed as `number`:
 - The type of numbers less than a given value is expressed as `under: literal number value`.
-- The type of numbers  greater than a given value is expressed as `over: literal number value`.
+- The type of numbers greater than a given value is expressed as `over: literal number value`.
 
 Chil also supports the `integer` keyword for the type of just all integers, as well as `whole` for the type of `0,1,2,3,...`, and `natural` for the type of `1,2,3,...`.
 
@@ -182,19 +182,22 @@ Unspecified keys are not constrained to any type. Regular expressions are valid 
 
 Modular types are defined by a file with a `.type` extension, which is formatted a YAML document with a single key-value pair that is a type.
 
-For example:
-
-1) The type of JSON booleans is implemented as a modular type named `true or false`, which includes just `true` and `false`:
+For example, the type of JSON booleans is implemented as a modular type named `true or false`:
 
 ```yaml
 any of:
   - is: true
   - is: false
 ```
-2) The type of negative integers is implemented as a modular type named `negative integers`:
+
+A modular type can have a constructor argument, which is referenced in code with the reserved word `variable`.
+
+For example, the type of numbers greater than or equal to a given value is implemented as a modular type named `over or is`:
 
 ```yaml
-integer |not: whole
+any of:
+  - over: variable
+  - number |is: variable
 ```
 
 ### 1.3 Implicit module resolution
@@ -208,7 +211,7 @@ TODO:
 
 ## 2 Source code
 
-Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). The source code for each component consists of one required file with a `.domain` extension, and an optional second file with a `.schema` extension.
+Chil source code is formatted according to the [YAML 1.2 specification](http://yaml.org/spec/1.2/spec.html). The source code for each component consists of one required file with a `.schema` extension, and an optional second file with a `.domain` extension.
 
 ### 2.1 Domain source files
 

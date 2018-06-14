@@ -1,6 +1,6 @@
-# *This specification is a draft, with work in progress.*
+# *This specification is an unimplemented draft, with work in progress.*
 
-***Last Updated:** 10 Jun 2018*
+***Last Updated:** 14 Jun 2018*
 
 # Chil Language Specification (Edition No. 1, June 2018)
 
@@ -143,13 +143,23 @@ The type which includes all valid JSON numbers is expressed as `number`:
 - The type of numbers less than a given value is expressed as `under: literal number value`.
 - The type of numbers greater than a given value is expressed as `over: literal number value`.
 
-Chil also supports the `integer` keyword for the type of just all integers, as well as `whole` for the type of `0,1,2,3,...`, and `natural` for the type of `1,2,3,...`.
+Chil also supports the `integer` keyword for the type of just all integers, and `natural` for the type of `0,1,2,3,...`.
 
-`number`, `integer`, `whole`, and `natural` can be constructed with another type which specifies that the given "value" type is constrained to the "key" type's domain. (In other words, the resulting type is the "value" type intersected with the "key" type, such as `number` or `integer`.) For example, to express the type that is *all numbers* which are not 0 (rather than *all values*, including strings, lookups, and so on):
+`number`, `integer`, and `natural` can be constructed with another type which specifies that the given "value" type is constrained to the "key" type's domain. (In other words, the resulting type is the "value" type intersected with the "key" type, such as `number` or `integer`.) For example, to express the type that is *all numbers* which are not 0 (rather than *all values*, including strings, lookups, and so on):
 
 ```yaml
 number |not |is: 0
 ```
+
+Here is another example, of a more complex expression of the type of numbers which are multiples of a given number:
+
+```yaml
+number |such that:
+  pipe |mod: variable
+  type |is: 0
+```
+
+(TODO: Refine and elaborate on `such that` syntax.)
 
 ##### 1.2.1.7 Strings
 

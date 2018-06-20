@@ -47,13 +47,13 @@ A schema file may define other streams not named `source` or `main`, which recei
 A stream is defined as a key-value pair, whose key is the name of the stream, and whose value is a reference to an instance of a component. A component instance reference takes the form
 
 ```
-component name [@[instance name]] [->input name]
+component name[ @[instance name]][ ->input name][: constructor value]
 ```
 Note that the square brackets (`[` and `]`) are not literal: they indicate that a portion of the expression is optional.
 
 #### 1.4.1 Prepositions: `@` and `->`
 
-Prepositions are used to "tag" component names with additional information. A preposition is a non-verbal symbol which comes immediately before the first character of a component name.
+Prepositions are used to "tag" component names with additional kinds of names. A preposition is a non-verbal symbol which comes immediately before the first character of a name.
 
 #### 1.4.2 Component name
 
@@ -61,9 +61,15 @@ A component name is a reference to a component schema file, which is instantiate
 
 #### 1.4.3 Instance name
 
-An instance name is unique among all instances of a given component name which are children of a single component. A component name expressed without an "at" preposition (`@`) is a unique anonymous instance. A component name expressed with `@` refers to the single instance of that component which has the name immediately following the `@`, which may be empty.
+An instance name is unique among all instances of a given component name which are children of a single component. A component name expressed without an "at" preposition (`@`) is a unique anonymous instance. A component name expressed with `@` refers to the single instance of that component which has the name immediately following the `@`, which may be empty. A single named instance must be referenced multiple times within a schema file, but it will only be constructed once.
 
 #### 1.4.4 Input name
+
+An input name refers to one of the inputs defined by the schema of the component name. Incoming values will be directed to the input of the component instance which has the given name, or `main` if the name is not defined in the schema.
+
+#### 1.4.5 Constructor value
+
+A constructor value is an optional value which is used to construct some components.
 
 TODO...
 

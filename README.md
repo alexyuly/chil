@@ -1,6 +1,6 @@
 # *This specification is an unimplemented draft, with work in progress.*
 
-***Last Updated:** 14 Jun 2018*
+***Last Updated:** 19 Jun 2018*
 
 # Chil Language Specification (Edition No. 1, June 2018)
 
@@ -25,6 +25,47 @@ In contrast to traditional object-oriented systems, the fundamental of unit of C
 Special *connection objects*, which are also children, form the bridge of communication between other children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be "sinked" to the component output, in various ways.
 
 All object construction and relation happens at compile time, so references can't be created, passed, or destroyed during runtime. Object relationships are defined by the proximity of objects within source code, rather than the state of objects which hold references. Moreover, all objects are stateless, except for those defined at the lowest level using native code, which may independently manage their own private state.
+
+## 1 Component schema file
+
+A Chil component is defined by at least one YAML file, with an extension of `.schema`. This schema file defines the flow of data through a component at runtime. Component data flow is expressed as a set of interconnected streams. Each stream is defined by a key-value pair within a root-level dictionary in the schema file.
+
+### 1.1 Source stream
+
+A schema file may define a stream named `source`, which is not an input and is a source of data. This data is output from the stream in the form of discrete values called *events*.
+
+### 1.2 Main stream
+
+A schema file may define a stream named `main`, which is the default input for all events coming into the component. This default input receives events for which a target input name is not specified, or for which the given target input name is not defined.
+
+### 1.3 Other streams
+
+A schema file may define other streams not named `source` or `main`, which receive events for which the target input name matches the name of the stream.
+
+### 1.4 Stream definition
+
+A stream is defined as a key-value pair, whose key is the name of the stream, and whose value is a reference to an instance of a component. A component instance reference takes the form
+
+```
+component name [@[instance name]] [->input name]
+```
+Note that the square brackets (`[` and `]`) are not literal: they indicate that a portion of the expression is optional.
+
+#### 1.4.1 Prepositions: `@` and `->`
+
+Prepositions are used to "tag" component names with additional information. A preposition is a non-verbal symbol which comes immediately before the first character of a component name.
+
+#### 1.4.2 Component name
+
+A component name is a reference to a component schema file, which is instantiated at compile time as a child of the component in which it is referenced. The name is a relative path to the schema file (without the `.schema` extension).
+
+#### 1.4.3 Instance name
+
+An instance name is unique among all instances of a given component name which are children of a single component. A component name expressed without an "at" preposition (`@`) is a unique anonymous instance. A component name expressed with `@` refers to the single instance of that component which has the name immediately following the `@`, which may be empty.
+
+#### 1.4.4 Input name
+
+TODO...
 
 ## 1 Compiler architecture
 

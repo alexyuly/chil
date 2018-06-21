@@ -75,6 +75,20 @@ TODO...
 
 ## Examples and ideas
 
+### `statefulComponent` (Node.js implementation)
+
+```js
+module.exports = factory => component => ({
+  __init: component.stream.state,
+  main: value => factory(value, component.getData().state),
+  state: value => {
+    component.applyData({
+      state: value,
+    })
+  },
+})
+```
+
 ### `gate.domain`
 
 ```yaml
@@ -86,10 +100,10 @@ state: boolean
 ```js
 const statefulComponent = require('@chil/core/statefulComponent')
 
-module.exports = statefulComponent((mainEvent, state) => (state ? mainEvent : undefined))
+module.exports = statefulComponent((value, state) => (state ? value : undefined))
 ```
 
-TODO: How do we infer input and output types from Node.js implementations of leaf components?
+TODO: How do we infer output types from Node.js implementations of leaf components?
 Do we need to statically declare them? That's not ideal. It would be better for the compiler to infer them.
 
 TODO: How do we separate functions from streams, in native implementations?
@@ -101,7 +115,15 @@ TODO: How do we separate functions from streams, in native implementations?
 ```js
 const statefulComponent = require('@chil/core/statefulComponent')
 
-module.exports = statefulComponent((mainEvent, state) => mainEvent === state)
+module.exports = statefulComponent((value, state) => value === state)
+```
+
+### `add` (Node.js)
+
+```js
+const statefulComponent = require('@chil/core/statefulComponent')
+
+module.exports = statefulComponent((value, state) => value + state)
 ```
 
 ### `mod` (Node.js)
@@ -109,7 +131,7 @@ module.exports = statefulComponent((mainEvent, state) => mainEvent === state)
 ```js
 const statefulComponent = require('@chil/core/statefulComponent')
 
-module.exports = statefulComponent((mainEvent, state) => mainEvent % state)
+module.exports = statefulComponent((value, state) => value % state)
 ```
 
 ### `multiple of.schema`

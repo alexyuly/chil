@@ -77,6 +77,32 @@ TODO...
 
 ### `statefulComponent` (Node.js implementation)
 
+TODO: This module is consumed to construct a stateful leaf node based on a set of methods.
+- Note that many leaf components will not be stateful, or they will have a different custom set of inputs.
+- We could use a class for this kind of thing instead, something like:
+
+```js
+const Component = require('@chil/core/Component')
+
+module.exports = factory => class extends Component {
+  constructor(value) {
+    this.state(value)
+  }
+  
+  main(value) {
+    return factory(value, this.component.getData().state)
+  }
+  
+  state(value) {
+    this.component.applyData({
+      state: value,
+    })
+  }
+}
+```
+
+Here's the non-class, functional form. I'm inclined towards this:
+
 ```js
 module.exports = factory => component => ({
   __init: component.stream.state,
@@ -192,20 +218,20 @@ Chil types unify the concepts of *static type checking* and *conditional validat
 
 Basic types are inherent to Chil and recognized by the compiler at any point in source code.
 
-##### 1.2.1.1 Literal type: `is`
+##### 1.2.1.1 Literal type: `equals`
 
 The type which includes just a single literal value of any type, is expressed as
 
 ```yaml
-is: literal value
+equals: literal value
 ```
 
-##### 1.2.1.2 Union of types: `any of`
+##### 1.2.1.2 Union of types: `fork`
 
 The type which includes the union of a set of types of data, is expressed as
 
 ```yaml
-any of:
+fork:
   - type 1
   - type 2
   ...
@@ -214,18 +240,18 @@ any of:
 An enumeration is defined by a union of literal values:
 
 ```yaml
-any of:
-  - is: literal value 1
-  - is: literal value 2
+fork:
+  - equals: literal value 1
+  - equals: literal value 2
   ...
 ```
 
-##### 1.2.1.3 Intersection of types: `all of`
+##### 1.2.1.3 Intersection of types: `pipe`
 
 The type which includes the intersection of a set of types of data, is expressed as
 
 ```yaml
-all of:
+pipe:
   - type 1
   - type 2
   ...
@@ -235,9 +261,9 @@ Note: The compiler throws an error if any intersected types are disjoint, meanin
 
 ```yaml
 # This type definition makes no sense:
-all of:
-  - is: 0
-  - is: 1
+pipe:
+  - equals: 0
+  - equals: 1
 ```
 
 The compiler will throw an error:
@@ -245,11 +271,11 @@ The compiler will throw an error:
 ```
 Empty type error
 Line 135, Char 2
-all of:
-  - is: 0
-  - is: 1
+pipe:
+  - equals: 0
+  - equals: 1
   ^
-Types of `is: 0` and `is: 1` are disjoint: The result of `all of` is the empty type.
+Types of `equals: 0` and `equals: 1` are disjoint: The result of `all of` is the empty type.
 Use `nothing` to explicitly specify the empty type.
 ```
 
@@ -269,10 +295,10 @@ For example, to express the type that is all values which are *not* 0:
 
 ```yaml
 not:
-  is: 0
+  equals: 0
   
 # or, in shorthand form
-not |is: 0
+not |equals: 0
 ```
 
 ##### 1.2.1.6 Numbers
@@ -286,18 +312,8 @@ Chil also supports the `integer` keyword for the type of just all integers, and 
 `number`, `integer`, and `natural` can be constructed with another type which specifies that the given "value" type is constrained to the "key" type's domain. (In other words, the resulting type is the "value" type intersected with the "key" type, such as `number` or `integer`.) For example, to express the type that is *all numbers* which are not 0 (rather than *all values*, including strings, lookups, and so on):
 
 ```yaml
-number |not |is: 0
+number |not |equals: 0
 ```
-
-Here is another example, of a more complex expression of the type of numbers which are multiples of a given number:
-
-```yaml
-number |such that:
-  pipe |mod: variable
-  type |is: 0
-```
-
-(TODO: Refine and elaborate on `such that` syntax.)
 
 ##### 1.2.1.7 Strings
 
@@ -333,9 +349,9 @@ Modular types are defined by a file with a `.type` extension, which is formatted
 For example, the type of JSON booleans is implemented as a modular type named `true or false`:
 
 ```yaml
-any of:
-  - is: true
-  - is: false
+fork:
+  - equals: true
+  - equals: false
 ```
 
 A modular type can have a constructor argument, which is referenced in code with the reserved word `variable`.
@@ -343,9 +359,9 @@ A modular type can have a constructor argument, which is referenced in code with
 For example, the type of numbers greater than or equal to a given value is implemented as a modular type named `over or is`:
 
 ```yaml
-any of:
+fork:
   - over: variable
-  - number |is: variable
+  - number |equals: variable
 ```
 
 ### 1.3 Implicit module resolution

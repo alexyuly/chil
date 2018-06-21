@@ -73,6 +73,75 @@ A constructor value is an optional value which is used to construct some compone
 
 TODO...
 
+## Examples and ideas
+
+### `gate.domain`
+
+```yaml
+state: boolean
+```
+
+### `gate` (Node.js implementation)
+
+```js
+const statefulComponent = require('@chil/core/statefulComponent')
+
+module.exports = statefulComponent((mainEvent, state) => (state ? mainEvent : undefined))
+```
+
+TODO: How do we infer input and output types from Node.js implementations of leaf components?
+Do we need to statically declare them? That's not ideal. It would be better for the compiler to infer them.
+
+TODO: How do we separate functions from streams, in native implementations?
+- Functions defined by a schema file have a main input denoted with `?main`. (Does this syntax make sense?)
+- Functions may only contain other functions, while streams may contain streams and functions.
+
+### `equals` (Node.js)
+
+```js
+const statefulComponent = require('@chil/core/statefulComponent')
+
+module.exports = statefulComponent((mainEvent, state) => mainEvent === state)
+```
+
+### `mod` (Node.js)
+
+```js
+const statefulComponent = require('@chil/core/statefulComponent')
+
+module.exports = statefulComponent((mainEvent, state) => mainEvent % state)
+```
+
+### `multiple of.schema`
+
+```yml
+?main |pipe:
+  - mod: $
+  - equals: 0
+```
+
+### `count.schema`
+
+```yml
+main |pipe:
+  - map: 1
+  - add @: 0
+  - branch: add @ ->state
+```
+
+### `once per.schema`
+
+```yml
+main |fork:
+  - gate @: true
+  - pipe:
+    - count
+    - multiple of: $
+    - gate @ ->state
+```
+
+### 
+
 ## 1 Compiler architecture
 
 The source code for a Chil application is expressed as any number of YAML files. A single source file (or a pair of files), called the *root component*, is passed as an argument to the compiler, which enters the application's object graph at that point and outputs a consolidated representation of the parent-child relationship tree, combined with the sibling relationship graph encapsulated by each object. Compiler output is in the form of *Chil intermediate code* (*CIC*), expressed as a single JSON file. CIC is parsed by a Chil runtime engine which executes the code on a specific platform such as Node.js. The use of an intermediate language allows Chil to be decoupled from any particular runtime environment.

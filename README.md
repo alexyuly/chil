@@ -28,21 +28,23 @@ All object construction and relation happens at compile time, so references can'
 
 ## Components
 
-A Chil component is defined by a YAML file with an extension of `.schema`. This file contains a dictionary which maps locally unique names to streams. A name defines a public interface for values sent to the component, and a stream defines an implementation for how values are handled.
+A Chil component is defined by a YAML file with an extension of `.schema`. This file contains a dictionary which maps locally unique names to streams. A name defines a public interface for values sent into the component, and a stream defines an implementation for how incoming values are handled. Values sent out of each of these streams are sent out of the component itself.
 
 ```yml
+# example component schema
+
 head: stream
 
 main: stream
 
 state: stream
 
-# others...
+# other named streams...
 ```
 
 ### Streams
 
-A stream is a pathway for values to travel. A stream is a private reference to an instance of a component, with various optional qualifiers. In Chil, all references are private.
+A stream is a pathway for values to travel. A stream is a private reference to an instance of a component, with various optional qualifiers. In Chil, all streams are private to each schema. Note that all following descriptions of "references" apply only within a single schema.
 
 ```yml
 # parts of a stream
@@ -56,23 +58,33 @@ component name[!][ @instance name][ *stream name][: constructor]
 
 Every stream must include at least a component name, which is a path to a component schema file, without the `.schema` extension, relative to the path of the current schema file.
 
-A stream with a component name and no other qualifiers references an anonymous instance of the given component, which cannot be referenced again.
+A stream with a component name and no other qualifiers references an anonymous instance of the given component, which cannot be reused and referenced again.
 
 #### Singletons (`!`)
 
-A stream with a component name immediately followed by an exclamation mark (`!`), is a reference to the single instance of the given component within the current schema. If any other reference is made to the same component name, then the compiler will throw an error.
+A stream with a component name immediately followed by an exclamation mark (`!`), is a reference to the single instance of the given component. If a reference is made to any other instance of the same component, then the compiler will throw an error.
+
+A singleton stream is useful for making multiple references to the same instance, where a specific instance name is not needed (see **Named instances**, below). A singleton is equivalent to a single instance with a given name, except a name is not specified and no other instances are allowed.
 
 #### Named instances (`@`)
 
-A stream with a component name followed by an "at" symbol (`@`) immediately followed by a name, is a reference to the instance of the given component which has the given locally unique name. The name must unique amongst all named instances of any component.
+A stream with a component name followed by an "at" symbol (`@`) immediately followed by a name, is a reference to the instance of the given component which has the given locally unique name. The name must unique amongst all named instances of any component. A named instance cannot also have an exclamation mark, else the compiler will throw an error.
+
+A named instance is useful for making multiple references to the same instance, where other instances of the same component also exist.
 
 #### Stream names (`*`)
 
-TODO
+A stream which includes an asterisk (`*`) immediately followed by a name, is a reference to the given component instance *where values are sent into and out of the given stream name*.
+
+By default, a stream which doesn't include a stream name receives incoming values at its `main` stream, and likewise it sends outgoing values from its own `main` stream.
+
+A stream which includes a stream name receives and sends values into and out of its own stream with the given name. If no such stream exists, then the `main` stream is used. (Note that this latter behavior is only useful for *leaf components*, native modules at the bottom of the component tree which are aware of the stream names used to send values. TODO: Elaborate on this idea...)
 
 #### Constructors
 
-TODO
+A stream which is a key-value pair, rather than a single value, has a value called a "constructor". Each unique instance may only be associated with one constructor, so if multiple streams reference the same instance then only one may have a constructor else the compiler will error.
+
+A constructor is a value used to create an instance of a component, *at compile time*. An instance with no constructor is also created at compile time, as are all instances. There is no way to instantiate components at runtime.
 
 TODO: Revise and remove a lot of this...
 

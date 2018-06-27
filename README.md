@@ -1,6 +1,6 @@
 # *This specification is an unimplemented draft, with work in progress.*
 
-***Last Updated:** 19 Jun 2018*
+***Last Updated:** 26 Jun 2018*
 
 # Chil Language Specification (Edition No. 1, June 2018)
 
@@ -25,6 +25,56 @@ In contrast to traditional object-oriented systems, the fundamental of unit of C
 Special *connection objects*, which are also children, form the bridge of communication between other children. These connection objects allow for the inputs of a component to be connected to child inputs, for child outputs to be connected to other child inputs, and for child outputs to be "sinked" to the component output, in various ways.
 
 All object construction and relation happens at compile time, so references can't be created, passed, or destroyed during runtime. Object relationships are defined by the proximity of objects within source code, rather than the state of objects which hold references. Moreover, all objects are stateless, except for those defined at the lowest level using native code, which may independently manage their own private state.
+
+## Components
+
+A Chil component is defined by a YAML file with an extension of `.schema`. This file contains a dictionary which maps locally unique names to streams. A name defines a public interface for values sent to the component, and a stream defines an implementation for how values are handled.
+
+```yml
+head: stream
+
+main: stream
+
+state: stream
+
+# others...
+```
+
+### Streams
+
+A stream is a pathway for values to travel. A stream is a private reference to an instance of a component, with various optional qualifiers. In Chil, all references are private.
+
+```yml
+# parts of a stream
+
+component name[!][ @instance name][ *stream name][: constructor]
+```
+
+*Note that square brackets are not literal but enclose an optional qualifier.*
+
+#### Component name
+
+Every stream must include at least a component name, which is a path to a component schema file, without the `.schema` extension, relative to the path of the current schema file.
+
+A stream with a component name and no other qualifiers references an anonymous instance of the given component, which cannot be referenced again.
+
+#### Singletons (`!`)
+
+A stream with a component name immediately followed by an exclamation mark (`!`), is a reference to the single instance of the given component within the current schema. If any other reference is made to the same component name, then the compiler will throw an error.
+
+#### Named instances (`@`)
+
+A stream with a component name followed by an "at" symbol (`@`) immediately followed by a name, is a reference to the instance of the given component which has the given locally unique name. The name must unique amongst all named instances of any component.
+
+#### Stream names (`*`)
+
+TODO
+
+#### Constructors
+
+TODO
+
+TODO: Revise and remove a lot of this...
 
 ## 1 Component schema file
 

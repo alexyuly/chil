@@ -20,13 +20,15 @@ Each instance of a component is an object. As with classes, components define th
 
 ### Layered abstraction
 
-**References** and **values** are treated differently by convention, because they exist on different layers of abstraction. References are low-level data used by humans and machines to identify some higher-level data. Values are high-level data used to provide information to components of a system. Values flow through channels of streams at runtime, while references are established and fixed at compile time so they can never be passed around as data. Data-flow conventions are reified as explicit syntax in Chil, which enforces one consistent mechanism for controlling application behavior without any need for manipulation of references at runtime.
+**References** and **values** are treated differently by convention, because they exist on different layers of abstraction. Values flow through channels of streams at runtime, while references are established and fixed at compile time so they can never be passed around as data. Data-flow conventions are reified as explicit syntax in Chil, which enforces one consistent mechanism for controlling application behavior without any need for manipulation of references at runtime.
 
 ### Isomorphic syntax
 
-Chil is a "homoiconic" language, which means its code syntax is directly comparable to its abstract structure.
+Chil is a "homoiconic" language, which means its code syntax is isomorphic with its abstract structure. There is a one-to-one mapping from any unit of code to any unit of the runtime model which executes the code. This align users' thinking about the structure of code with thinking about the modeling of concepts. As a result, code becomes much more semantic, in that it directly describes the behavorial model of a system.
 
 ### Portable bytecode
+
+The source code for a Chil application is expressed as any number of YAML files, which are compiled together into bytecode expressed as a single JSON file. Chil JSON bytecode is portable to any runtime environment for which there is an engine that can execute it. So, Chil source code is completely decoupled from any particular environment.
 
 ## Fundamental syntax
 
@@ -34,3 +36,6 @@ Chil is a "homoiconic" language, which means its code syntax is directly compara
 
 Chil code is a subset of [YAML](http://yaml.org/spec/1.2/spec.html), which is well suited to a language which represents code as data. It avoids extraneous symbols designed to separate code from data inline, like quotes and braces, and cuts right to the heart of the content being expressed.
 
+### Schema files
+
+The source code for a Chil component is expressed as a YAML file called a **schema file**, with an extension of `.schema`. The schema file contains definitions of the public input channels that define the component's interface, as well as definitions of the private objects and relationships which define its behavior.

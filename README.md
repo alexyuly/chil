@@ -12,11 +12,11 @@ Chil is a data-driven programming language, built on familiar patterns like func
 
 ### Strict encapsulation
 
-Each component is strictly responsible for its own operations, and strictly *not responsible* for the operations of other units of code. Communication between components is intensely, intentionally limited by the concepts of **boundaries** and **channels**. Chil is a spatially modeled language, with code components being analogous to physical components. A component's boundaries enclose a private implementation for handling values, which enter and exit the component via public *single-directional* channels. This kind of communication reduces the conceptual distance between virtual models and physical representations of those models, either human or machine.
+Each component is strictly responsible for its own operations, and strictly not responsible for the operations of other components. Communication between components is intentionally and extremely limited by the concepts of boundaries and channels. Component **boundaries** enclose a private implementation for handling values, while **channels** allow values to enter and exit in a single direction. Chil is a spatially modeled language, with components in code being analogous to closed physical systems. Chil's communication conventions reduce the conceptual distance between virtual models and physical systems, either human or machine.
 
 ### Object orientation
 
-Each instance of a component is an object. As with classes, components define the interface and behavior of a type of objects. An object's interface has a set of zero or more input channels, each of which receives an asynchronous sequence of a specific type of values. These values are handled by the object's behavior, which is a composition of other objects whose channels are interconnected via *strong, static* typing. Outgoing values are sent *either synchronously or async, relative to incoming values,* to a single output channel. Since an object models a sequence of incoming and outgoing values, *all Chil objects are also streams*.
+Each instance of a component is an object. As with classes, components define the interface and behavior of a type of object. An object's interface has a set of zero or more input channels, each of which receives an asynchronous sequence of a specific type of value. These values are handled by the object's implementation, which is a composition of other objects whose channels are interconnected via strong, static typing. Outgoing values are sent either synchronously or async, relative to incoming values, to a single output channel. Since an object models a sequence of incoming and outgoing values, all Chil objects are also streams.
 
 ### Layered abstraction
 
@@ -24,7 +24,7 @@ Each instance of a component is an object. As with classes, components define th
 
 ### Isomorphic syntax
 
-Chil is a "homoiconic" language, which means its code syntax is isomorphic with its abstract structure. There is a one-to-one mapping from any unit of code to any unit of the runtime model which executes the code. This align users' thinking about the structure of code with thinking about the modeling of concepts. As a result, code becomes much more semantic, in that it directly describes the behavorial model of a system.
+Chil is a "homoiconic" language, which means its code syntax is isomorphic with its abstract structure. There is a one-to-one mapping from any unit of code to any unit of the runtime model which executes the code. This aligns users' thinking about the structure of code with thinking about the modeling of concepts. As a result, code becomes much more semantic, in that it directly describes the behavorial model of a system.
 
 ### Portable bytecode
 

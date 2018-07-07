@@ -1,10 +1,14 @@
 # *This specification is an unimplemented draft, with much work in progress.*
 
-***Last Updated:** 3 Jul 2018*
+***Last Updated:** 6 Jul 2018*
 
 # Chil Language Specification (Edition No. 1, July 2018)
 
 Copyright (c) 2017-2018 Alex Yuly. Distributed under the MIT license.
+
+## Why "Chil"?
+
+*Chil* is an acronym for *Component Hierarchy Information Language*. The name is also a reference to the idea of "chill" software, that an application's structure is "frozen" at compile time, so runtime errors due to problems with the structure of code *cannot occur*. No more null pointers, no more circular runtime dependencies: *yes*, to more creativity.
 
 ## Driving Principles
 
@@ -20,7 +24,7 @@ Each instance of a component is an object. As with classes, components define th
 
 ### Layered abstraction
 
-References and values are treated differently by convention, because they exist on different layers of abstraction. Values flow through channels of streams at runtime, while references are established and fixed at compile time so they can never be passed around as data. Data-flow conventions are reified as explicit syntax in Chil, which enforces one consistent mechanism for controlling application behavior without any need for manipulation of references at runtime.
+References and values are treated differently by convention, because they exist on different layers of abstraction. Values flow through channels of streams at runtime, while references are established and fixed at compile time so they can never be passed around as data. Data-flow conventions are reified as explicit syntax in Chil, which enforces one consistent mechanism for controlling application behavior without any need for passing references at runtime. The dependency structure of a Chil application is entirely fixed at compile time.
 
 ### Isomorphic syntax
 
@@ -39,8 +43,22 @@ Chil code is a subset of [YAML](http://yaml.org/spec/1.2/spec.html), which is we
 ### Schema files
 
 The source code for a Chil component is expressed as a YAML file called a "schema file", with an extension of `.schema`.
-A schema file consists of a dictionary which defines a set of channels for a component. A channel consists of a name mapped to a delegate. A delegate is a reference to a channel of an object. Such objects and their channels are strictly private to the component.
+A schema file consists of a dictionary which defines a set of channels for a component. A channel consists of a name mapped to a delegate. A delegate is a reference to a channel of an object, which is a "child" of the top-level component. Child objects and their channels are strictly private to the component.
 
-Every schema must have at least one channel. Most schemas have a `main` channel, which is the "default channel" for all values sent to an instance of the component at an unspecified or undefined channel. Some schemas, instead of or in addition to `main`, have a `head` channel, to which no values can be sent. While `main` should be used to delegate the primary data flow through the component in response to incoming values, `head` is used to produce original values.
+Every schema must have at least one channel. Each channel outputs values from its delegate's output to the component output. Most schemas have a `main` channel, which is the "default channel" for all values sent to an instance of the component at an unspecified or undefined channel. Some schemas, instead of or in addition to `main`, have a `head` channel, to which no values can be sent. All channels other than `head` are called "input channels", because they receive incoming values, while `head` is "private" and can't receive input values.
 
-The private objects referenced within a component are themselves instances of components. Some special "connection components" are native to Chil, which define a limited set of composable communication conventions for objects.
+The private objects referenced within a component are themselves instances of components. Some special "connection components" are native to Chil, which define a limited set of composable communication conventions for objects. Oftentimes, a connection channel is the delegate of a component channel. Connection channels are constructed with other channels.
+
+TODO: Revise and organize a lot of this writing.
+
+### Components
+
+A component is the fundamental unit of computation in Chil. It encapsulates instances of other components.
+
+#### Objects
+
+An object is an instance of a component.
+
+#### Applications
+
+An application is an object which is the root of an object tree.

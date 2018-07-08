@@ -1,6 +1,6 @@
 # *This specification is an unimplemented draft, with much work in progress.*
 
-***Last Updated:*** *7 Jul 2018*
+***Last Updated:*** *8 Jul 2018*
 
 # Chil Language Specification
 
@@ -66,4 +66,28 @@ The **main stream** is common to most objects, including all applications. If an
 The **head stream** is common to all objects, even if not explicitly declared. If an object declares a stream named `head`, then it handles the value passed into the object when it is constructed at compile-time, and it should be concerned with initializing the state of the object. Note that the head stream may also receive values passed at runtime, which may be useful to dynamically re-initialize an object's state.
 
 If no head stream is explicitly declared, then values passed into the object during construction, or into the head stream at runtime, will have no effect.
+
+### Application tree
+
+An **application tree** is a tree of objects, which has an application at its root, "branch objects" within, and "leaf objects" at its leaves:
+
+#### Leaf object
+
+A **leaf object** is an object which has no children. It is defined as "native code", that is any code which is written in a language targeting a specific platform supported by a Chil runtime engine, rather than code which is written in a platform-agnostic language, that is the "Chil language" itself.
+
+A leaf object is constructed from a "component function", which is implemented for each target platform, in a platform-specific language. For example, a Node.js implementation of the `add` component might look like this:
+
+```js
+module.exports = (object) => ({
+    head: (value) => {
+        object.store(value)
+    },
+    main: (value) => {
+        const state = object.fetch()
+        object.output(value + state)
+    },
+})
+```
+
+Note that `object` provides access to synchronous functions which are called to `store` and `fetch` the object's state, as well as `output` a value. The functions assigned to `head` and `main` define streams which call these functions of the object. Note: the streams return undefined, as no return value is expected or consumed. Instead, values are "generated", "published", or "yielded", via function calls.
 

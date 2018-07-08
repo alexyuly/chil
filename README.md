@@ -39,7 +39,7 @@ A **stream** is an executable block of code which is called in response to a con
 
 A **component** is a structure which
 
-- combines streams and gives them scoped access to shared state and a shared output
+- combines streams and gives them private access to reading and writing shared state, and writing to a shared output
 - assigns a name to each stream, which is unique among all streams of the component
   - if the name is `head`, then the stream is called once, *at compile time*, with a value called a "constructor", in order to initialize the component's state
   - otherwise, the stream is called repeatedly, *at runtime*, with incoming values from one or more outputs, in order to take an action which depends on the kind of component
@@ -65,7 +65,7 @@ A **schema component** is a component which is implemented with Chil code, which
 
 A schema component source code file should have an extension of `.schema`. The content of a schema component source code file is valid [YAML](http://yaml.org/spec/1.2/spec.html). (YAML is well-suited to a language which represents code as data. It avoids extraneous symbols such as quotes and braces, which do not add to the human-readable meaning of words.)
 
-Each stream of a schema component is defined as a key-value pair within a dictionary. The key is the name of the stream, while the value is a "delegate", which is a reference to a stream within the component's private scope. The delegate is called in response to each value sent to the stream, and all values output by the delegate are sent to the stream's output.
+Each stream of a schema component is defined as a key-value pair within a dictionary. The key is the name of the stream, while the value is a "delegate":
 
 #### Delegate
 
@@ -79,26 +79,38 @@ What is "a stream within the component's private scope"? Each component has priv
 
 The syntax of a delegate can be represented as
 
-`[component path][!][ @component instance][ *component stream]`
+`[component path][!][ @component instance][ *component stream][: constructor]`
 
-The brackets indicate each part of the syntax.
+The brackets are not literal. They indicate the bounds of a section of the syntax.
 
 ##### Component path
 
 A **component path** is a path to a source code file for a component, which is one of the following:
 
-- A "global" file path which can be referenced because it is relative to an entry defined in the Chil compiler path. (*TODO*: Explain how to define entries in the Chil compiler path.)
-- A "system" file path which is relative to the current directory of the file within which is it referenced.
+- a "global" file path which can be referenced because it is relative to an entry defined in the Chil compiler path. (*TODO*: Explain how to define entries in the Chil compiler path.)
+- a "system" file path which is relative to the current directory of the file within which is it referenced.
 
 ##### Singleton (exclamation point)
 
-*TODO*
+A delegate which references the single instance of a child component is denoted by a trailing exclamation point, after the component path.
 
-##### Component instance ("at" symbol)
+##### Component instance (*at* symbol)
 
-*TODO*
+Alternatively, a delegate which references the instance of a child component which has a given name is denoted by a string identifier preceded by an *at* symbol, where the identifier is unique among all child component instances.
+
+A delegate may have either a singleton or a component instance, but not both.
 
 ##### Component stream (asterisk)
 
-*TODO*
+A delegate which references a stream of the given child component which is named something other than `main`, is denoted by the name of a stream preceded by an asterisk.
+
+The `main` stream of a component is the default stream, which receives incoming values when no component stream is specified, or when the specified stream is not defined on the given child component.
+
+##### Constructor
+
+A delegate may be a single value, or it may be a key-value pair, where the value is a "constructor" which is passed to the `head` stream of the given child component, at compile time.
+
+Only one constructor may be defined per unique component instance, regardless of which stream is referenced. If more than one such constructor is defined, then the compiler will throw an error.
+
+
 

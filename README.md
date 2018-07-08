@@ -29,100 +29,41 @@ A **value** is a single piece of human-readable data, such as a number, a string
 
 ### Output
 
-An **output** is an asynchronous series of values.
+An **output** is a function which is called with a value 0 or more times, in order to publish values to any "listeners" who may be notified as a result of the calls.
 
 ### Stream
 
-A **stream** is an executable block of code which is called in response to a constant value at compile time, or alternatively, in response to variable values from one or more outputs at runtime.
+A **stream** is a function which is called with an "input value" 1 or more times, and which in response calls its own output with an "output value" 0 or more times per input. The "own output" of a stream is passed in by a higher-order function. For example, this ECMAScript-like pseudo-code returns a stream:
+
+```js
+(output) => (value) => over_time(() => output(transformation_of(value)))
+```
+
+Note: `over_time` is a function which abstracts the synchronicity of a stream over time, which may be a combination of synchronous and asynchronous calls. `transformation_of` is a function which abstracts a theoretical transformation of an input value to produce an output value. (Note that input-output mappings need not be 1-to-1: Inputs may have any possible correspondence with outputs.)
+
+Streams may also be stateful. This state, as well as the stream's own output, is controlled by a "component":
 
 ### Component
 
-A **component** is a structure which
+A **component** is a closure which combines 1 or more streams with an output and a state. Each stream has a "name" which is unique within the component. A component is a prototype for an "object":
 
-- combines streams and gives them private access to reading and writing shared state, and writing to a shared output
-- assigns a name to each stream, which is unique among all streams of the component
-  - if the name is `head`, then the stream is called once, *at compile time*, with a value called a "constructor", in order to initialize the component's state
-  - otherwise, the stream is called repeatedly, *at runtime*, with incoming values from one or more outputs, in order to take an action which depends on the kind of component
+#### Object
 
-Components have two kinds, **leaf** and **schema**:
+An **object** is an instance of a component which is constructed at compile-time. Chil objects are constructed only at compile-time, never at runtime. The representation of an object in Chil "byte-code" is equivalent to the serialization of the state of that object. Once an object has been compiled into byte-code, it may be executed, state-updated, terminated, and re-executed with the same state, with no additional compilation.
 
-#### Leaf component
+#### Application
 
-A **leaf component** is a component which is implemented with "native" code, which is code that is specific to one target platform supported by a Chil runtime engine. (For example, a leaf component may be implemented in JavaScript, to target the proposed Chil Node.js runtime engine.)
+An **application** is an object which is the root of an "object tree". Each object may be the child of another object, excluding itself and its descendants, therefore the objects of an application form a *tree*. Circular graphs of objects are not permitted and will cause a compiler error.
 
-A leaf component source code file should have an extension of `.leaf.[native extension]`, where `[native extension]` is the extension of the native code. (For example, a leaf component implemented in JavaScript should have a "double-dot" extension of `.leaf.js`).
+An application is executed by passing arguments, as a list of strings, into one stream of the application, which is named `main`:
 
-Each stream of a leaf component is defined as a function with one parameter, which is a closure on the component's state and the component's output.
+#### Main stream
 
-Each stream of a leaf component is called in order to
+The **main stream** is common to most objects, including all applications. If an object declares a stream named `main`, then it handles all incoming values for the object, unless another stream is specified.
 
-- initialize or update the component's state
-- send values to the component's output
+#### Head stream
 
-#### Schema component
+The **head stream** is common to all objects, even if not explicitly declared. If an object declares a stream named `head`, then it handles the value passed into the object when it is constructed at compile-time, and it should be concerned with initializing the state of the object. Note that the head stream may also receive values passed at runtime, which may be useful to dynamically re-initialize an object's state.
 
-A **schema component** is a component which is implemented with Chil code, which is code that is general to any target platform supported by a Chil runtime engine.
-
-A schema component source code file should have an extension of `.schema`. The content of a schema component source code file is valid [YAML](http://yaml.org/spec/1.2/spec.html). (YAML is well-suited to a language which represents code as data. It avoids extraneous symbols such as quotes and braces, which do not add to the human-readable meaning of words.)
-
-Each stream of a schema component is defined as a key-value pair within a dictionary. The key is the name of the stream, while the value is a "delegate":
-
-#### Delegate
-
-A **delegate** is a reference to a stream which
-
-- is within the component's private scope
-- receives values sent into a public stream of the component
-- sends values out to the component's output
-
-What is "a stream within the component's private scope"? Each component has private "child components", whose streams are included in delegates.
-
-The syntax of a delegate can be represented as
-
-`[component path][!][ @component instance][ *component stream][: constructor]`
-
-The brackets are not literal. They indicate the bounds of a section of the syntax.
-
-##### Component path
-
-A **component path** is a path to a source code file for a component, which is one of the following:
-
-- a "global" file path which can be referenced because it is relative to an entry defined in the Chil compiler path. (*TODO*: Explain how to define entries in the Chil compiler path.)
-- a "system" file path which is relative to the current directory of the file within which is it referenced.
-
-##### Singleton (exclamation point)
-
-A delegate which references the single instance of a child component is denoted by a trailing exclamation point, after the component path.
-
-##### Component instance (*at* symbol)
-
-Alternatively, a delegate which references the instance of a child component which has a given name is denoted by a string identifier preceded by an *at* symbol, where the identifier is unique among all child component instances.
-
-A delegate may have either a singleton or a component instance, but not both.
-
-##### Component stream (asterisk)
-
-A delegate which references a stream of the given child component which is named something other than `main`, is denoted by the name of a stream preceded by an asterisk.
-
-The `main` stream of a component is the default stream, which receives incoming values when no component stream is specified, or when the specified stream is not defined on the given child component.
-
-##### Constructor
-
-A delegate may be a key-value pair, where the value is a "constructor" which is passed to the `head` stream of the given child component, at compile time.
-
-Only one constructor may be defined per unique component instance, regardless of which stream is referenced. If more than one such constructor is defined, then the compiler will throw an error.
-
-Alternatively, values may be sent through a component's own constructor, to the constructor of a child component, at compile time. This is achieved by defining a `head` stream on a component and routing values to the `head `of a child component. For example:
-
-```yaml
-head: mod! *head    # sent at compile time
-main| split:
-  - pipe:
-    - mod!
-    - equals: 0
-    - gate! *head   # sent at runtime
-  - gate!
-```
-
-Values can even be sent to a child component's constructor *at runtime* instead of compile time, if those values are sent within a stream other than `head`, such as `main`. (For example, the values sent to `gate! *head` in the above example, are sent at runtime.)
+If no head stream is explicitly declared, then values passed into the object during construction, or into the head stream at runtime, will have no effect.
 

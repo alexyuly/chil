@@ -108,9 +108,21 @@ The `main` stream of a component is the default stream, which receives incoming 
 
 ##### Constructor
 
-A delegate may be a single value, or it may be a key-value pair, where the value is a "constructor" which is passed to the `head` stream of the given child component, at compile time.
+A delegate may be a key-value pair, where the value is a "constructor" which is passed to the `head` stream of the given child component, at compile time.
 
 Only one constructor may be defined per unique component instance, regardless of which stream is referenced. If more than one such constructor is defined, then the compiler will throw an error.
 
+Alternatively, values may be sent through a component's own constructor, to the constructor of a child component, at compile time. This is achieved by defining a `head` stream on a component and routing values to the `head `of a child component. For example:
 
+```yaml
+head: mod! *head    # sent at compile time
+main| split:
+  - pipe:
+    - mod!
+    - equals: 0
+    - gate! *head   # sent at runtime
+  - gate!
+```
+
+Values can even be sent to a child component's constructor *at runtime* instead of compile time, if those values are sent within a stream other than `head`, such as `main`. (For example, the values sent to `gate! *head` in the above example, are sent at runtime.)
 

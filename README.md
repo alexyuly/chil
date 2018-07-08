@@ -89,5 +89,31 @@ module.exports = (object) => ({
 })
 ```
 
-Note that `object` provides access to synchronous functions which are called to `store` and `fetch` the object's state, as well as `output` a value. The functions assigned to `head` and `main` define streams which call these functions of the object. Note: the streams return undefined, as no return value is expected or consumed. Instead, values are "generated", "published", or "yielded", via function calls.
+Note that `object` provides access to synchronous functions which are called to `store` and `fetch` the object's state, as well as `output` a value. The functions assigned to `head` and `main` define streams which call these functions of the object. Note that any value returned by a stream is ignored and not consumed.
+
+##### Proposed leaf object API for Node.js #####
+
+Each leaf object has an API which consists of the following functions, called "methods":
+
+- `fetch()`: Synchronously return the value which was last called with `store(value)`, or if that method was never called, then return `undefined`.
+- `fetch(key)`: Synchronously return the value which was last called with `store(value, key)`, or if that method was never called with the given `key`, then return `undefined`.
+- `output(value)`: Synchronously, iteratively call each listening stream with `value`.
+- `store(value)`: Synchronously write `value` to memory, to be retrieved later on with `fetch()`. (Note: After `value` is written to memory, a background thread is called to persist the storage to disk.)
+- `store(value, key)`: Synchronously write `value` to memory, at the specified `key`, to be retrieved later on with `fetch(key)`. (*TODO*: Given the extra complexity introduced by key-specific storage, evaluate whether it is necessary.)
+
+#### Branch object
+
+A **branch object** is an object which has one or more children. It is defined as code in the Chil language. This code is "platform-agnostic", in the sense that, ideally, it is designed to implement a level of abstraction above the concerns of any specific platform.
+
+A branch object is constructed from a "schema file", which is a file in valid [YAML](http://yaml.org/spec/1.2/spec.html) format, containing a single dictionary, whose keys are the names of streams, and whose values are "delegates":
+
+#### Delegate
+
+A **delegate** is a reference to a stream of a child of a branch object. The stream is the "owner" of the delegate. A delegate handles all incoming values sent to its owner, and it sends outgoing values on behalf of its owner's output. The syntax of a delegate includes the file path of a component's source code, plus some identifying information about the particular child object and stream being referenced:
+
+```yaml
+[component file path][!][ @object name][ *stream name][: constructor]
+```
+
+(Note that the brackets are not literal: They indicate the bounds of part of the syntax.)
 

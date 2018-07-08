@@ -50,19 +50,55 @@ Components have two kinds, **leaf** and **schema**:
 
 A **leaf component** is a component which is implemented with "native" code, which is code that is specific to one target platform supported by a Chil runtime engine. (For example, a leaf component may be implemented in JavaScript, to target the proposed Chil Node.js runtime engine.)
 
-A leaf component source code file should have an extension of `.leaf.[native extension]`, where `[native extension]` is the extension of the native code. (For example, a leaf component implemented in JavaScript should have a "double-dot" extenstion of `.leaf.js`).
+A leaf component source code file should have an extension of `.leaf.[native extension]`, where `[native extension]` is the extension of the native code. (For example, a leaf component implemented in JavaScript should have a "double-dot" extension of `.leaf.js`).
 
 Each stream of a leaf component is defined as a function with one parameter, which is a closure on the component's state and the component's output.
 
-Each non-head stream of a leaf component is called repeatedly at runtime, in order to
+Each stream of a leaf component is called in order to
 
-- update the component's state
+- initialize or update the component's state
 - send values to the component's output
 
 #### Schema component
 
 A **schema component** is a component which is implemented with Chil code, which is code that is general to any target platform supported by a Chil runtime engine.
 
-A schema component source code file should have an extension of `.schema.yml`. The content of a schema component source code file is valid [YAML](http://yaml.org/spec/1.2/spec.html). (YAML is well-suited to a language which represents code as data. It avoids extraneous symbols such as quotes and braces, which do not add to the human-readable meaning of words.)
+A schema component source code file should have an extension of `.schema`. The content of a schema component source code file is valid [YAML](http://yaml.org/spec/1.2/spec.html). (YAML is well-suited to a language which represents code as data. It avoids extraneous symbols such as quotes and braces, which do not add to the human-readable meaning of words.)
 
-Each stream of a schema component is defined as a key-value pair within a dictionary.
+Each stream of a schema component is defined as a key-value pair within a dictionary. The key is the name of the stream, while the value is a "delegate", which is a reference to a stream within the component's private scope. The delegate is called in response to each value sent to the stream, and all values output by the delegate are sent to the stream's output.
+
+#### Delegate
+
+A **delegate** is a reference to a stream which
+
+- is within the component's private scope
+- receives values sent into a public stream of the component
+- sends values out to the component's output
+
+What is "a stream within the component's private scope"? Each component has private "child components", whose streams are included in delegates.
+
+The syntax of a delegate can be represented as
+
+`[component path][!][ @component instance][ *component stream]`
+
+The brackets indicate each part of the syntax.
+
+##### Component path
+
+A **component path** is a path to a source code file for a component, which is one of the following:
+
+- A "global" file path which can be referenced because it is relative to an entry defined in the Chil compiler path. (*TODO*: Explain how to define entries in the Chil compiler path.)
+- A "system" file path which is relative to the current directory of the file within which is it referenced.
+
+##### Singleton (exclamation point)
+
+*TODO*
+
+##### Component instance ("at" symbol)
+
+*TODO*
+
+##### Component stream (asterisk)
+
+*TODO*
+

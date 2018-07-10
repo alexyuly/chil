@@ -1,6 +1,6 @@
 # *This specification is an unimplemented draft, with much work in progress.*
 
-***Last Updated:*** *9 Jul 2018*
+***Last Updated:*** *10 Jul 2018*
 
 # Chil Language Specification
 
@@ -55,7 +55,7 @@ Chil byte-code will be explained in detail in a subsequent section of this speci
 
 #### Object stream
 
-An **object stream** is one of the streams that is combined to construct an object. Such a stream has a "name", which is unique within its object, and a "delegate", which is a stream that is called with all input values sent to the object stream, and which outputs values on behalf the object stream.
+An **object stream** is one of the streams that is combined to construct an object, which is said to be "owned" by that object. An object stream has a "name" unique to its object, and a "delegate", which is a stream that is called with all input values sent to the object stream, and which outputs values on behalf the object stream.
 
 Some object streams have a delegate which is a function implemented in "native code" (see below), while others have a delegate which is a stream of a "child object":
 
@@ -63,11 +63,11 @@ Some object streams have a delegate which is a function implemented in "native c
 
 A **child object** is an object which has 1 "parent" which is an object, and 0 or more "siblings" which are child objects of the same parent. The interface of each child is "privately scoped" to its parent: Only a parent has access to sending input values and listening to output values from its own children.
 
-A child object may contain the stream which is the delegate of one of its parent's streams, or a child object may be passed into a delegate as a "constructor":
+Each stream owned by child object may be either the delegate of one of its parent's streams, or part of such a delegate's "constructor":
 
 #### Constructor
 
-A **constructor** is a value which is passed to an object via its "head" stream, when it is constructed at compile-time. The "head" stream refers to the stream of an object which is named "head".
+A **constructor** is a value or stream which is passed to an object via its "head" stream, when it is constructed at compile-time. The "head" stream refers to the stream of an object which is named "head".
 
 ### Leaf object
 
@@ -77,7 +77,7 @@ A **leaf object** is an object which has no children, and whose streams therefor
 
 **Native code** is any code which is used to implement delegates of a leaf object, for a particular runtime environment which is supported by a Chil runtime engine.
 
-A leaf object is constructed from a "component function", which defines the streams and delegates of a leaf component. For example, a Node.js implementation of an `add` component might look like this:
+A leaf object is constructed from a "component function", which defines the streams and delegates of a leaf component. For example, a Node.js implementation of an "add" component might look like this:
 
 ```js
 module.exports = (object) => ({
@@ -90,4 +90,22 @@ module.exports = (object) => ({
     },
 })
 ```
+
+Leaf component functions are packaged into "libraries", which includes the Chil standard library. These functions should be as small, focused, unique, and reusable as possible, across the global Chil ecosystem. Applications should implement new leaf components only if a problem cannot be solved by combining existing components.
+
+#### Connection object
+
+A **connection object** is a class of leaf object which is constructed with 1 or more objects, in order to define the flow of data through those objects. Connection components are included in the Chil standard library.
+
+##### Pipe
+
+A **pipe** is an object which is constructed with a list of streams, and which sends its input values into the first stream in the list, sends values out from the first stream into the second, out of the second, and so on through any remaining streams, until values are sent out from the last stream to the pipe's output.
+
+*TODO*...
+
+### Branch object
+
+A **branch object** is an object which has 1 or more children, and whose streams therefore have delegates which are streams of its child objects.
+
+*TODO: Think about objects having more than one output: i.e., one output per stream. Object streams probably shouldn't share on output, otherwise the idea of "delegating" to streams is too confusing.*
 

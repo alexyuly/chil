@@ -41,26 +41,65 @@ A **value object** or just "value", is an immutable piece of information, which 
 
 ### Stream
 
-A **stream** is an object which can be called repeatedly with incoming values, and which may either call each of its connected streams in response, or may hand off responsibility for calling its connected streams to a "delegate" function, which is called with each incoming value.
+A **stream** is an object which can be called repeatedly with incoming values, and which may either call each of its connected streams in response, or may hand off responsibility for calling its connected streams to a "delegate" function or stream, which is called with each incoming value.
 
-Here is the Node.js implementation of a function which returns a new stream, from an optional delegate and an optional "state object":
+Here is the Node.js implementation of a function which returns a new stream, from an optional delegate function:
 
 ```js
-module.exports = (delegate, state) => {
+const stream = (delegate = (fn) => fn) => {
     const connected_streams = []
-    const this_stream {
+    return {
         connect: connected_streams.push,
-        next: (value) => {
-            for (const stream of connected_streams) {
-                stream.next(value)
+        next: delegate((value) => {
+            for (const connected_stream of connected_streams) {
+                connected_stream.next(value)
             }
+        }),
+    }
+}
+```
+
+*TODO: Move component code samples to the component definiton section.*
+
+Here is the Node.js implementation of a function which returns a new leaf component, from a map of intent names to delegate functions:
+
+```js
+const leaf_component = (fn_map) => {
+    let state
+    const this_component = {
+        intents: {},
+        result: stream(),
+        state: {
+            fetch: () => state,
+            store: (value) => {
+                state = value
+                // Then, asynchronously write values to disk.
+            },
         },
-        state,
     }
-    if (delegate) {
-        this_stream.next = delegate(this_stream)
+    for (const intent_name in fn_map) {
+        const intent = stream(fn_map[intent_name](this_component))
+        intent.connect(this_component.result)
+        this_component.intents[intent_name] = intent
     }
-    return this_stream
+    return this_component
+}
+```
+
+Here is the Node.js implementation of a function which returns a new branch component, from a map of intent names to streams:
+
+```js
+const branch_component = (stream_map) => {
+    const this_component = {
+        intents: {},
+        result: stream(),
+    }
+    for (const intent_name in stream_map) {
+        const intent = stream_map[intent_name]
+        intent.connect(this_component.result)
+        this_component.intents[intent_name] = intent
+    }
+    return this_component
 }
 ```
 
@@ -102,11 +141,11 @@ A leaf object is constructed from a "component function", which defines the stre
 
 ```js
 module.exports = {
-    head: (result) => (value) => {
-        result.state.store(value)
+    head: (component) => (value) => {
+        component.state.store(value)
     },
-    main: (result) => (value) => {
-        result.next(value + result.state.fetch())
+    main: (component) => (value) => {
+        component.result.next(value + component.state.fetch())
     },
 }
 ```
@@ -183,4 +222,3 @@ Note that all head-streams are wrapped with "void" by default, meaning that thei
 A **branch object** is an object which has 1 or more children, and whose streams therefore have delegates which are streams of its child objects.
 
 *TODO*
-

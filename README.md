@@ -161,5 +161,9 @@ Note that all head-streams are wrapped with "void" by default, meaning that thei
 
 A **branch object** is an object which has 1 or more children, and whose streams therefore have delegates which are streams of its child objects.
 
-*TODO: Think about objects having more than one output: i.e., one output per stream. Object streams probably shouldn't share on output, otherwise the idea of "delegating" to streams is too confusing.*
+*TODO*
+
+### Human-Centered Interaction Model
+
+![hello][./images/Human-Application Interaction Model.png]
 

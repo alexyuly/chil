@@ -27,39 +27,35 @@ Just *Chil*, ok? Software is going to be alright...
 
 ### Human-Application Interaction Cycle
 
-The Chil language is designed with a certain model of human-application interaction in mind, and that model is cyclic. A Chil application is the aggregate root of high-level intents and results, expressed as single-directional streams of value objects. The intents are translated from *inputs* received via a software interface. *Intents* flow through the *application model*, which produces results. The *results* are translated into *outputs* and sent out via a software interface. (A "software interface" can be as high-level as the web browser Document Object Model, or as low-level as an audio/video buffer.)
+The Chil language is designed with a certain model of human-application interaction in mind, and that model is cyclic. A Chil application is the aggregate root of high-level entities: a set of intents, a model, and a result. Each entity is represented as a single-directional stream of value objects. *Inputs* received via a software interface are translated into *intents*, which flow through the *application model* to produce results. The *results* are translated into *outputs* and sent out via a software interface. (A "software interface" can be as high-level as the web browser Document Object Model, or as low-level as an audio/video buffer.)
 
 ![Human-Application Interaction Cycle](https://github.com/alexyuly/chil/blob/master/images/Human-Application%20Interaction%20Cycle.svg)
 
-Please refer to the work of Cycle.js for more, excellent analysis of human/computer ["dialogue abstraction"](https://cycle.js.org/dialogue.html).
+Please refer to the documentation of Cycle.js for further excellent analysis of the concepts involved in ["human-computer dialogue abstraction"](https://cycle.js.org/dialogue.html). Thank you to Cycle.js for catalyzing my interest in modeling software applications with single-directional, cyclic data flow, and for inspiring the Chil language.
 
 ## Definitions
 
 ### Value Object
 
-A **value object** or just "value", is an immutable piece of information, which has a scalar or vectoral value or an enumeration of attributes, and which has no conceptual identity. Examples include *2*, the string *"hello, world"*, and a list of three values: *[ 1, "apple", { "per" : "day" } ]*. Values in Chil are expressed as JSON.
+A **value object** or just "value", is an immutable piece of information, which has a scalar or vectoral value or an enumeration of attributes, and which has no conceptual identity. Examples include *2*, the string *"hello, world"*, and a list of three values: *[ 1, "apple", { "per" : "day" } ]*. Every Chil value can be represented literally as JSON.
 
 ### Stream
 
 A **stream** is an object which can be called repeatedly with incoming values, and which may either call each of its connected streams in response, or may hand off responsibility for calling its connected streams to a "delegate" function, which is called with each incoming value.
 
-Here is the Node.js implementation of a function which returns a new stream, from an optional delegate:
+Here is the Node.js implementation of a function which returns a new stream, from an optional delegate and an optional "state object":
 
 ```js
-module.exports = (save_state, last_state) => (delegate) => {
-    let state = last_state
+module.exports = (delegate, state) => {
     const connected_streams = []
-    const this_stream = {
+    const this_stream {
         connect: connected_streams.push,
         next: (value) => {
             for (const stream of connected_streams) {
                 stream.next(value)
             }
         },
-        state: {
-            fetch: () => state,
-            store: (value) => save_state(state = value),
-        },
+        state,
     }
     if (delegate) {
         this_stream.next = delegate(this_stream)

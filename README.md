@@ -42,17 +42,25 @@ A **stream** is an object which can be called repeatedly with incoming values, a
 Here is the Node.js implementation of a function which returns a new stream, from an optional delegate:
 
 ```js
-module.exports = (delegate) => {
+module.exports = (save_state, last_state) => (delegate) => {
+    let state = last_state
     const connected_streams = []
-    const next = (value) => {
-        for (const stream of connected_streams) {
-            stream.next(value)
-        }
-    }
-    return {
+    const this_stream = {
         connect: connected_streams.push,
-        next: delegate ? delegate(next) : next,
+        next: (value) => {
+            for (const stream of connected_streams) {
+                stream.next(value)
+            }
+        },
+        state: {
+            fetch: () => state,
+            store: (value) => save_state(state = value),
+        },
     }
+    if (delegate) {
+        this_stream.next = delegate(this_stream)
+    }
+    return this_stream
 }
 ```
 
@@ -93,14 +101,14 @@ A **leaf object** is an object which has no children, and whose streams therefor
 A leaf object is constructed from a "component function", which defines the streams and delegates of a leaf component. For example, a Node.js implementation of an "add" component might look like this:
 
 ```js
-module.exports = (object) => ({
-    head: (value) => {
-        object.store(value)
+module.exports = {
+    head: (result) => (value) => {
+        result.state.store(value)
     },
-    main: (value) => {
-        object.output(value + object.fetch())
+    main: (result) => (value) => {
+        result.next(value + result.state.fetch())
     },
-})
+}
 ```
 
 Leaf component functions are packaged into "libraries", which includes the Chil standard library. These functions should be as small, focused, unique, and reusable as possible, across the global Chil ecosystem. Applications should implement new leaf components only if a problem cannot be solved by combining existing components.

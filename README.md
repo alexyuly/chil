@@ -1,8 +1,10 @@
 # *This specification is an unimplemented draft, with much work in progress.*
 
-***Last Updated:*** *14 Jul 2018*
+***Last Updated:*** *15 Jul 2018*
 
 # Chil Language Specification
+
+# `🌨 -> ❄️ -> ☃️`
 
 ## (Edition No. 1, July 2018)
 
@@ -19,15 +21,17 @@ Chil is a new kind of language built on familiar patterns, used in reimagined wa
 - information
 - language
 
-The primary design principle of Chil is modular composition. Inheritance and polymorphism are shunned, because they tend to create "spaghetti code": Instead, small, simple units of code are combined together into large, complex trees of streaming data, where the flow of data is explicit.
+The primary design principle of Chil is modular composition. Inheritance and polymorphism are shunned, because they tend to create circuitous "spaghetti code". Instead, small, simple units of code are combined together into large, complex trees of streaming data, where the flow of data is explicit.
+
+Just *Chil*, ok? Software is going to be alright...
 
 ### Human-Application Interaction Cycle
 
-The Chil language is designed with a certain human-application interaction model in mind. A Chil application is the aggregate root of high-level intents and results, expressed as single-directional streams of value objects. The intents are translated from *inputs* received from a hardware interface. *Intents* flow through the *application model*, which produces results. The *results* are translated into *outputs* and sent to a hardware interface. (A "hardware interface" can be as high-level as a web browser's Document Object Model, or as low-level as an audio/video buffer.)
+The Chil language is designed with a certain model of human-application interaction in mind, and that model is cyclic. A Chil application is the aggregate root of high-level intents and results, expressed as single-directional streams of value objects. The intents are translated from *inputs* received via a software interface. *Intents* flow through the *application model*, which produces results. The *results* are translated into *outputs* and sent out via a software interface. (A "software interface" can be as high-level as the web browser Document Object Model, or as low-level as an audio/video buffer.)
 
 ![Human-Application Interaction Cycle](https://github.com/alexyuly/chil/blob/master/images/Human-Application%20Interaction%20Cycle.svg)
 
-
+Please refer to the work of Cycle.js for more, excellent analysis of human/computer ["dialogue abstraction"](https://cycle.js.org/dialogue.html).
 
 ## Definitions
 

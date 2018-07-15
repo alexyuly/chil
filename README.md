@@ -21,31 +21,44 @@ Chil is a new kind of language built on familiar patterns, used in reimagined wa
 
 The primary design principle of Chil is modular composition. Inheritance and polymorphism are shunned, because they tend to create "spaghetti code": Instead, small, simple units of code are combined together into large, complex trees of streaming data, where the flow of data is explicit.
 
+### Human-Application Interaction Model
+
+The Chil language is designed with a certain human-application interaction model in mind. A Chil application is the aggregate root of high-level intents and results, expressed as single-directional streams of value objects. The intents are translated from *inputs* received from a hardware interface. *Intents* flow through the *application model*, which produces results. The *results* are translated into *outputs* and sent to a hardware interface. (A "hardware interface" can be as high-level as a web browser's Document Object Model, or as low-level as an audio/video buffer.)
+
+![Human-Application Interaction Model](https://github.com/alexyuly/chil/blob/bd839857b53bb5d4d1442d5aacc85ff7d8ec3e52/images/Human-Application%20Interaction%20Model.png?raw=true)
+
+
+
 ## Definitions
 
-### Value
+### Value Object
 
-A **value** is a single piece of human-readable data, such as a number, a string, or a list.
-
-### Output
-
-An **output** is a function which is called with a value 0 or more times, in order to publish values to any "listeners" who may be notified as a result of the calls.
+A **value object** or just "value", is an immutable piece of information, which has a scalar or vectoral value or an enumeration of attributes, and which has no conceptual identity. Examples include *2*, the string *"hello, world"*, and a list of three values: *[ 1, "apple", { "per" : "day" } ]*. Values in Chil are expressed as JSON.
 
 ### Stream
 
-A **stream** is a function which is called with an "input value" 1 or more times, and which in response calls its own output with an "output value" 0 or more times per input. The "own output" of a stream is passed in by a higher-order function call. For example, this pseudo-ECMAScript code returns a stream:
+A **stream** is an object which can be called repeatedly with incoming values, and which may either call each of its connected streams in response, or may hand off responsibility for calling its connected streams to a "delegate" function, which is called with each incoming value.
+
+Here is the Node.js implementation of a function which returns a new stream, from an optional delegate:
 
 ```js
-(output) => (value) => over_time(() => output(transformation_of(value)))
+module.exports = (delegate) => {
+    const connected_streams = []
+    const next = (value) => {
+        for (const stream of connected_streams) {
+            stream.next(value)
+        }
+    }
+    return {
+        connect: connected_streams.push,
+        next: delegate ? delegate(next) : next,
+    }
+}
 ```
-
-Note: `over_time` is a function which abstracts the synchronicity of a stream over time, which may be a combination of synchronous and asynchronous calls. `transformation_of` is a function which abstracts a theoretical transformation of an input value to produce an output value. (Note that input-output mappings need not be 1-to-1, as inputs may have any correspondence with outputs.)
-
-Streams may also be stateful. This state, as well as the stream's own output, is controlled by a "component":
 
 ### Component
 
-A **component** is a closure which combines 1 or more streams with 1 output and a state. A component is a prototype for an "object":
+A **component** is a closure which combines 1 or more "intent" streams with 1 "result" stream and a state. *(TODO: Revise any remaining component "output" and "input" terminology to refer to "results" and "intents".)* A component is a prototype for an "object":
 
 #### Object
 
@@ -163,6 +176,3 @@ A **branch object** is an object which has 1 or more children, and whose streams
 
 *TODO*
 
-### Human-Application Interaction Model
-
-![Human-Application Interaction Model](https://github.com/alexyuly/chil/blob/bd839857b53bb5d4d1442d5aacc85ff7d8ec3e52/images/Human-Application%20Interaction%20Model.png?raw=true)

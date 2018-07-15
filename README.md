@@ -21,11 +21,11 @@ Chil is a new kind of language built on familiar patterns, used in reimagined wa
 
 The primary design principle of Chil is modular composition. Inheritance and polymorphism are shunned, because they tend to create "spaghetti code": Instead, small, simple units of code are combined together into large, complex trees of streaming data, where the flow of data is explicit.
 
-### Human-Application Interaction Model
+### Human-Application Interaction Cycle
 
 The Chil language is designed with a certain human-application interaction model in mind. A Chil application is the aggregate root of high-level intents and results, expressed as single-directional streams of value objects. The intents are translated from *inputs* received from a hardware interface. *Intents* flow through the *application model*, which produces results. The *results* are translated into *outputs* and sent to a hardware interface. (A "hardware interface" can be as high-level as a web browser's Document Object Model, or as low-level as an audio/video buffer.)
 
-![Human-Application Interaction Model](https://github.com/alexyuly/chil/blob/bd839857b53bb5d4d1442d5aacc85ff7d8ec3e52/images/Human-Application%20Interaction%20Model.png?raw=true)
+![Human-Application Interaction Cycle](https://github.com/alexyuly/chil/blob/master/images/Human-Application%20Interaction%20Cycle.svg)
 
 
 

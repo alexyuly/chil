@@ -92,15 +92,15 @@ module.exports = (object) => ({
 
 Leaf component functions are packaged into "libraries", which includes the Chil standard library. These functions should be as small, focused, unique, and reusable as possible, across the global Chil ecosystem. Applications should implement new leaf components only if a problem cannot be solved by combining existing components.
 
-#### Connection object
+#### Pipe object
 
-A **connection object** is a class of leaf object which is constructed with 1 or more objects, in order to define the flow of data through those objects. Connection components are included in the Chil standard library.
+A **pipe object** is a class of leaf object which is constructed with 1 or more objects, in order to define the flow of data through those objects. Pipe components are included in the Chil standard library.
 
-##### Pipe
+##### Line
 
-A **pipe** is an object which is constructed with a list of streams, and which connects its own input with the first stream's input, connects each stream's output with the subsequent stream's input, and connects the last stream's output with its own output. This produces a linear "pipeline" of values.
+A **line** is an object which is constructed with a list of streams, and which connects its own input with the first stream's input, connects each stream's output with the subsequent stream's input, and connects the last stream's output with its own output.
 
-The Node.js implementation of the pipe component:
+The Node.js implementation of the line component:
 
 ```js
 module.exports = (object) => ({
@@ -116,11 +116,11 @@ module.exports = (object) => ({
 })
 ```
 
-##### Split
+##### Fork
 
-A **split** is an object which is constructed with a list of streams, and which connects its own input with each stream's input, and connects each stream's output with its own output, in list order. This produces an ordered "splitting" of values.
+A **fork** is an object which is constructed with a list of streams, and which connects its own input with each stream's input, and connects each stream's output with its own output, in list order.
 
-The Node.js implementation of the split component:
+The Node.js implementation of the fork component:
 
 ```js
 module.exports = (object) => ({
@@ -163,7 +163,7 @@ A **branch object** is an object which has 1 or more children, and whose streams
 
 *TODO*
 
-### Human-Centered Interaction Model
+### Human-Application Interaction Model
 
-![Human-Centered Interaction Model](https://raw.githubusercontent.com/alexyuly/chil/master/images/Human-Application%20Interaction%20Model.png)
+![Human-Application Interaction Model](https://raw.githubusercontent.com/alexyuly/chil/master/images/Human-Application%20Interaction%20Model.png)
 

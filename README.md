@@ -165,5 +165,5 @@ A **branch object** is an object which has 1 or more children, and whose streams
 
 ### Human-Centered Interaction Model
 
-![hello][./images/Human-Application Interaction Model.png]
+![Human-Centered Interaction Model](images/Human-Application Interaction Model.png)
 

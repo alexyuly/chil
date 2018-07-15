@@ -1,6 +1,6 @@
 # *This specification is an unimplemented draft, with much work in progress.*
 
-***Last Updated:*** *10 Jul 2018*
+***Last Updated:*** *14 Jul 2018*
 
 # Chil Language Specification
 
@@ -45,7 +45,7 @@ Streams may also be stateful. This state, as well as the stream's own output, is
 
 ### Component
 
-A **component** is a closure which combines 1 or more streams with an output and a state. A component is a prototype for an "object":
+A **component** is a closure which combines 1 or more streams with 1 output and a state. A component is a prototype for an "object":
 
 #### Object
 
@@ -85,8 +85,7 @@ module.exports = (object) => ({
         object.store(value)
     },
     main: (value) => {
-        const state = object.fetch()
-        object.output(value + state)
+        object.output(value + object.fetch())
     },
 })
 ```
@@ -99,9 +98,64 @@ A **connection object** is a class of leaf object which is constructed with 1 or
 
 ##### Pipe
 
-A **pipe** is an object which is constructed with a list of streams, and which sends its input values into the first stream in the list, sends values out from the first stream into the second, out of the second, and so on through any remaining streams, until values are sent out from the last stream to the pipe's output.
+A **pipe** is an object which is constructed with a list of streams, and which connects its own input with the first stream's input, connects each stream's output with the subsequent stream's input, and connects the last stream's output with its own output. This produces a linear "pipeline" of values.
 
-*TODO*...
+The Node.js implementation of the pipe component:
+
+```js
+module.exports = (object) => ({
+    head: (streams) => {
+        object.store(streams[0])
+        for (let i = 0; i < streams.length; i++) {
+            streams[i].connect(streams[i + 1] || object.output)
+        }
+    },
+    main: (value) => {
+        object.fetch().next(value)
+    },
+})
+```
+
+##### Split
+
+A **split** is an object which is constructed with a list of streams, and which connects its own input with each stream's input, and connects each stream's output with its own output, in list order. This produces an ordered "splitting" of values.
+
+The Node.js implementation of the split component:
+
+```js
+module.exports = (object) => ({
+    head: (streams) => {
+        object.store(streams)
+        for (const stream of streams) {
+            stream.connect(object.output)
+        }
+    },
+    main: (value) => {
+        for (const stream of object.fetch()) {
+            stream.next(value)
+        }
+    },
+})
+```
+
+##### Void
+
+A **void** is an object which is constructed with a single stream, and which connects its own input with the stream's input, and then ignores all outputs of the stream.
+
+The Node.js implemenation of the void component:
+
+```js
+module.exports = (object) => ({
+    head: (stream) => {
+        object.store(stream)
+    },
+    main: (value) => {
+        object.fetch().next(value)
+    },
+})
+```
+
+Note that all head-streams are wrapped with "void" by default, meaning that their outputs cannot be connected with any other inputs or outputs.
 
 ### Branch object
 
